@@ -12,9 +12,10 @@ public class Neuron {
     private ArrayList<Double> weights;
     private ArrayList<Double> wgtChange;
 
-    public Neuron(int numInputs) {
+    public Neuron(int numInputs, ActivationFunction activationFunction) {
         weights = new ArrayList<>();
         wgtChange = new ArrayList<>();
+        this.activationFunction = activationFunction;
         for(int i = 0; i <= numInputs; i++) {
             weights.add(0.0);
             wgtChange.add(0.0);
