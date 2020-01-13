@@ -5,4 +5,9 @@ public class Linear implements ActivationFunction {
     public Double activationFunction(Double currOutput) {
         return currOutput;
     }
+
+    @Override
+    public Double findDelta(Double error, Double output) {
+        return error;
+    }
 }

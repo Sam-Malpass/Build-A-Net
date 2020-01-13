@@ -39,7 +39,7 @@ public class Neuron {
     }
 
     public void findDelta(Double error) {
-        this.delta = error;
+        this.delta = activationFunction.findDelta(error, output);
     }
 
     public void updateWeights(ArrayList<Double> inputs, Double learnRate, Double momentum) {

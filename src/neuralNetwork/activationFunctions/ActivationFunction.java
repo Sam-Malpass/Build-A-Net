@@ -1,7 +1,5 @@
 package neuralNetwork.activationFunctions;
-
-import java.util.ArrayList;
-
 public interface ActivationFunction {
      Double activationFunction(Double currOutput);
+     Double findDelta(Double error, Double output);
 }
