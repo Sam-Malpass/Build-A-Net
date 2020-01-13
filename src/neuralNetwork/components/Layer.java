@@ -43,6 +43,18 @@ public class Layer {
         }
     }
 
+    public void addNeuron(Neuron n) {
+        neurons.add(n);
+    }
+
+    public void removeNeuron(int position) {
+        neurons.remove(position);
+    }
+
+    public void setNextLayer(Layer nextLayer) {
+        this.nextLayer = nextLayer;
+    }
+
     public ArrayList<Double> getOutputs() {
         return outputs;
     }
