@@ -37,6 +37,12 @@ public class Layer {
         }
     }
 
+    public void updateWeights(ArrayList<Double> inputs, Double learningRate, Double momentum) {
+        for(Neuron n : neurons) {
+            n.updateWeights(inputs, learningRate, momentum);
+        }
+    }
+
     public ArrayList<Double> getOutputs() {
         return outputs;
     }
