@@ -66,4 +66,8 @@ public class Neuron {
     {
         return weights.size();
     }
+
+    public Double getOutput() {
+        return this.output;
+    }
 }
