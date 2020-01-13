@@ -32,9 +32,10 @@ public class Neuron {
 
     protected void calculateOutput(ArrayList<Double> inputs) {
         output = weights.get(0);
-        for(int i = 1; i < weights.size(); i++) {
-            output += inputs.get(i-1) * weights.get(i);
+        for (int i = 1; i < weights.size(); i++) {
+            output += inputs.get(i - 1) * weights.get(i);
         }
+        output = activationFunction.activationFunction(output);
     }
 
     public void findDelta(Double error) {
