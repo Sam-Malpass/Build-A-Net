@@ -30,7 +30,7 @@ public class Neuron {
         delta = 0.0;
     }
 
-    private void calculateOutput(ArrayList<Double> inputs) {
+    protected void calculateOutput(ArrayList<Double> inputs) {
         output = weights.get(0);
         for(int i = 1; i < weights.size(); i++) {
             output += inputs.get(i-1) * weights.get(i);
