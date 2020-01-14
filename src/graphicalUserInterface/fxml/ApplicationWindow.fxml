@@ -63,9 +63,9 @@
                   <Button fx:id="setError" mnemonicParsing="false" onAction="#setMinError" prefHeight="25.0" prefWidth="100.0" text="Set Min Error" />
                 <Button fx:id="testNetwork" alignment="CENTER" mnemonicParsing="false" text="Test Network" />
                   <Label text="Learning Rate:" />
-                  <Spinner fx:id="learningRate" />
+                  <Spinner fx:id="learningRateSpinner" />
                   <Label text="Momentum:" />
-                  <Spinner fx:id="momentum" />
+                  <Spinner fx:id="momentumSpinner" />
               </items>
             </ToolBar>
          </children>

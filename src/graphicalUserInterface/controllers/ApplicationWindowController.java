@@ -9,9 +9,9 @@ package graphicalUserInterface.controllers;
 import graphicalUserInterface.MessageBus;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.*;
+import javafx.scene.text.Text;
+
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -29,6 +29,24 @@ public class ApplicationWindowController implements Initializable {
     private TextArea console;
 
     /**
+     * statusBox is a TextArea to display current network information to the user
+     */
+    @FXML
+    private TextArea statusBox;
+
+    /**
+     * learningRateSpinner holds the spinner for learning rate
+     */
+    @FXML
+    private Spinner learningRateSpinner;
+
+    /**
+     * momentumSpinner holds the spinner for momentum
+     */
+    @FXML
+    private Spinner momentumSpinner;
+
+    /**
      * maxEpochs stores a number for the max epochs as set by the user
      */
     private int maxEpochs;
@@ -37,6 +55,46 @@ public class ApplicationWindowController implements Initializable {
      * minError stores a number for the minimum error to aim for
      */
     private double minError;
+
+    /**
+     * learningRate holds the learning rate of the network that is currently being built
+     */
+    private double learningRate;
+
+    /**
+     * momentum holds the momentum of the network that is currently being built
+     */
+    private double momentum;
+
+    /**
+     * trainedFlag says whether the network has been trained or not
+     */
+    private boolean trainedFlag;
+
+    /**
+     * deepFlag says whether the network is classified as deep or shallow
+     */
+    private boolean deepFlag;
+
+    /**
+     * paramsFlag determines whether all parameters are okay
+     */
+    private boolean paramsFlag;
+
+    /**
+     * dataFlag says whether a set of input data has been loaded for the network
+     */
+    private boolean dataFlag;
+
+    /**
+     * currStatus holds the current state of the application
+     */
+    private int currStatus;
+
+    /**
+     * numLayers holds the current number of layers in the network
+     */
+    private int numLayers;
 
     /**
      * Function initialize()
@@ -50,8 +108,23 @@ public class ApplicationWindowController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         // Make the console un-editable
         console.setEditable(false);
+        statusBox.setEditable(false);
         // Create a new MessageBus object using this instantiation
         messageBus = new MessageBus(this);
+        learningRate = 1.0;
+        momentum = 0.0;
+        minError = 0.0;
+        maxEpochs = 0;
+        numLayers = 0;
+        currStatus = 0;
+        paramsFlag = false;
+        deepFlag = false;
+        trainedFlag = false;
+        updateStatusBox();
+        learningRateSpinner.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0.0, Double.MAX_VALUE, 1.0, 0.1));
+        learningRateSpinner.valueProperty().addListener(((observableValue, o, t1) -> {learningRate = (double)learningRateSpinner.getValue();}));
+        momentumSpinner.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0.0, Double.MAX_VALUE, 0.0, 0.1));
+        momentumSpinner.valueProperty().addListener(((observableValue, o, t1) -> { momentum = (double)momentumSpinner.getValue(); }));
     }
 
     /**
@@ -134,6 +207,7 @@ public class ApplicationWindowController implements Initializable {
             // Reset maxEpochs
             maxEpochs = 0;
         }
+        updateStatusBox();
     }
 
     /**
@@ -164,6 +238,7 @@ public class ApplicationWindowController implements Initializable {
             // Reset the minError
             minError = 0.0;
         }
+        updateStatusBox();
     }
 
     /**
@@ -187,6 +262,138 @@ public class ApplicationWindowController implements Initializable {
     }
 
     /**
+     * Function updateStatusBox()
+     * <p>
+     *     Updates the status box with the current network information
+     * </p>
+     */
+    private void updateStatusBox() {
+        // Create the string
+        String information = "";
+        // Append the network status
+        information += "Status: " + checkStatus() + "\n";
+        // Check the deepFlag
+        if(deepFlag) {
+            // Append relevant status
+            information += "Architecture: DEEP\n";
+        }
+        else {
+            // Append relevant status
+            information += "Architecture: SHALLOW\n";
+        }
+        // Append number of hidden layers
+        information += "Hidden Layers: " + (hiddenLayers()) + "\n";
+        // Append next attribute
+        information += "Data Loaded: ";
+        // Check the dataFlag
+        if(dataFlag) {
+            // Append relevant status
+            information += "YES\n";
+        }
+        // Otherwise
+        else {
+            // Append relevant status
+            information += "NO\n";
+        }
+        // Append maxEpochs
+        information += "Max Epochs to Run: " + maxEpochs + "\n";
+        // Append minError
+        information += "Min Error to Achieve: " + minError + "\n";
+        // Output the information to the statusBox
+        statusBox.setText(information);
+    }
+
+    /**
+     * Function checkStatus()
+     * <p>
+     *     Converts the currStatus state into the appropriate string
+     * </p>
+     * @return the string
+     */
+    private String checkStatus() {
+        // Check the status
+        switch(currStatus) {
+            case 0:
+                return "MIN LAYERS NOT REACHED";
+            case 1:
+                return "MISSING NEURONS IN LAYER(S)";
+            case 2:
+                return "NO DATA SELECTED";
+            case 3:
+                return "NUM INPUTS EXCEEDS NUM NEURONS IN INPUT LAYER";
+            case 4:
+                return "NUM OUTPUTS EXCEEDS NUM NEURONS IN OUTPUT LAYER";
+            default:
+                return "IDLE";
+        }
+    }
+
+    /**
+     * Function checkParameters()
+     * <p>
+     *     Checks the different parameters for errors
+     * </p>
+     */
+    private void checkParameters() {
+        // Create the error message
+        String errorMessage = "";
+        // If the maxEpochs is less than or equal to 0
+        if(maxEpochs <= 0) {
+            // Update the error message
+            errorMessage += "Max epochs ";
+            // Set the flag
+            paramsFlag = false;
+        }
+        // If the minError is negative
+        if(minError <= 0.0) {
+            // Update the error message
+            errorMessage += "Min Error ";
+            // Set the flag
+            paramsFlag = false;
+        }
+        // If the learningRate is less than or equal to 0.0
+        if(learningRate <= 0.0) {
+            // Update the error message
+            errorMessage = "Learning Rate ";
+            // Set the flag
+            paramsFlag = false;
+        }
+        // If the momentum is less than 0
+        if(momentum < 0) {
+            // Update the error message
+            errorMessage = "Momentum ";
+            // Set the flag
+            paramsFlag = false;
+        }
+        // If the data is not loaded in
+        if(!dataFlag) {
+            // Update the error message
+            errorMessage = "Input data ";
+            // Set the flag
+            paramsFlag = false;
+        }
+        // If the paramsFlag is false
+        if(!paramsFlag) {
+            // Output the error message to the console
+            write("Issues with following parameter(s): " + errorMessage, "-e");
+        }
+    }
+
+    /**
+     * Function getParameterFlag()
+     * <p>
+     *     Runs a parameter check and then returns the paramsFlag
+     * </p>
+     * @return paramsFlag
+     */
+    public boolean getParameterFlag() {
+        // Check the parameters
+        checkParameters();
+        // Return the paramsFlag
+        return paramsFlag;
+    }
+
+    /**
      * Function getMessageBus()
      * <p>
      *     Return the messageBus
@@ -196,5 +403,25 @@ public class ApplicationWindowController implements Initializable {
     public static MessageBus getMessageBus() {
         // Return messageBus
         return messageBus;
+    }
+
+    /**
+     * Function hiddenLayers()
+     * <p>
+     *     Calculates the hidden layers of the network
+     * </p>
+     * @return the number of hidden layers
+     */
+    private int hiddenLayers() {
+        // If the total number of hidden layers is greater than two
+        if(numLayers > 2) {
+            // Return the total layers - the input and output layer
+            return numLayers - 2;
+        }
+        // Otherwise
+        else {
+            // Return 0
+            return 0;
+        }
     }
 }
