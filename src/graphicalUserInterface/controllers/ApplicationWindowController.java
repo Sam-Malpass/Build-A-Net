@@ -9,6 +9,7 @@ package graphicalUserInterface.controllers;
 import graphicalUserInterface.MessageBus;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextInputDialog;
 import java.net.URL;
@@ -163,6 +164,26 @@ public class ApplicationWindowController implements Initializable {
             // Reset the minError
             minError = 0.0;
         }
+    }
+
+    /**
+     * Function about()
+     * <p>
+     *     Create an alert window with all the information about the application and display this window the user
+     * </p>
+     */
+    @FXML
+    private void about() {
+        // Create the Alert
+        Alert window = new Alert(Alert.AlertType.INFORMATION);
+        // Set the title
+        window.setTitle("About");
+        // Set the header text
+        window.setHeaderText("Build-A-Net");
+        // Set the content of the Alert
+        window.setContentText("Author: Sam Malpass\nApplication Version: 0.0.1\nDescription: Build-A-Net was created for an MSc thesis in demonstrating multi-layer perceptrons and their uses in deep learning");
+        // Display the window
+        window.showAndWait();
     }
 
     /**
