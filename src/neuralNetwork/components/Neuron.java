@@ -42,16 +42,18 @@ public class Neuron {
      * <p>
      *     Creates the object using passed and default objects and values
      * </p>
-     * @param numInputs is the number of input connections it will have
      * @param activationFunction is the ActivationFunction it will use
      */
-    public Neuron(int numInputs, ActivationFunction activationFunction) {
+    public Neuron(ActivationFunction activationFunction) {
         // Set up the list of weights
         weights = new ArrayList<>();
         // Set up the list of weight changes
         wgtChange = new ArrayList<>();
         // Set the activation function
         this.activationFunction = activationFunction;
+    }
+
+    public void connectNeuron(int numInputs) {
         // For all inputs
         for(int i = 0; i <= numInputs; i++) {
             // Create a weight
@@ -60,7 +62,6 @@ public class Neuron {
             wgtChange.add(0.0);
         }
     }
-
     /**
      * Function initializeNeuron()
      * <p>
@@ -181,5 +182,9 @@ public class Neuron {
     public Double getOutput() {
         // Return the output
         return this.output;
+    }
+
+    public ArrayList<Double> getColour() {
+        return activationFunction.getColour();
     }
 }

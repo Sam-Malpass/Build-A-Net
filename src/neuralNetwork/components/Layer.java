@@ -23,7 +23,7 @@ public class Layer {
     /**
      * nextLayer holds the next layer in the network
      */
-    private Layer nextLayer;
+    //private Layer nextLayer;
 
     /**
      * Constructor without arguments
@@ -34,24 +34,13 @@ public class Layer {
     public Layer() {
         // Create an empty list of neurons
         this.neurons = new ArrayList<>();
-        // Set the next layer to null
-        this.nextLayer = null;
     }
 
-    /**
-     * Constructor with argument
-     * <p>
-     *     Creates the object with an empty list of neurons and uses the passed layer as the next layer
-     * </p>
-     * @param nextLayer is the layer to use
-     */
-    public Layer(Layer nextLayer) {
-        // Create an empty list of neurons
-        this.neurons = new ArrayList<>();
-        // Set the next layer
-        this.nextLayer = nextLayer;
+    public void connect(int numInputs) {
+        for(Neuron n : neurons) {
+            n.connectNeuron(numInputs);
+        }
     }
-
     /**
      * Function initializeLayer()
      * <p>
@@ -63,6 +52,12 @@ public class Layer {
         for(Neuron n : neurons) {
             // Initialize the neuron
             n.initializeNeuron();
+        }
+    }
+
+    public void generateWeights() {
+        for(Neuron n : neurons) {
+            n.genWeights();
         }
     }
 
@@ -80,11 +75,6 @@ public class Layer {
             n.calculateOutput(inputs);
             // Add the output to the list
             outputs.add(n.getOutput());
-        }
-        // If there is another layer
-        if(nextLayer != null) {
-            // Send the outputs to the next layer
-            nextLayer.calculateOutputs(outputs);
         }
     }
 
@@ -145,18 +135,6 @@ public class Layer {
     }
 
     /**
-     * Function setNextLayer()
-     * <p>
-     *     Takes a Layer object and sets it to the nextLayer
-     * </p>
-     * @param nextLayer is the Layer object to use
-     */
-    public void setNextLayer(Layer nextLayer) {
-        // Set the nextLayer
-        this.nextLayer = nextLayer;
-    }
-
-    /**
      * Function getOutputs()
      * <p>
      *     Returns the outputs of the layer - useful for the last layer
@@ -178,5 +156,9 @@ public class Layer {
     public int numNeurons() {
         // Return the number of neurons in the layer
         return neurons.size();
+    }
+
+    public ArrayList<Neuron> getNeurons() {
+        return neurons;
     }
 }

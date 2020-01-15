@@ -6,6 +6,8 @@
  */
 package neuralNetwork.activationFunctions;
 
+import java.util.ArrayList;
+
 public interface ActivationFunction {
      /**
       * Function activationFunction()
@@ -27,4 +29,13 @@ public interface ActivationFunction {
       * @return the result
       */
      Double findDelta(Double error, Double output);
+
+     /**
+      * Function getColour()
+      * <p>
+      *     The user can return RGB values in the arraylist to colour the neuron with this activation function
+      * </p>
+      * @return the RGB values in the arraylist
+      */
+     ArrayList<Double> getColour();
 }

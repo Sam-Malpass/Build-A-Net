@@ -6,6 +6,8 @@
  */
 package neuralNetwork.activationFunctions;
 
+import java.util.ArrayList;
+
 public class Linear implements ActivationFunction {
 
     /**
@@ -35,5 +37,14 @@ public class Linear implements ActivationFunction {
     public Double findDelta(Double error, Double output) {
         // Return the delta
         return error;
+    }
+
+    @Override
+    public ArrayList<Double> getColour() {
+        ArrayList<Double> col = new ArrayList<>();
+        col.add(0.0);
+        col.add(0.0);
+        col.add(0.0);
+        return col;
     }
 }

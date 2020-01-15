@@ -7,10 +7,22 @@
 package graphicalUserInterface.controllers;
 
 import graphicalUserInterface.MessageBus;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
+import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.ArcType;
 import javafx.scene.text.Text;
+import neuralNetwork.Network;
+import neuralNetwork.activationFunctions.Sigmoid;
+import neuralNetwork.components.Neuron;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -33,6 +45,29 @@ public class ApplicationWindowController implements Initializable {
      */
     @FXML
     private TextArea statusBox;
+
+    /**
+     * canvas holds the canvas object for the neural network viewer
+     */
+    @FXML
+    private Canvas canvas;
+
+    @FXML
+    private AnchorPane canvasPane;
+
+    /**
+     * graphicsContext holds the graphics context of the application
+     */
+    private GraphicsContext graphicsContext;
+
+    /**
+     * baseMaxLayers holds the max number of layers that can be displayed before the canvas must be resized
+     */
+    private int baseMaxLayers = 11;
+
+    private ContextMenu menu;
+    private double locX;
+    private int selectedLayer;
 
     /**
      * learningRateSpinner holds the spinner for learning rate
@@ -96,6 +131,8 @@ public class ApplicationWindowController implements Initializable {
      */
     private int numLayers;
 
+    private Network neuralNetwork;
+
     /**
      * Function initialize()
      * <p>
@@ -120,11 +157,76 @@ public class ApplicationWindowController implements Initializable {
         paramsFlag = false;
         deepFlag = false;
         trainedFlag = false;
+        neuralNetwork = new Network();
         updateStatusBox();
         learningRateSpinner.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0.0, Double.MAX_VALUE, 1.0, 0.1));
         learningRateSpinner.valueProperty().addListener(((observableValue, o, t1) -> {learningRate = (double)learningRateSpinner.getValue();}));
         momentumSpinner.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0.0, Double.MAX_VALUE, 0.0, 0.1));
         momentumSpinner.valueProperty().addListener(((observableValue, o, t1) -> { momentum = (double)momentumSpinner.getValue(); }));
+
+        graphicsContext = canvas.getGraphicsContext2D();
+        createCanvasMenu();
+        canvas.setOnContextMenuRequested(e -> {menu.show(canvas, e.getScreenX(), e.getScreenY()); locX = e.getX();});
+        canvas.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                locX = mouseEvent.getX();
+                hiliteLayer();
+            }
+        });
+
+        prepCanvas();
+    }
+
+    private void createCanvasMenu() {
+        ContextMenu menu = new ContextMenu();
+        MenuItem addLayer = new MenuItem("Add Layer");
+        addLayer.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                addLayer();
+            }
+        });
+        MenuItem removeLayer = new MenuItem("Remove Layer");
+        removeLayer.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                double bound = numLayers * 100;
+                if(locX < bound) {
+                    double rawLayerNum = (locX / 100);
+                    rawLayerNum = Math.ceil(rawLayerNum);
+                    neuralNetwork.removeLayer((int)rawLayerNum);
+                    if(selectedLayer == rawLayerNum-1) {
+                        selectedLayer = -1;
+                    }
+                    removeLayer();
+                }
+            }
+        });
+        MenuItem addNeuron = new MenuItem("Add Neuron");
+        addNeuron.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                double bound = numLayers * 100;
+                if(locX < bound) {
+                    double rawLayerNum = (locX / 100);
+                    rawLayerNum = Math.ceil(rawLayerNum);
+                    addNeuron((int)rawLayerNum -1);
+                    drawAllNeurons();
+                }
+            }
+        });
+        MenuItem removeNeuron = new MenuItem("Remove Neuron");
+        SeparatorMenuItem separator = new SeparatorMenuItem();
+        MenuItem cancel = new MenuItem("Cancel");
+        cancel.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                return;
+            }
+        });
+        menu.getItems().addAll(addLayer, removeLayer, addNeuron, removeNeuron, separator, cancel);
+        this.menu = menu;
     }
 
     /**
@@ -261,6 +363,141 @@ public class ApplicationWindowController implements Initializable {
         window.showAndWait();
     }
 
+    private void prepCanvas() {
+        graphicsContext.setFill(Color.LIGHTGRAY);
+        graphicsContext.fillRect(0,0, canvas.getWidth(), canvas.getHeight());
+        drawLayerBox();
+    }
+
+    private void drawLayerBox() {
+        graphicsContext.setStroke(Color.BLACK);
+
+        if(numLayers > 0) {
+            double length = numLayers * 100;
+            graphicsContext.setLineWidth(2.5);
+            graphicsContext.strokeLine(0, 0, length, 0);
+            graphicsContext.strokeLine(0, canvas.getHeight(), length, canvas.getHeight());
+
+            graphicsContext.setLineWidth(2.5);
+            int curr = 100;
+            int prev = 0;
+            for(int i = 0; i < numLayers; i++) {
+                graphicsContext.strokeLine(prev, 0, prev, canvas.getHeight());
+                graphicsContext.strokeLine(curr, 0, curr, canvas.getHeight());
+                prev = curr;
+                curr += 100;
+            }
+        }
+
+        drawAllNeurons();
+    }
+
+    private void drawNeurons(int layerID) {
+        if(neuralNetwork.getLayer(layerID).numNeurons() > 0) {
+            int numNeurons = neuralNetwork.getLayer(layerID).numNeurons();
+            double startX;
+            double startY;
+            double interval;
+            if (numNeurons <= 8) {
+                interval = canvas.getHeight() / (double) numNeurons + 1;
+                startX = (layerID * 100) + 50;
+                startY = 0 + (0.5 * interval) - 12.5;
+            } else {
+                interval = 60.375;
+                startX = (layerID * 100) + 50;
+                startY = 0 + (0.5 * interval) - 12.5;
+            }
+            int bonus = 0;
+            int ct = 0;
+            for (Neuron n : neuralNetwork.getLayer(layerID).getNeurons()) {
+                graphicsContext.setFill(Color.color(n.getColour().get(0), n.getColour().get(1), n.getColour().get(2)));
+
+
+                graphicsContext.fillArc(startX - 12.5, startY - 12.5, 25, 25, 0, 360, ArcType.ROUND);
+                if (ct < 7) {
+                    startY += interval;
+                }
+
+
+                if (ct > 7) {
+                    bonus++;
+                    write("here");
+                    graphicsContext.setFill(Color.BLACK);
+                    graphicsContext.fillText(bonus + "+", startX - 7, startY + 5);
+                    continue;
+                }
+                ct++;
+            }
+        }
+    }
+
+    public void drawAllNeurons() {
+        if(neuralNetwork.numLayers() > 0) {
+            for (int i = 0; i < numLayers; i++) {
+                graphicsContext.setFill(Color.LIGHTGRAY);
+                graphicsContext.fillRect((i * 100) + 1.125, 1.125, 100 - 2.5, canvas.getHeight() - 2.5);
+                drawNeurons(i);
+            }
+        }
+    }
+
+    private void hiliteLayer() {
+        double rawLayerNum = (locX / 100);
+        rawLayerNum = Math.ceil(rawLayerNum);
+        if(rawLayerNum <= numLayers) {
+            if(selectedLayer != -1) {
+                graphicsContext.setStroke(Color.BLACK);
+                graphicsContext.setLineWidth(2.5);
+
+                graphicsContext.strokeLine(selectedLayer * 100, 0, selectedLayer * 100, canvas.getHeight());
+                graphicsContext.strokeLine((selectedLayer * 100) + 100, 0, (selectedLayer * 100) + 100, canvas.getHeight());
+                graphicsContext.strokeLine(selectedLayer * 100, 0, (selectedLayer * 100) + 100, 0);
+                graphicsContext.strokeLine(selectedLayer * 100, canvas.getHeight(), (selectedLayer * 100) + 100, canvas.getHeight());
+            }
+
+            selectedLayer = (int) rawLayerNum - 1;
+
+            graphicsContext.setStroke(Color.BLUE);
+            graphicsContext.setLineWidth(2.5);
+
+
+            graphicsContext.strokeLine(selectedLayer * 100, 0, selectedLayer * 100, canvas.getHeight());
+            graphicsContext.strokeLine((selectedLayer * 100) + 100, 0, (selectedLayer * 100) + 100, canvas.getHeight());
+            graphicsContext.strokeLine(selectedLayer * 100, 0, (selectedLayer * 100) + 100, 0);
+            graphicsContext.strokeLine(selectedLayer * 100, canvas.getHeight(), (selectedLayer * 100) + 100, canvas.getHeight());
+        }
+    }
+
+    @FXML
+    private void addLayer() {
+        numLayers++;
+        neuralNetwork.addLayer();
+        if(numLayers > baseMaxLayers) {
+            canvas.setWidth(canvas.getWidth()+100);
+            canvasPane.setPrefWidth(canvasPane.getWidth() + 100);
+            prepCanvas();
+        }
+        drawLayerBox();
+
+        updateStatusBox();
+    }
+
+    private void addNeuron(int layerID) {
+        neuralNetwork.addNeuron(new Neuron(new Sigmoid()), layerID);
+        updateStatusBox();
+    }
+
+    private void removeLayer() {
+        numLayers--;
+        if(numLayers > baseMaxLayers) {
+            canvas.setWidth(canvas.getWidth()-100);
+            canvasPane.setPrefWidth(canvasPane.getWidth() - 100);
+        }
+        prepCanvas();
+        drawLayerBox();
+        updateStatusBox();
+    }
+
     /**
      * Function updateStatusBox()
      * <p>
@@ -311,6 +548,26 @@ public class ApplicationWindowController implements Initializable {
      * @return the string
      */
     private String checkStatus() {
+        if(numLayers >= 2) {
+            currStatus = 1;
+        }
+        else {
+            boolean neurons = true;
+            if(neuralNetwork.numLayers() == 0){
+                neurons = false;
+            }
+            for (int i = 0; i < numLayers; i++) {
+                if (neuralNetwork.getLayer(i).numNeurons() <= 0) {
+                    neurons = false;
+                }
+            }
+            if (neurons) {
+                currStatus = 2;
+            }
+            else {
+
+            }
+        }
         // Check the status
         switch(currStatus) {
             case 0:

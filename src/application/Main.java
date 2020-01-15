@@ -1,5 +1,5 @@
-/**
- * Main
+package application; /**
+ * application.Main
  * @author Sam Malpass
  * @version 0.0.1
  * @since 0.0.1
