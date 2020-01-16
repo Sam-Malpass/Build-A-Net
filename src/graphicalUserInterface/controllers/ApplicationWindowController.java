@@ -414,6 +414,8 @@ public class ApplicationWindowController implements Initializable {
 
 
                 graphicsContext.fillArc(startX - 12.5, startY - 12.5, 25, 25, 0, 360, ArcType.ROUND);
+                graphicsContext.setStroke(Color.BLACK);
+                graphicsContext.strokeOval(startX-12.5, startY-12.5, 25, 25);
                 if (ct < 7) {
                     startY += interval;
                 }
@@ -548,7 +550,7 @@ public class ApplicationWindowController implements Initializable {
      * @return the string
      */
     private String checkStatus() {
-        if(numLayers >= 2) {
+        if(numLayers >= 2 && currStatus == 0) {
             currStatus = 1;
         }
         else {
