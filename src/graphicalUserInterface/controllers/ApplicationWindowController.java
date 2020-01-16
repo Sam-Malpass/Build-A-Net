@@ -396,9 +396,13 @@ public class ApplicationWindowController implements Initializable {
         // Round to actual layer number
         rawLayerNum = Math.ceil(rawLayerNum);
         // If the layer number is within the bounds
+        int currSelected = selectedLayer;
         if(rawLayerNum <= neuralNetwork.numLayers()) {
             // Update the selected layer
             selectedLayer = (int) rawLayerNum - 1;
+            if(selectedLayer == currSelected) {
+                selectedLayer = -1;
+            }
             updateNetworkCanvas();
         }
     }
@@ -430,11 +434,13 @@ public class ApplicationWindowController implements Initializable {
      * </p>
      */
     private void addNeuron() {
-        // Add the neuron to the given layer
-        neuralNetwork.addNeuron(new Neuron(new Sigmoid()), selectedLayer);
-        updateNetworkCanvas();
-        // Update the status box
-        updateStatusBox();
+        if(selectedLayer != -1) {
+            // Add the neuron to the given layer
+            neuralNetwork.addNeuron(new Neuron(new Sigmoid()), selectedLayer);
+            updateNetworkCanvas();
+            // Update the status box
+            updateStatusBox();
+        }
     }
 
     /**
