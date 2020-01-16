@@ -100,11 +100,6 @@ public class ApplicationWindowController implements Initializable {
     private double momentum;
 
     /**
-     * trainedFlag says whether the network has been trained or not
-     */
-    private boolean trainedFlag;
-
-    /**
      * deepFlag says whether the network is classified as deep or shallow
      */
     private boolean deepFlag;
@@ -123,11 +118,6 @@ public class ApplicationWindowController implements Initializable {
      * currStatus holds the current state of the application
      */
     private int currStatus;
-
-    /**
-     * numLayers holds the current number of layers in the network
-     */
-    private int numLayers;
 
     private Network neuralNetwork;
 
@@ -155,18 +145,14 @@ public class ApplicationWindowController implements Initializable {
         minError = 0.0;
         // Set the maxEpochs to a min value
         maxEpochs = 0;
-        // Set the numLayers to a min value
-        numLayers = 0;
+        // Create an empty neural network object
+        neuralNetwork = new Network();
         // Set the currStatus to status 0
         currStatus = 0;
         // Set the paramsFlag
         paramsFlag = false;
         // Set the deepFlag
         deepFlag = false;
-        // Set the trainedFlag
-        trainedFlag = false;
-        // Create an empty neural network object
-        neuralNetwork = new Network();
         // Update the statusBox
         updateStatusBox();
         // Create the Spinner ValueFactory for learningRate
@@ -223,7 +209,7 @@ public class ApplicationWindowController implements Initializable {
             @Override
             public void handle(ActionEvent actionEvent) {
                 // Create the bound
-                double bound = numLayers * 100;
+                double bound = neuralNetwork.numLayers() * 100;
                 // Determine whether the cursor is not on any layer
                 if(locX < bound) {
                     // Calculate which layer it should be in roughly
@@ -249,7 +235,7 @@ public class ApplicationWindowController implements Initializable {
             @Override
             public void handle(ActionEvent actionEvent) {
                 // Find the bound
-                double bound = numLayers * 100;
+                double bound = neuralNetwork.numLayers() * 100;
                 // Check that the cursor is on a layer
                 if(locX < bound) {
                     // Get the rough layer number
@@ -444,9 +430,9 @@ public class ApplicationWindowController implements Initializable {
         // Set the colour of the lines to be drawn
         graphicsContext.setStroke(Color.BLACK);
         // If there is at least one layer
-        if(numLayers > 0) {
+        if(neuralNetwork.numLayers() > 0) {
             // Calculate the length of the top and bottom lines to be drawn
-            double length = numLayers * 100;
+            double length = neuralNetwork.numLayers() * 100;
             // Set the width of the line
             graphicsContext.setLineWidth(2.5);
             // Draw the top line
@@ -459,7 +445,7 @@ public class ApplicationWindowController implements Initializable {
             // Set the previous destination width
             int prev = 0;
             // For all layers
-            for(int i = 0; i < numLayers; i++) {
+            for(int i = 0; i < neuralNetwork.numLayers(); i++) {
                 // Draw a line for the previous edge
                 graphicsContext.strokeLine(prev, 0, prev, canvas.getHeight());
                 // Draw a line for the next edge
@@ -556,7 +542,7 @@ public class ApplicationWindowController implements Initializable {
         // If there is at least one layer
         if(neuralNetwork.numLayers() > 0) {
             // For all layers in the network
-            for (int i = 0; i < numLayers; i++) {
+            for (int i = 0; i < neuralNetwork.numLayers(); i++) {
                 // Set the fill colour
                 graphicsContext.setFill(Color.LIGHTGRAY);
                 // Reset the layer
@@ -580,7 +566,7 @@ public class ApplicationWindowController implements Initializable {
         // Round to actual layer number
         rawLayerNum = Math.ceil(rawLayerNum);
         // If the layer number is within the bounds
-        if(rawLayerNum <= numLayers) {
+        if(rawLayerNum <= neuralNetwork.numLayers()) {
             // If there is a previously selected layer
             if(selectedLayer != -1) {
                 // Set the stroke color
@@ -621,12 +607,10 @@ public class ApplicationWindowController implements Initializable {
      */
     @FXML
     private void addLayer() {
-        // Increment the number of layers
-        numLayers++;
         // Add a layer to the network
         neuralNetwork.addLayer();
         // If the number of layers now exceeds tha max that can be displayed at the start
-        if(numLayers > baseMaxLayers) {
+        if(neuralNetwork.numLayers() > baseMaxLayers) {
             // Update the width of the canvas
             canvas.setWidth(canvas.getWidth()+100);
             // Update the width of the pane that holds the canvas
@@ -657,10 +641,8 @@ public class ApplicationWindowController implements Initializable {
      * </p>
      */
     private void removeLayer() {
-        // Reduce the numLayers
-        numLayers--;
         // If the number of layers exceeds the base size of the canvas
-        if(numLayers > baseMaxLayers) {
+        if(neuralNetwork.numLayers() > baseMaxLayers) {
             // Update the width of the canvas
             canvas.setWidth(canvas.getWidth()-100);
             // Update the width of the pane holding the canvas
@@ -720,7 +702,7 @@ public class ApplicationWindowController implements Initializable {
      * @return the string
      */
     private String checkStatus() {
-        if(numLayers >= 2 && currStatus == 0) {
+        if(neuralNetwork.numLayers() >= 2 && currStatus == 0) {
             currStatus = 1;
         }
         else {
@@ -728,7 +710,7 @@ public class ApplicationWindowController implements Initializable {
             if(neuralNetwork.numLayers() == 0){
                 neurons = false;
             }
-            for (int i = 0; i < numLayers; i++) {
+            for (int i = 0; i < neuralNetwork.numLayers(); i++) {
                 if (neuralNetwork.getLayer(i).numNeurons() <= 0) {
                     neurons = false;
                 }
@@ -843,9 +825,9 @@ public class ApplicationWindowController implements Initializable {
      */
     private int hiddenLayers() {
         // If the total number of hidden layers is greater than two
-        if(numLayers > 2) {
+        if(neuralNetwork.numLayers() > 2) {
             // Return the total layers - the input and output layer
-            return numLayers - 2;
+            return neuralNetwork.numLayers() - 2;
         }
         // Otherwise
         else {
