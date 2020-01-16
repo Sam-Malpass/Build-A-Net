@@ -55,6 +55,14 @@ public class ApplicationWindowController implements Initializable {
     @FXML
     private AnchorPane canvasPane;
 
+    @FXML
+    private SplitPane splitPaneTop;
+    @FXML
+    private AnchorPane topRightPane;
+
+    @FXML
+    private SplitPane splitPaneBottom;
+
     /**
      * graphicsContext holds the graphics context of the application
      */
