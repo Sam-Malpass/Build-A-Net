@@ -14,6 +14,7 @@ public class NetworkDrawer {
     }
 
     private void drawLayerBox(double startX) {
+        area.setStroke(Color.BLACK);
         area.strokeLine(startX, 0, startX + 100, 0);
         area.strokeLine(startX,  475, startX + 100, 475);
         area.strokeLine(startX, 0, startX, 475);
@@ -85,5 +86,21 @@ public class NetworkDrawer {
         area.setFill(Color.LIGHTGRAY);
         // Fill the canvas with the colour
         area.fillRect(0,0, width, 475);
+    }
+
+    public void highlightLayer(int layer) {
+        // Set the stroke colour
+        area.setStroke(Color.BLUE);
+        // Set the line width
+        area.setLineWidth(2.5);
+        // Draw a line
+        area.strokeLine(layer * 100, 0, layer * 100, 475);
+        // Draw a line
+        area.strokeLine((layer * 100) + 100, 0, (layer * 100) + 100, 475);
+        // Draw a line
+        area.strokeLine(layer * 100, 0, (layer * 100) + 100, 0);
+        // Draw a line
+        area.strokeLine(layer * 100, 475, (layer * 100) + 100, 475);
+        area.setLineWidth(1);
     }
 }

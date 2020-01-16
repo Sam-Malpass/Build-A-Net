@@ -24,6 +24,7 @@ import neuralNetwork.activationFunctions.Sigmoid;
 import neuralNetwork.components.Neuron;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class ApplicationWindowController implements Initializable {
@@ -64,7 +65,7 @@ public class ApplicationWindowController implements Initializable {
      */
     private int baseMaxLayers = 11;
 
-    private NetworkDrawer drawer;
+    private NetworkDrawer networkDrawer;
 
     private ContextMenu menu;
     private double locX;
@@ -182,9 +183,9 @@ public class ApplicationWindowController implements Initializable {
                 hiliteLayer();
             }
         });
-        drawer = new NetworkDrawer(graphicsContext);
+        networkDrawer = new NetworkDrawer(graphicsContext);
         // Prepare the canvas
-        prepCanvas();
+        networkDrawer.resetArea(canvas.getWidth());
     }
 
     /**
@@ -212,25 +213,9 @@ public class ApplicationWindowController implements Initializable {
         removeLayer.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                // Create the bound
-                double bound = neuralNetwork.numLayers() * 100;
-                // Determine whether the cursor is not on any layer
-                if(locX < bound) {
-                    // Calculate which layer it should be in roughly
-                    double rawLayerNum = (locX / 100);
-                    // Round to get precise layer number
-                    rawLayerNum = Math.ceil(rawLayerNum);
-                    // Remove the selected layer from the network object
-                    neuralNetwork.removeLayer((int)rawLayerNum);
-                    // If that layer was the selected layer
-                    if(selectedLayer == rawLayerNum-1) {
-                        // Reset the selectedLayer
-                        selectedLayer = -1;
-                    }
                     // Call the removeLayer function
                     removeLayer();
                 }
-            }
         });
         // Create addNeuron MenuItem
         MenuItem addNeuron = new MenuItem("Add Neuron");
@@ -238,19 +223,7 @@ public class ApplicationWindowController implements Initializable {
         addNeuron.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                // Find the bound
-                double bound = neuralNetwork.numLayers() * 100;
-                // Check that the cursor is on a layer
-                if(locX < bound) {
-                    // Get the rough layer number
-                    double rawLayerNum = (locX / 100);
-                    // Round for the final layer number
-                    rawLayerNum = Math.ceil(rawLayerNum);
-                    // Call the addNeuron function, passing the layer number (-1 because of indexing)
-                    addNeuron((int)rawLayerNum -1);
-                    // Call the drawAllNeurons function
-                    drawAllNeurons();
-                }
+                addNeuron();
             }
         });
         // Create removeNeuron MenuItem
@@ -410,154 +383,6 @@ public class ApplicationWindowController implements Initializable {
     }
 
     /**
-     * Function prepCanvas()
-     * <p>
-     *     Prepares the canvas with the background color then attempts to draw the layers of the network
-     * </p>
-     */
-    private void prepCanvas() {
-        // Set the fill colour
-        graphicsContext.setFill(Color.LIGHTGRAY);
-        // Fill the canvas with the colour
-        graphicsContext.fillRect(0,0, canvas.getWidth(), canvas.getHeight());
-        // Attempt to draw layers
-        drawLayerBoxes();
-    }
-
-    /**
-     * Function drawLayerBoxes()
-     * <p>
-     *     For all the layers, draws the boxes around them
-     * </p>
-     */
-    private void drawLayerBoxes() {
-        // Set the colour of the lines to be drawn
-        graphicsContext.setStroke(Color.BLACK);
-        // If there is at least one layer
-        if(neuralNetwork.numLayers() > 0) {
-            // Calculate the length of the top and bottom lines to be drawn
-            double length = neuralNetwork.numLayers() * 100;
-            // Set the width of the line
-            graphicsContext.setLineWidth(2.5);
-            // Draw the top line
-            graphicsContext.strokeLine(0, 0, length, 0);
-            // Draw the bottom line
-            graphicsContext.strokeLine(0, canvas.getHeight(), length, canvas.getHeight());
-
-            // Set the current destination width
-            int curr = 100;
-            // Set the previous destination width
-            int prev = 0;
-            // For all layers
-            for(int i = 0; i < neuralNetwork.numLayers(); i++) {
-                // Draw a line for the previous edge
-                graphicsContext.strokeLine(prev, 0, prev, canvas.getHeight());
-                // Draw a line for the next edge
-                graphicsContext.strokeLine(curr, 0, curr, canvas.getHeight());
-                // Update the prev
-                prev = curr;
-                // Update the curr
-                curr += 100;
-            }
-        }
-        // Call the drawAllNeurons function
-        drawAllNeurons();
-    }
-
-    /**
-     * Function drawNeurons()
-     * <p>
-     *     Gets a layer then draws all the neurons within that layer up to 8 neurons, then a counter is drawn on the
-     *     final neuron instead
-     * </p>
-     * @param layerID is the layer to draw the neurons for
-     */
-    private void drawNeurons(int layerID) {
-        // If the network has at least one layer
-        if(neuralNetwork.getLayer(layerID).numNeurons() > 0) {
-            // Get the number of neurons in that layer
-            int numNeurons = neuralNetwork.getLayer(layerID).numNeurons();
-            // Declare the startX
-            double startX;
-            // Declare the startY
-            double startY;
-            // Declare the interval
-            double interval;
-            // If the number of neurons in the layer is less than or equal to 8
-            if (numNeurons <= 8) {
-                // Set the interval
-                interval = canvas.getHeight() / (double) numNeurons + 1;
-                // Set the startX
-                startX = (layerID * 100) + 50;
-                // Set the startY
-                startY = 0 + (0.5 * interval) - 12.5;
-            // Otherwise
-            } else {
-                // Set the interval
-                interval = 60.375;
-                // Set the startX
-                startX = (layerID * 100) + 50;
-                // Set the startY
-                startY = 0 + (0.5 * interval) - 12.5;
-            }
-            // Declare the bonus calculator
-            int bonus = 0;
-            // Declare the counter
-            int ct = 0;
-            // For all neurons in the layer
-            for (Neuron n : neuralNetwork.getLayer(layerID).getNeurons()) {
-                // Get their colour
-                graphicsContext.setFill(Color.color(n.getColour().get(0), n.getColour().get(1), n.getColour().get(2)));
-                // Fill the circle for the neuron
-                graphicsContext.fillArc(startX - 12.5, startY - 12.5, 25, 25, 0, 360, ArcType.ROUND);
-                // Set the stroke colour
-                graphicsContext.setStroke(Color.BLACK);
-                // Draw the outer edge around the neuron
-                graphicsContext.strokeOval(startX-12.5, startY-12.5, 25, 25);
-                // If the number of drawn neurons is less than 8
-                if (ct < 7) {
-                    // Increment the startY
-                    startY += interval;
-                }
-                // If the ct is greater than 7
-                if (ct > 7) {
-                    // Increment the bonus
-                    bonus++;
-                    // Set the fill colour
-                    graphicsContext.setFill(Color.BLACK);
-                    // Draw the text count
-                    graphicsContext.fillText(bonus + "+", startX - 7, startY + 5);
-                    // Return to loop start
-                    continue;
-                }
-                // Increment the counter
-                ct++;
-            }
-        }
-    }
-
-    /**
-     * Function drawAllNeurons()
-     * <p>
-     *     For all layers of the network, reset the layer in the canvas and draw all the neurons
-     * </p>
-     */
-    private void drawAllNeurons() {
-        // If there is at least one layer
-        if(neuralNetwork.numLayers() > 0) {
-            // For all layers in the network
-            for (int i = 0; i < neuralNetwork.numLayers(); i++) {
-                // Set the fill colour
-                graphicsContext.setFill(Color.LIGHTGRAY);
-                // Reset the layer
-                graphicsContext.fillRect((i * 100) + 1.125, 1.125, 100 - 2.5, canvas.getHeight() - 2.5);
-                // Call the drawNeurons functions
-                drawNeurons(i);
-            }
-        }
-    }
-
-    /**
      * Function hiliteLayer()
      * <p>
      *     Finds which layer has been clicked and then highlights it with a blue border.
@@ -569,37 +394,12 @@ public class ApplicationWindowController implements Initializable {
         double rawLayerNum = (locX / 100);
         // Round to actual layer number
         rawLayerNum = Math.ceil(rawLayerNum);
+        updateNetworkCanvas();
         // If the layer number is within the bounds
         if(rawLayerNum <= neuralNetwork.numLayers()) {
-            // If there is a previously selected layer
-            if(selectedLayer != -1) {
-                // Set the stroke color
-                graphicsContext.setStroke(Color.BLACK);
-                // Set the width of the line
-                graphicsContext.setLineWidth(2.5);
-                // Draw a line
-                graphicsContext.strokeLine(selectedLayer * 100, 0, selectedLayer * 100, canvas.getHeight());
-                // Draw a line
-                graphicsContext.strokeLine((selectedLayer * 100) + 100, 0, (selectedLayer * 100) + 100, canvas.getHeight());
-                // Draw a line
-                graphicsContext.strokeLine(selectedLayer * 100, 0, (selectedLayer * 100) + 100, 0);
-                // Draw a line
-                graphicsContext.strokeLine(selectedLayer * 100, canvas.getHeight(), (selectedLayer * 100) + 100, canvas.getHeight());
-            }
             // Update the selected layer
             selectedLayer = (int) rawLayerNum - 1;
-            // Set the stroke colour
-            graphicsContext.setStroke(Color.BLUE);
-            // Set the line width
-            graphicsContext.setLineWidth(2.5);
-            // Draw a line
-            graphicsContext.strokeLine(selectedLayer * 100, 0, selectedLayer * 100, canvas.getHeight());
-            // Draw a line
-            graphicsContext.strokeLine((selectedLayer * 100) + 100, 0, (selectedLayer * 100) + 100, canvas.getHeight());
-            // Draw a line
-            graphicsContext.strokeLine(selectedLayer * 100, 0, (selectedLayer * 100) + 100, 0);
-            // Draw a line
-            graphicsContext.strokeLine(selectedLayer * 100, canvas.getHeight(), (selectedLayer * 100) + 100, canvas.getHeight());
+            networkDrawer.highlightLayer(selectedLayer);
         }
     }
 
@@ -619,10 +419,8 @@ public class ApplicationWindowController implements Initializable {
             canvas.setWidth(canvas.getWidth()+100);
             // Update the width of the pane that holds the canvas
             canvasPane.setPrefWidth(canvasPane.getWidth() + 100);
-            // Prepare the canvas
-            prepCanvas();
         }
-        drawLayerBoxes();
+        updateNetworkCanvas();
     }
 
     /**
@@ -630,11 +428,11 @@ public class ApplicationWindowController implements Initializable {
      * <p>
      *     Takes the layer number and adds a neuron to that layer
      * </p>
-     * @param layerID
      */
-    private void addNeuron(int layerID) {
+    private void addNeuron() {
         // Add the neuron to the given layer
-        neuralNetwork.addNeuron(new Neuron(new Sigmoid()), layerID);
+        neuralNetwork.addNeuron(new Neuron(new Sigmoid()), selectedLayer);
+        updateNetworkCanvas();
         // Update the status box
         updateStatusBox();
     }
@@ -646,6 +444,23 @@ public class ApplicationWindowController implements Initializable {
      * </p>
      */
     private void removeLayer() {
+        // Create the bound
+        double bound = neuralNetwork.numLayers() * 100;
+        double rawLayerNum = 0.0;
+        // Determine whether the cursor is not on any layer
+        if(locX < bound) {
+            // Calculate which layer it should be in roughly
+            rawLayerNum = (locX / 100);
+            // Round to get precise layer number
+            rawLayerNum = Math.ceil(rawLayerNum);
+        }
+        // Remove the selected layer from the network object
+        neuralNetwork.removeLayer((int)rawLayerNum);
+        // If that layer was the selected layer
+        if(selectedLayer == rawLayerNum-1) {
+            // Reset the selectedLayer
+            selectedLayer = -1;
+        }
         // If the number of layers exceeds the base size of the canvas
         if(neuralNetwork.numLayers() > baseMaxLayers) {
             // Update the width of the canvas
@@ -653,8 +468,7 @@ public class ApplicationWindowController implements Initializable {
             // Update the width of the pane holding the canvas
             canvasPane.setPrefWidth(canvasPane.getWidth() - 100);
         }
-        // Prep the canvas
-        prepCanvas();
+        updateNetworkCanvas();
     }
 
     /**
@@ -697,6 +511,22 @@ public class ApplicationWindowController implements Initializable {
         information += "Min Error to Achieve: " + minError + "\n";
         // Output the information to the statusBox
         statusBox.setText(information);
+    }
+
+    private void updateNetworkCanvas() {
+        networkDrawer.resetArea(canvas.getWidth());
+        networkDrawer.drawAllLayers(neuralNetwork.numLayers());
+        ArrayList<ArrayList<Double>> colours = new ArrayList();
+        for(int i = 0; i < neuralNetwork.numLayers(); i++) {
+            for(Neuron neuron : neuralNetwork.getLayer(i).getNeurons()) {
+                colours.add(neuron.getColour());
+            }
+            networkDrawer.drawAllNeurons(i, neuralNetwork.getLayer(i).numNeurons(), colours);
+            colours = new ArrayList<>();
+        }
+        if(selectedLayer != -1) {
+            networkDrawer.highlightLayer(selectedLayer);
+        }
     }
 
     /**
