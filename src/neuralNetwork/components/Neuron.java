@@ -184,6 +184,13 @@ public class Neuron {
         return this.output;
     }
 
+    /**
+     * Function getColour()
+     * <p>
+     *     Returns the colour of the neuron
+     * </p>
+     * @return the ArrayList of colour values
+     */
     public ArrayList<Double> getColour() {
         return activationFunction.getColour();
     }

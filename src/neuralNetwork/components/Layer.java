@@ -158,6 +158,13 @@ public class Layer {
         return neurons.size();
     }
 
+    /**
+     * Function getNeurons()
+     * <p>
+     *     Return the list of neurons
+     * </p>
+     * @return the list of neurons
+     */
     public ArrayList<Neuron> getNeurons() {
         return neurons;
     }
