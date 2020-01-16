@@ -14,12 +14,10 @@ import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
-import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.ArcType;
-import javafx.scene.text.Text;
 import neuralNetwork.Network;
 import neuralNetwork.activationFunctions.Sigmoid;
 import neuralNetwork.components.Neuron;
@@ -145,87 +143,145 @@ public class ApplicationWindowController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         // Make the console un-editable
         console.setEditable(false);
+        // Make the status box un-editable
         statusBox.setEditable(false);
         // Create a new MessageBus object using this instantiation
         messageBus = new MessageBus(this);
+        // Set the learning rate to a default value
         learningRate = 1.0;
+        // Set the momentum to a default value
         momentum = 0.0;
+        // Set the minError to a min value
         minError = 0.0;
+        // Set the maxEpochs to a min value
         maxEpochs = 0;
+        // Set the numLayers to a min value
         numLayers = 0;
+        // Set the currStatus to status 0
         currStatus = 0;
+        // Set the paramsFlag
         paramsFlag = false;
+        // Set the deepFlag
         deepFlag = false;
+        // Set the trainedFlag
         trainedFlag = false;
+        // Create an empty neural network object
         neuralNetwork = new Network();
+        // Update the statusBox
         updateStatusBox();
+        // Create the Spinner ValueFactory for learningRate
         learningRateSpinner.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0.0, Double.MAX_VALUE, 1.0, 0.1));
+        // Add the listener
         learningRateSpinner.valueProperty().addListener(((observableValue, o, t1) -> {learningRate = (double)learningRateSpinner.getValue();}));
+        // Create the Spinner ValueFactory for momentum
         momentumSpinner.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0.0, Double.MAX_VALUE, 0.0, 0.1));
+        // Add the listener
         momentumSpinner.valueProperty().addListener(((observableValue, o, t1) -> { momentum = (double)momentumSpinner.getValue(); }));
-
+        // Create the graphicsContext
         graphicsContext = canvas.getGraphicsContext2D();
+        // Create the menu for the canvas
         createCanvasMenu();
+        // Set the menu in the canvas
         canvas.setOnContextMenuRequested(e -> {menu.show(canvas, e.getScreenX(), e.getScreenY()); locX = e.getX();});
+        // Add a listener for a mouse click to the canvas
         canvas.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
+                // Set the x position on the canvas of the click
                 locX = mouseEvent.getX();
+                // Call the hiliteLayer function
                 hiliteLayer();
             }
         });
-
+        // Prepare the canvas
         prepCanvas();
     }
 
+    /**
+     * Function createCanvasMenu()
+     * <p>
+     *     Creates the context menu for the canvas, including all the menu items that are needed for the menu
+     * </p>
+     */
     private void createCanvasMenu() {
+        // Create the ContextMenu object
         ContextMenu menu = new ContextMenu();
+        // Create the addLayer MenuItem
         MenuItem addLayer = new MenuItem("Add Layer");
+        // Set the action
         addLayer.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                // Call the addLayer function
                 addLayer();
             }
         });
+        // Create the removeLayer MenuItem
         MenuItem removeLayer = new MenuItem("Remove Layer");
+        // Set the action
         removeLayer.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                // Create the bound
                 double bound = numLayers * 100;
+                // Determine whether the cursor is not on any layer
                 if(locX < bound) {
+                    // Calculate which layer it should be in roughly
                     double rawLayerNum = (locX / 100);
+                    // Round to get precise layer number
                     rawLayerNum = Math.ceil(rawLayerNum);
+                    // Remove the selected layer from the network object
                     neuralNetwork.removeLayer((int)rawLayerNum);
+                    // If that layer was the selected layer
                     if(selectedLayer == rawLayerNum-1) {
+                        // Reset the selectedLayer
                         selectedLayer = -1;
                     }
+                    // Call the removeLayer function
                     removeLayer();
                 }
             }
         });
+        // Create addNeuron MenuItem
         MenuItem addNeuron = new MenuItem("Add Neuron");
+        // Set the action
         addNeuron.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                // Find the bound
                 double bound = numLayers * 100;
+                // Check that the cursor is on a layer
                 if(locX < bound) {
+                    // Get the rough layer number
                     double rawLayerNum = (locX / 100);
+                    // Round for the final layer number
                     rawLayerNum = Math.ceil(rawLayerNum);
+                    // Call the addNeuron function, passing the layer number (-1 because of indexing)
                     addNeuron((int)rawLayerNum -1);
+                    // Call the drawAllNeurons function
                     drawAllNeurons();
                 }
             }
         });
+        // Create removeNeuron MenuItem
         MenuItem removeNeuron = new MenuItem("Remove Neuron");
+        // Create a separator MenuItem
         SeparatorMenuItem separator = new SeparatorMenuItem();
+        // Create a separator MenuItem
+        SeparatorMenuItem separator2 = new SeparatorMenuItem();
+        // Create the cancel MenuItem
         MenuItem cancel = new MenuItem("Cancel");
+        // Set the action
         cancel.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                // Do nothing but close the menu
                 return;
             }
         });
-        menu.getItems().addAll(addLayer, removeLayer, addNeuron, removeNeuron, separator, cancel);
+        // Gather the items and add them to the menu
+        menu.getItems().addAll(addLayer, removeLayer,separator, addNeuron, removeNeuron, separator2, cancel);
+        // Set the menu
         this.menu = menu;
     }
 
@@ -363,141 +419,255 @@ public class ApplicationWindowController implements Initializable {
         window.showAndWait();
     }
 
+    /**
+     * Function prepCanvas()
+     * <p>
+     *     Prepares the canvas with the background color then attempts to draw the layers of the network
+     * </p>
+     */
     private void prepCanvas() {
+        // Set the fill colour
         graphicsContext.setFill(Color.LIGHTGRAY);
+        // Fill the canvas with the colour
         graphicsContext.fillRect(0,0, canvas.getWidth(), canvas.getHeight());
-        drawLayerBox();
+        // Attempt to draw layers
+        drawLayerBoxes();
     }
 
-    private void drawLayerBox() {
+    /**
+     * Function drawLayerBoxes()
+     * <p>
+     *     For all the layers, draws the boxes around them
+     * </p>
+     */
+    private void drawLayerBoxes() {
+        // Set the colour of the lines to be drawn
         graphicsContext.setStroke(Color.BLACK);
-
+        // If there is at least one layer
         if(numLayers > 0) {
+            // Calculate the length of the top and bottom lines to be drawn
             double length = numLayers * 100;
+            // Set the width of the line
             graphicsContext.setLineWidth(2.5);
+            // Draw the top line
             graphicsContext.strokeLine(0, 0, length, 0);
+            // Draw the bottom line
             graphicsContext.strokeLine(0, canvas.getHeight(), length, canvas.getHeight());
 
-            graphicsContext.setLineWidth(2.5);
+            // Set the current destination width
             int curr = 100;
+            // Set the previous destination width
             int prev = 0;
+            // For all layers
             for(int i = 0; i < numLayers; i++) {
+                // Draw a line for the previous edge
                 graphicsContext.strokeLine(prev, 0, prev, canvas.getHeight());
+                // Draw a line for the next edge
                 graphicsContext.strokeLine(curr, 0, curr, canvas.getHeight());
+                // Update the prev
                 prev = curr;
+                // Update the curr
                 curr += 100;
             }
         }
-
+        // Call the drawAllNeurons function
         drawAllNeurons();
     }
 
+    /**
+     * Function drawNeurons()
+     * <p>
+     *     Gets a layer then draws all the neurons within that layer up to 8 neurons, then a counter is drawn on the
+     *     final neuron instead
+     * </p>
+     * @param layerID is the layer to draw the neurons for
+     */
     private void drawNeurons(int layerID) {
+        // If the network has at least one layer
         if(neuralNetwork.getLayer(layerID).numNeurons() > 0) {
+            // Get the number of neurons in that layer
             int numNeurons = neuralNetwork.getLayer(layerID).numNeurons();
+            // Declare the startX
             double startX;
+            // Declare the startY
             double startY;
+            // Declare the interval
             double interval;
+            // If the number of neurons in the layer is less than or equal to 8
             if (numNeurons <= 8) {
+                // Set the interval
                 interval = canvas.getHeight() / (double) numNeurons + 1;
+                // Set the startX
                 startX = (layerID * 100) + 50;
+                // Set the startY
                 startY = 0 + (0.5 * interval) - 12.5;
+            // Otherwise
             } else {
+                // Set the interval
                 interval = 60.375;
+                // Set the startX
                 startX = (layerID * 100) + 50;
+                // Set the startY
                 startY = 0 + (0.5 * interval) - 12.5;
             }
+            // Declare the bonus calculator
             int bonus = 0;
+            // Declare the counter
             int ct = 0;
+            // For all neurons in the layer
             for (Neuron n : neuralNetwork.getLayer(layerID).getNeurons()) {
+                // Get their colour
                 graphicsContext.setFill(Color.color(n.getColour().get(0), n.getColour().get(1), n.getColour().get(2)));
-
-
+                // Fill the circle for the neuron
                 graphicsContext.fillArc(startX - 12.5, startY - 12.5, 25, 25, 0, 360, ArcType.ROUND);
+                // Set the stroke colour
                 graphicsContext.setStroke(Color.BLACK);
+                // Draw the outer edge around the neuron
                 graphicsContext.strokeOval(startX-12.5, startY-12.5, 25, 25);
+                // If the number of drawn neurons is less than 8
                 if (ct < 7) {
+                    // Increment the startY
                     startY += interval;
                 }
-
-
+                // If the ct is greater than 7
                 if (ct > 7) {
+                    // Increment the bonus
                     bonus++;
-                    write("here");
+                    // Set the fill colour
                     graphicsContext.setFill(Color.BLACK);
+                    // Draw the text count
                     graphicsContext.fillText(bonus + "+", startX - 7, startY + 5);
+                    // Return to loop start
                     continue;
                 }
+                // Increment the counter
                 ct++;
             }
         }
     }
 
-    public void drawAllNeurons() {
+    /**
+     * Function drawAllNeurons()
+     * <p>
+     *     For all layers of the network, reset the layer in the canvas and draw all the neurons
+     * </p>
+     */
+    private void drawAllNeurons() {
+        // If there is at least one layer
         if(neuralNetwork.numLayers() > 0) {
+            // For all layers in the network
             for (int i = 0; i < numLayers; i++) {
+                // Set the fill colour
                 graphicsContext.setFill(Color.LIGHTGRAY);
+                // Reset the layer
                 graphicsContext.fillRect((i * 100) + 1.125, 1.125, 100 - 2.5, canvas.getHeight() - 2.5);
+                // Call the drawNeurons functions
                 drawNeurons(i);
             }
         }
     }
 
+    /**
+     * Function hiliteLayer()
+     * <p>
+     *     Finds which layer has been clicked and then highlights it with a blue border.
+     *     Also handles the redrawing of black borders should the layer be deselected
+     * </p>
+     */
     private void hiliteLayer() {
+        // Get the rough layer number
         double rawLayerNum = (locX / 100);
+        // Round to actual layer number
         rawLayerNum = Math.ceil(rawLayerNum);
+        // If the layer number is within the bounds
         if(rawLayerNum <= numLayers) {
+            // If there is a previously selected layer
             if(selectedLayer != -1) {
+                // Set the stroke color
                 graphicsContext.setStroke(Color.BLACK);
+                // Set the width of the line
                 graphicsContext.setLineWidth(2.5);
-
+                // Draw a line
                 graphicsContext.strokeLine(selectedLayer * 100, 0, selectedLayer * 100, canvas.getHeight());
+                // Draw a line
                 graphicsContext.strokeLine((selectedLayer * 100) + 100, 0, (selectedLayer * 100) + 100, canvas.getHeight());
+                // Draw a line
                 graphicsContext.strokeLine(selectedLayer * 100, 0, (selectedLayer * 100) + 100, 0);
+                // Draw a line
                 graphicsContext.strokeLine(selectedLayer * 100, canvas.getHeight(), (selectedLayer * 100) + 100, canvas.getHeight());
             }
-
+            // Update the selected layer
             selectedLayer = (int) rawLayerNum - 1;
-
+            // Set the stroke colour
             graphicsContext.setStroke(Color.BLUE);
+            // Set the line width
             graphicsContext.setLineWidth(2.5);
-
-
+            // Draw a line
             graphicsContext.strokeLine(selectedLayer * 100, 0, selectedLayer * 100, canvas.getHeight());
+            // Draw a line
             graphicsContext.strokeLine((selectedLayer * 100) + 100, 0, (selectedLayer * 100) + 100, canvas.getHeight());
+            // Draw a line
             graphicsContext.strokeLine(selectedLayer * 100, 0, (selectedLayer * 100) + 100, 0);
+            // Draw a line
             graphicsContext.strokeLine(selectedLayer * 100, canvas.getHeight(), (selectedLayer * 100) + 100, canvas.getHeight());
         }
     }
 
+    /**
+     * Function addLayer()
+     * <p>
+     *     Handles the adding of a layer
+     * </p>
+     */
     @FXML
     private void addLayer() {
+        // Increment the number of layers
         numLayers++;
+        // Add a layer to the network
         neuralNetwork.addLayer();
+        // If the number of layers now exceeds tha max that can be displayed at the start
         if(numLayers > baseMaxLayers) {
+            // Update the width of the canvas
             canvas.setWidth(canvas.getWidth()+100);
+            // Update the width of the pane that holds the canvas
             canvasPane.setPrefWidth(canvasPane.getWidth() + 100);
+            // Prepare the canvas
             prepCanvas();
         }
-        drawLayerBox();
-
-        updateStatusBox();
     }
 
+    /**
+     * Function addNeuron()
+     * <p>
+     *     Takes the layer number and adds a neuron to that layer
+     * </p>
+     * @param layerID
+     */
     private void addNeuron(int layerID) {
+        // Add the neuron to the given layer
         neuralNetwork.addNeuron(new Neuron(new Sigmoid()), layerID);
+        // Update the status box
         updateStatusBox();
     }
 
+    /**
+     * Function removeLayer()
+     * <p>
+     *     Removes a layer from the network and updates the canvas
+     * </p>
+     */
     private void removeLayer() {
+        // Reduce the numLayers
         numLayers--;
+        // If the number of layers exceeds the base size of the canvas
         if(numLayers > baseMaxLayers) {
+            // Update the width of the canvas
             canvas.setWidth(canvas.getWidth()-100);
+            // Update the width of the pane holding the canvas
             canvasPane.setPrefWidth(canvasPane.getWidth() - 100);
         }
+        // Prep the canvas
         prepCanvas();
-        drawLayerBox();
-        updateStatusBox();
     }
 
     /**
