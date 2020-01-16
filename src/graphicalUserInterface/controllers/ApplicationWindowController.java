@@ -6,8 +6,10 @@
  */
 package graphicalUserInterface.controllers;
 
+import application.integrator.Integrator;
 import graphicalUserInterface.MessageBus;
 import graphicalUserInterface.drawers.NetworkDrawer;
+import graphicalUserInterface.drawers.ToolboxDrawer;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -17,13 +19,12 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.ArcType;
 import neuralNetwork.Network;
 import neuralNetwork.activationFunctions.Linear;
 import neuralNetwork.activationFunctions.Sigmoid;
 import neuralNetwork.components.Neuron;
 
+import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Random;
@@ -52,7 +53,10 @@ public class ApplicationWindowController implements Initializable {
      * canvas holds the canvas object for the neural network viewer
      */
     @FXML
-    private Canvas canvas;
+    private Canvas networkCanvas;
+
+    @FXML
+    private Canvas toolboxCanvas;
 
     @FXML
     private AnchorPane canvasPane;
@@ -68,7 +72,9 @@ public class ApplicationWindowController implements Initializable {
     /**
      * graphicsContext holds the graphics context of the application
      */
-    private GraphicsContext graphicsContext;
+    private GraphicsContext networkContext;
+
+    private GraphicsContext toolboxContext;
 
     /**
      * baseMaxLayers holds the max number of layers that can be displayed before the canvas must be resized
@@ -76,10 +82,12 @@ public class ApplicationWindowController implements Initializable {
     private int baseMaxLayers = 11;
 
     private NetworkDrawer networkDrawer;
+    private ToolboxDrawer toolboxDrawer;
 
     private ContextMenu menu;
     private double locX;
     private int selectedLayer;
+
 
     /**
      * learningRateSpinner holds the spinner for learning rate
@@ -178,13 +186,14 @@ public class ApplicationWindowController implements Initializable {
         // Add the listener
         momentumSpinner.valueProperty().addListener(((observableValue, o, t1) -> { momentum = (double)momentumSpinner.getValue(); }));
         // Create the graphicsContext
-        graphicsContext = canvas.getGraphicsContext2D();
+        networkContext = networkCanvas.getGraphicsContext2D();
+        toolboxContext = toolboxCanvas.getGraphicsContext2D();
         // Create the menu for the canvas
         createCanvasMenu();
         // Set the menu in the canvas
-        canvas.setOnContextMenuRequested(e -> {menu.show(canvas, e.getScreenX(), e.getScreenY()); locX = e.getX();});
+        networkCanvas.setOnContextMenuRequested(e -> {menu.show(networkCanvas, e.getScreenX(), e.getScreenY()); locX = e.getX();});
         // Add a listener for a mouse click to the canvas
-        canvas.setOnMouseClicked(new EventHandler<MouseEvent>() {
+        networkCanvas.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 // Set the x position on the canvas of the click
@@ -193,10 +202,13 @@ public class ApplicationWindowController implements Initializable {
                 hiliteLayer();
             }
         });
-        networkDrawer = new NetworkDrawer(graphicsContext);
+        networkDrawer = new NetworkDrawer(networkContext);
+        toolboxDrawer = new ToolboxDrawer(toolboxContext);
         // Prepare the canvas
-        networkDrawer.resetArea(canvas.getWidth());
+        networkDrawer.resetArea(networkCanvas.getWidth());
         selectedLayer = -1;
+
+        initializeToolbox();
     }
 
     /**
@@ -427,7 +439,7 @@ public class ApplicationWindowController implements Initializable {
         // If the number of layers now exceeds tha max that can be displayed at the start
         if(neuralNetwork.numLayers() > baseMaxLayers) {
             // Update the width of the canvas
-            canvas.setWidth(canvas.getWidth()+100);
+            networkCanvas.setWidth(networkCanvas.getWidth()+100);
             // Update the width of the pane that holds the canvas
             canvasPane.setPrefWidth(canvasPane.getWidth() + 100);
         }
@@ -457,7 +469,7 @@ public class ApplicationWindowController implements Initializable {
             /*
             DEBUG
              */
-            
+
             updateNetworkCanvas();
             // Update the status box
             updateStatusBox();
@@ -491,7 +503,7 @@ public class ApplicationWindowController implements Initializable {
         // If the number of layers exceeds the base size of the canvas
         if(neuralNetwork.numLayers() > baseMaxLayers) {
             // Update the width of the canvas
-            canvas.setWidth(canvas.getWidth()-100);
+            networkCanvas.setWidth(networkCanvas.getWidth()-100);
             // Update the width of the pane holding the canvas
             canvasPane.setPrefWidth(canvasPane.getWidth() - 100);
         }
@@ -541,7 +553,7 @@ public class ApplicationWindowController implements Initializable {
     }
 
     private void updateNetworkCanvas() {
-        networkDrawer.resetArea(canvas.getWidth());
+        networkDrawer.resetArea(networkCanvas.getWidth());
         networkDrawer.drawAllLayers(neuralNetwork.numLayers());
         ArrayList<ArrayList<Double>> colours = new ArrayList();
         for(int i = 0; i < neuralNetwork.numLayers(); i++) {
@@ -697,4 +709,14 @@ public class ApplicationWindowController implements Initializable {
             return 0;
         }
     }
+
+    private void initializeToolbox() {
+        try{
+            Integrator.findClasses(new File("../../neuralNetwork/activationFunctions"), "");
+        }
+        catch (Exception e) {
+            write("File not found", "-e");
+        }
+    }
+
 }
