@@ -20,11 +20,13 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.ArcType;
 import neuralNetwork.Network;
+import neuralNetwork.activationFunctions.Linear;
 import neuralNetwork.activationFunctions.Sigmoid;
 import neuralNetwork.components.Neuron;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.ResourceBundle;
 
 public class ApplicationWindowController implements Initializable {
@@ -408,9 +410,6 @@ public class ApplicationWindowController implements Initializable {
         if(rawLayerNum <= neuralNetwork.numLayers()) {
             // Update the selected layer
             selectedLayer = (int) rawLayerNum - 1;
-            if(selectedLayer == currSelected) {
-                selectedLayer = -1;
-            }
             updateNetworkCanvas();
         }
     }
@@ -444,7 +443,21 @@ public class ApplicationWindowController implements Initializable {
     private void addNeuron() {
         if(selectedLayer != -1) {
             // Add the neuron to the given layer
-            neuralNetwork.addNeuron(new Neuron(new Sigmoid()), selectedLayer);
+
+            /*
+            DEBUG
+             */
+            Random rnd = new Random();
+            if(rnd.nextInt(2) == 1) {
+                neuralNetwork.addNeuron(new Neuron(new Linear()), selectedLayer);
+            }
+            else {
+                neuralNetwork.addNeuron(new Neuron(new Sigmoid()), selectedLayer);
+            }
+            /*
+            DEBUG
+             */
+            
             updateNetworkCanvas();
             // Update the status box
             updateStatusBox();
