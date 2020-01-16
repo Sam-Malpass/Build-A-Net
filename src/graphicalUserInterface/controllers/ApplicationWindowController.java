@@ -186,6 +186,7 @@ public class ApplicationWindowController implements Initializable {
         networkDrawer = new NetworkDrawer(graphicsContext);
         // Prepare the canvas
         networkDrawer.resetArea(canvas.getWidth());
+        selectedLayer = -1;
     }
 
     /**
@@ -394,12 +395,11 @@ public class ApplicationWindowController implements Initializable {
         double rawLayerNum = (locX / 100);
         // Round to actual layer number
         rawLayerNum = Math.ceil(rawLayerNum);
-        updateNetworkCanvas();
         // If the layer number is within the bounds
         if(rawLayerNum <= neuralNetwork.numLayers()) {
             // Update the selected layer
             selectedLayer = (int) rawLayerNum - 1;
-            networkDrawer.highlightLayer(selectedLayer);
+            updateNetworkCanvas();
         }
     }
 
