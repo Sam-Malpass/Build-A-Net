@@ -7,6 +7,7 @@
 package graphicalUserInterface.controllers;
 
 import graphicalUserInterface.MessageBus;
+import graphicalUserInterface.drawers.NetworkDrawer;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -62,6 +63,8 @@ public class ApplicationWindowController implements Initializable {
      * baseMaxLayers holds the max number of layers that can be displayed before the canvas must be resized
      */
     private int baseMaxLayers = 11;
+
+    private NetworkDrawer drawer;
 
     private ContextMenu menu;
     private double locX;
@@ -179,6 +182,7 @@ public class ApplicationWindowController implements Initializable {
                 hiliteLayer();
             }
         });
+        drawer = new NetworkDrawer(graphicsContext);
         // Prepare the canvas
         prepCanvas();
     }
@@ -618,6 +622,7 @@ public class ApplicationWindowController implements Initializable {
             // Prepare the canvas
             prepCanvas();
         }
+        drawLayerBoxes();
     }
 
     /**
