@@ -25,18 +25,20 @@ public class ToolboxDrawer {
     private void resetArea(double height) {
         context.setFill(Color.LIGHTGRAY);
         context.fillRect(0,0, 475, height);
+        baseYName = 50;
+        baseYNeuron = 12.5;
     }
 
     private void drawNeuron(double ypos, ArrayList<Double> colours) {
         context.setFill(Color.color(colours.get(0), colours.get(1), colours.get(2)));
-        context.fillArc(12.5, ypos, 75, 75, 0, 360, ArcType.ROUND);
+        context.fillArc(12.5, baseYNeuron, 75, 75, 0, 360, ArcType.ROUND);
         context.setStroke(Color.BLACK);
-        context.strokeOval(12.5, ypos, 75,75);
+        context.strokeOval(12.5, baseYNeuron, 75,75);
     }
 
     private void drawName(double ypos, String neuronName) {
         context.setFill(Color.BLACK);
-        context.fillText(neuronName + " Neuron", 125, ypos, 2000);
+        context.fillText(neuronName + " Neuron", 100, baseYName, 2000);
     }
 
     private void drawDebugLines() {
@@ -44,6 +46,23 @@ public class ToolboxDrawer {
         for(int i = 0; i <= 400; i+=100) {
             context.strokeLine(0, i, 475, i);
         }
+    }
+
+    public void highlightBox(int box) {
+        // Set the stroke colour
+        context.setStroke(Color.BLUE);
+        // Set the line width
+        context.setLineWidth(2.5);
+        // Draw a line
+        context.strokeLine( 0, box * 100, 475, box * 100);
+        // Draw a line
+        context.strokeLine( 0, (box * 100) + 100, 475,(box * 100) + 100);
+        // Draw a line
+        context.strokeLine(0, box * 100, 0, (box * 100) + 100);
+        // Draw a line
+        context.strokeLine(475, (box * 100), 475, (box * 100) + 100);
+        // Reset the width
+        context.setLineWidth(1);
     }
 
 
