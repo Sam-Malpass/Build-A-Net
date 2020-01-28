@@ -6,6 +6,7 @@
  */
 package graphicalUserInterface.drawers;
 
+import application.Main;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.ArcType;
@@ -124,7 +125,12 @@ public class NetworkDrawer {
                 // Increment the bonus
                 bonus++;
                 // Set the fill colour
-                context.setFill(Color.BLACK);
+                if(!context.getFill().equals(Color.color(0.0,0.0,0.0))) {
+                    context.setFill(Color.BLACK);
+                }
+                else {
+                    context.setFill(Color.WHITE);
+                }
                 // Draw the text count
                 context.fillText(bonus + "+", xpos - 7, ypos + 5);
             }

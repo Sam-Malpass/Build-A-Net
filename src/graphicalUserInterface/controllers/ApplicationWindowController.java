@@ -85,6 +85,13 @@ public class ApplicationWindowController implements Initializable {
     private NetworkDrawer networkDrawer;
     private ToolboxDrawer toolboxDrawer;
 
+    // Declare the list of colour values
+    ArrayList<ArrayList<Double>> colourVals = new ArrayList<>();
+    // Declare the list of neuron names
+    ArrayList<String> neuronNames = new ArrayList<>();
+
+    ArrayList<ActivationFunction> neuronTypes = new ArrayList<>();
+
     private ContextMenu menu;
     private double locXNetwork;
     private double locYToolbox;
@@ -191,6 +198,9 @@ public class ApplicationWindowController implements Initializable {
         // Create the graphicsContext
         networkContext = networkCanvas.getGraphicsContext2D();
         toolboxContext = toolboxCanvas.getGraphicsContext2D();
+        networkDrawer = new NetworkDrawer(networkContext);
+        toolboxDrawer = new ToolboxDrawer(toolboxContext);
+        initializeToolbox();
         // Create the menu for the canvas
         createCanvasMenu();
         // Set the menu in the canvas
@@ -205,13 +215,11 @@ public class ApplicationWindowController implements Initializable {
                 hiliteLayer();
             }
         });
-        networkDrawer = new NetworkDrawer(networkContext);
-        toolboxDrawer = new ToolboxDrawer(toolboxContext);
         // Prepare the canvas
         networkDrawer.resetArea(networkCanvas.getWidth());
         selectedLayer = -1;
 
-        initializeToolbox();
+
     }
 
     /**
@@ -244,14 +252,18 @@ public class ApplicationWindowController implements Initializable {
                 }
         });
         // Create addNeuron MenuItem
-        MenuItem addNeuron = new MenuItem("Add Neuron");
-        // Set the action
-        addNeuron.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                addNeuron();
-            }
-        });
+        Menu addNeuronMenu = new Menu("Add Neuron");
+        for(String name : neuronNames) {
+            MenuItem addNeuron = new MenuItem(name);
+            // Set the action
+            addNeuron.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent actionEvent) {
+                    addNeuron(neuronTypes.get(neuronNames.indexOf(name)));
+                }
+            });
+            addNeuronMenu.getItems().add(addNeuron);
+        }
         // Create removeNeuron MenuItem
         MenuItem removeNeuron = new MenuItem("Remove Neuron");
         // Create a separator MenuItem
@@ -269,7 +281,7 @@ public class ApplicationWindowController implements Initializable {
             }
         });
         // Gather the items and add them to the menu
-        menu.getItems().addAll(addLayer, removeLayer,separator, addNeuron, removeNeuron, separator2, cancel);
+        menu.getItems().addAll(addLayer, removeLayer,separator, addNeuronMenu, removeNeuron, separator2, cancel);
         // Set the menu
         this.menu = menu;
     }
@@ -737,6 +749,12 @@ public class ApplicationWindowController implements Initializable {
         }
     }
 
+    /**
+     * Function initializeToolbox()
+     * <p>
+     *     Handles the setup of the toolbox canvas in the application
+     * </p>
+     */
     private void initializeToolbox() {
         // Find all the activation functions in the system
         ArrayList<File> functions = Integrator.getInternalClasses("neuralNetwork/activationFunctions");
@@ -754,11 +772,11 @@ public class ApplicationWindowController implements Initializable {
         functions.remove(index);
 
         // Declare the list of colour values
-        ArrayList<ArrayList<Double>> colourVals = new ArrayList<>();
+        colourVals = new ArrayList<>();
         // Declare the list of neuron names
-        ArrayList<String> neuronNames = new ArrayList<>();
+        neuronNames = new ArrayList<>();
 
-        ArrayList<ActivationFunction> neuronTypes = new ArrayList<>();
+        neuronTypes = new ArrayList<>();
 
         // For all the activation functions
         for(File f : functions) {
