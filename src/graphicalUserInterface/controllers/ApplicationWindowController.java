@@ -487,35 +487,6 @@ public class ApplicationWindowController implements Initializable {
         updateNetworkCanvas();
     }
 
-
-    /**
-     * Function addNeuron()
-     * <p>
-     *     Takes the layer number and adds a neuron to that layer
-     * </p>
-     */
-    /*
-    private void addNeuron() {
-        if(selectedLayer != -1) {
-            // Add the neuron to the given layer
-
-
-            Random rnd = new Random();
-            if(rnd.nextInt(2) == 1) {
-                neuralNetwork.addNeuron(new Neuron(new Linear()), selectedLayer);
-            }
-            else {
-                neuralNetwork.addNeuron(new Neuron(new Sigmoid()), selectedLayer);
-            }
-
-
-            updateNetworkCanvas();
-            // Update the status box
-            updateStatusBox();
-        }
-    }
-    */
-
     /**
      * Function addNeuron()
      * <p>
@@ -540,28 +511,52 @@ public class ApplicationWindowController implements Initializable {
         }
     }
 
+    /**
+     * Function removeNeuron()
+     * <p>
+     *     Removes a neuron from the currently selected layer. Prompts the user to select which neuron should be removed
+     *     then handles the removal process.
+     * </p>
+     */
     private void removeNeuron() {
+        // Check that there is a selected layer
         if(selectedLayer != -1) {
+            // Check that there is at least one neuron in that layer
             if(neuralNetwork.getLayer(selectedLayer).numNeurons() > 0) {
+                // Try
                 try {
+                    // Create an FXMLLoader
                     FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../fxml/NeuronSelectWindow.fxml"));
+                    // Get the scene side
                     Parent root = fxmlLoader.load();
+                    // Get the controller side
                     NeuronSelectWindowController controller = fxmlLoader.getController();
+                    // Pass the list of neurons in the layer to the controller
                     controller.setNeurons(neuralNetwork.getLayer(selectedLayer).getNeurons());
                     // Set the scene to the loaded FXML
                     Scene scene = new Scene(root, 250, 400);
+                    // Create a stage (a window)
                     Stage stage = new Stage();
+                    // Set the scene of the stage
                     stage.setScene(scene);
+                    // Set the window's title
                     stage.setTitle("Select...");
+                    // Make it un-resizable
                     stage.setResizable(false);
+                    // Show the window and wait for a response
                     stage.showAndWait();
+                    // Get the selected index
                     int index = controller.getIndex();
+                    // If index is not default
                     if(index != -1) {
+                        // Remove neuron from selected layer at selected index
                         neuralNetwork.removeNeuron(selectedLayer, index);
-
+                        // Redraw the canvas
                         updateNetworkCanvas();
+                        // Update the status box
                         updateStatusBox();
                     }
+                // Catch exception
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
