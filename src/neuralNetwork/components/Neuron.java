@@ -194,4 +194,8 @@ public class Neuron {
     public ArrayList<Double> getColour() {
         return activationFunction.getColour();
     }
+
+    public String getNeuronType() {
+        return activationFunction.getClass().getName();
+    }
 }

@@ -13,12 +13,16 @@ import graphicalUserInterface.drawers.ToolboxDrawer;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 import neuralNetwork.Network;
 import neuralNetwork.activationFunctions.ActivationFunction;
 import neuralNetwork.activationFunctions.Linear;
@@ -26,6 +30,7 @@ import neuralNetwork.activationFunctions.Sigmoid;
 import neuralNetwork.components.Neuron;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Random;
@@ -185,6 +190,7 @@ public class ApplicationWindowController implements Initializable {
         paramsFlag = false;
         // Set the deepFlag
         deepFlag = false;
+        selectedLayer = -1;
         // Update the statusBox
         updateStatusBox();
         // Create the Spinner ValueFactory for learningRate
@@ -217,7 +223,7 @@ public class ApplicationWindowController implements Initializable {
         });
         // Prepare the canvas
         networkDrawer.resetArea(networkCanvas.getWidth());
-        selectedLayer = -1;
+
 
 
     }
@@ -253,6 +259,7 @@ public class ApplicationWindowController implements Initializable {
         });
         // Create addNeuron MenuItem
         Menu addNeuronMenu = new Menu("Add Neuron");
+        int ct = 0;
         for(String name : neuronNames) {
             MenuItem addNeuron = new MenuItem(name);
             // Set the action
@@ -263,9 +270,28 @@ public class ApplicationWindowController implements Initializable {
                 }
             });
             addNeuronMenu.getItems().add(addNeuron);
+            ct++;
+            if(ct >= 4) {
+                SeparatorMenuItem s = new SeparatorMenuItem();
+                MenuItem other = new MenuItem("Other...");
+                other.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent actionEvent) {
+                        // INSERT NEURON SELECT WIZARD HERE
+                    }
+                });
+                addNeuronMenu.getItems().addAll(s, other);
+                break;
+            }
         }
         // Create removeNeuron MenuItem
-        MenuItem removeNeuron = new MenuItem("Remove Neuron");
+        MenuItem removeNeuron = new MenuItem("Remove Neuron...");
+        removeNeuron.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                removeNeuron();
+            }
+        });
         // Create a separator MenuItem
         SeparatorMenuItem separator = new SeparatorMenuItem();
         // Create a separator MenuItem
@@ -461,19 +487,19 @@ public class ApplicationWindowController implements Initializable {
         updateNetworkCanvas();
     }
 
+
     /**
      * Function addNeuron()
      * <p>
      *     Takes the layer number and adds a neuron to that layer
      * </p>
      */
+    /*
     private void addNeuron() {
         if(selectedLayer != -1) {
             // Add the neuron to the given layer
 
-            /*
-            DEBUG
-             */
+
             Random rnd = new Random();
             if(rnd.nextInt(2) == 1) {
                 neuralNetwork.addNeuron(new Neuron(new Linear()), selectedLayer);
@@ -481,15 +507,14 @@ public class ApplicationWindowController implements Initializable {
             else {
                 neuralNetwork.addNeuron(new Neuron(new Sigmoid()), selectedLayer);
             }
-            /*
-            DEBUG
-             */
+
 
             updateNetworkCanvas();
             // Update the status box
             updateStatusBox();
         }
     }
+    */
 
     /**
      * Function addNeuron()
@@ -512,6 +537,35 @@ public class ApplicationWindowController implements Initializable {
             updateNetworkCanvas();
             // Update the status box
             updateStatusBox();
+        }
+    }
+
+    private void removeNeuron() {
+        if(selectedLayer != -1) {
+            if(neuralNetwork.getLayer(selectedLayer).numNeurons() > 0) {
+                try {
+                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../fxml/NeuronSelectWindow.fxml"));
+                    Parent root = fxmlLoader.load();
+                    NeuronSelectWindowController controller = fxmlLoader.getController();
+                    controller.setNeurons(neuralNetwork.getLayer(selectedLayer).getNeurons());
+                    // Set the scene to the loaded FXML
+                    Scene scene = new Scene(root, 250, 400);
+                    Stage stage = new Stage();
+                    stage.setScene(scene);
+                    stage.setTitle("Select...");
+                    stage.setResizable(false);
+                    stage.showAndWait();
+                    int index = controller.getIndex();
+                    if(index != -1) {
+                        neuralNetwork.removeNeuron(selectedLayer, index);
+
+                        updateNetworkCanvas();
+                        updateStatusBox();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
