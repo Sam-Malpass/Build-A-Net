@@ -15,6 +15,9 @@ import java.util.ArrayList;
 
 public class Network implements Serializable {
 
+    /**
+     * serialversionUID holds the ID for the serialization
+     */
     private static final long serialversionUID = 1L;
 
     /**
@@ -42,8 +45,14 @@ public class Network implements Serializable {
      */
     private boolean connected = false;
 
+    /**
+     * modified holds a flag to say whether the network has been changed
+     */
     private boolean modified = false;
 
+    /**
+     * saved holds a flag to say whether the network has been saved
+     */
     private boolean saved = false;
 
 
@@ -124,6 +133,7 @@ public class Network implements Serializable {
         connected = false;
         // Reset trained flag;
         trained = false;
+        // Update modified flag
         modified = true;
     }
 
@@ -142,6 +152,7 @@ public class Network implements Serializable {
         connected = false;
         // Update the trained flag
         trained = false;
+        // Update modified flag
         modified = true;
     }
 
@@ -160,6 +171,7 @@ public class Network implements Serializable {
         connected = false;
         // Update trained flag
         trained = false;
+        // Update modified flag
         modified = true;
     }
 
@@ -177,6 +189,7 @@ public class Network implements Serializable {
         connected = false;
         // Update the trained flag
         trained = false;
+        // Update modified flag
         modified = true;
     }
 
@@ -215,6 +228,7 @@ public class Network implements Serializable {
             Main.passMessage("Connection weights generated successfully");
             // Update the connected flag
             connected = true;
+            // Update modified flag
             modified = true;
         }
     }
@@ -235,6 +249,7 @@ public class Network implements Serializable {
             // Run the algorithm
             learningAlgorithm.runAlgorithm();
         }
+        // Update modified flag
         modified = true;
     }
 
@@ -263,6 +278,7 @@ public class Network implements Serializable {
         connected = false;
         // Update the trained flag
         trained = false;
+        // Update modified flag
         modified = true;
     }
 
@@ -276,6 +292,7 @@ public class Network implements Serializable {
     public void setName(String name) {
         // Set the name to the passed string
         networkName = name;
+        // Update modified flag
         modified = true;
     }
 
@@ -369,19 +386,51 @@ public class Network implements Serializable {
         return networkLayers.size();
     }
 
+    /**
+     * Function getSavedFlag()
+     * <p>
+     *     Returns the saved flag
+     * </p>
+     * @return saved
+     */
     public boolean getSavedFlag() {
+        // Return saved
         return saved;
     }
 
+    /**
+     * Function setSavedFlag()
+     * <p>
+     *     Sets the saved flag to the passed value
+     * </p>
+     * @param passed is the value to use
+     */
     public void setSavedFlag(boolean passed) {
+        // Set the saved flag
         saved = passed;
     }
 
+    /**
+     * Function getModified()
+     * <p>
+     *     Returns the modified flag
+     * </p>
+     * @return modified
+     */
     public boolean getModified() {
+        // Return modified
         return modified;
     }
 
+    /**
+     * Function setModified()
+     * <p>
+     *     Set the modified flag to the passed value
+     * </p>
+     * @param passed is the value to use
+     */
     public void setModified(boolean passed) {
+        // Set the modified flag
         modified = passed;
     }
 }

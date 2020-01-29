@@ -360,112 +360,209 @@ public class ApplicationWindowController implements Initializable {
      * Function newNetwork()
      * <p>
      *     Determines if the network has been saved thus far or if the network has been modified and needs saving and prompts
-     *     the user for instructions on what to do.
+     *     the user for instructions on what to do. Then opens a new network.
      * </p>
      */
     @FXML
     private void newNetwork() {
+        // Check the flags
         if(neuralNetwork.getSavedFlag() && !neuralNetwork.getModified()) {
-                neuralNetwork = new Network();
-                selectedLayer = -1;
-                updateNetworkCanvas();
-                updateStatusBox();
+            // Create a new network
+            neuralNetwork = new Network();
+            // Deselect the layer
+            selectedLayer = -1;
+            // Update the canvas
+            updateNetworkCanvas();
+            // Update the status box
+            updateStatusBox();
         }
+        // Otherwise
         else {
+            // Create an alert
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            // Set the alert title
             alert.setTitle("Unsaved progress");
+            // Set the alert content text
             alert.setContentText("You have unsaved progress, would you like to save first?");
+            // Create a button type
             ButtonType save = new ButtonType("Save");
+            // Create a button type
             ButtonType dontSave = new ButtonType("Don't Save");
+            // Create the cancel button
             ButtonType cancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+            // Add the button types to the alert
             alert.getButtonTypes().setAll(cancel, dontSave, save);
+            // Get the result
             Optional<ButtonType> result = alert.showAndWait();
+            // If save
             if(result.get().equals(save)){
+                // If the network hasn't been saved yet
                 if(neuralNetwork.getName().equals("Untitled")) {
+                    // Open a file chooser
                     FileChooser chooser = new FileChooser();
+                    // Get the user given file path
                     File file = chooser.showSaveDialog(new Stage());
+                    // Set the name of the network to the file path
                     neuralNetwork.setName(file.getAbsolutePath());
+                    // Update the saved flag
                     neuralNetwork.setSavedFlag(true);
+                    // Update the modified flag
                     neuralNetwork.setModified(false);
+                    // Save the network
                     fileHandler.saveNetwork(neuralNetwork);
+                    // Call newNetwork again, flags are updated, top block will execute
                     newNetwork();
                 }
+                // Otherwise
                 else {
+                    // Set the modified flag
                     neuralNetwork.setModified(false);
+                    // Set the saved flag
                     neuralNetwork.setSavedFlag(true);
+                    // Save the network
                     fileHandler.saveNetwork(neuralNetwork);
+                    // Call newNetwork again, flags are updated, top block will execute
                     newNetwork();
                 }
-                // OPEN FILESAVE DIALOG
-                // IMPLEMENT LATER
             }
+            // Otherwise
             else if(result.get().equals(dontSave)){
+                // Set the saved flag
                 neuralNetwork.setSavedFlag(true);
+                // Call newNetwork again, flags are updated, top block will execute
                 newNetwork();
             }
         }
     }
 
+    /**
+     * Function openNetwork()
+     * <p>
+     *     Determines if the network has been saved thus far or if the network has been modified and needs saving and prompts
+     *     the user for instructions on what to do. Then opens the newly selected network
+     * </p>
+     */
     @FXML
     private void openNetwork() {
+        // Checks the flags
         if(neuralNetwork.getSavedFlag() && !neuralNetwork.getModified()) {
+            // Open a file chooser
             FileChooser chooser = new FileChooser();
+            // Get the selected file
             File file = chooser.showOpenDialog(new Stage());
+            // Load the network
             neuralNetwork = fileHandler.loadNetwork(file.getAbsolutePath());
+            // Deselect the layer
             selectedLayer = -1;
+            // Update the canvas
             updateNetworkCanvas();
+            // Update the status box
             updateStatusBox();
         }
+        // Otherwise
         else {
+            // Create an alert
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            // Set the title
             alert.setTitle("Unsaved progress");
+            // Set the content text
             alert.setContentText("You have unsaved progress, would you like to save first?");
+            // Create a button type
             ButtonType save = new ButtonType("Save");
+            // Create a button type
             ButtonType dontSave = new ButtonType("Don't Save");
+            // Create the cancel button
             ButtonType cancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+            // Add the button types to the alert
             alert.getButtonTypes().setAll(cancel, dontSave, save);
+            // Get the choice
             Optional<ButtonType> result = alert.showAndWait();
+            // If save
             if(result.get().equals(save)){
+                // If the network has yet to be saved
                 if(neuralNetwork.getName().equals("Untitled")) {
+                    // Open the file chooser
                     FileChooser chooser = new FileChooser();
+                    // Get the selected file
                     File file = chooser.showSaveDialog(new Stage());
+                    // Set the network name to the file path
                     neuralNetwork.setName(file.getAbsolutePath());
+                    // Update the saved flag
                     neuralNetwork.setSavedFlag(true);
+                    // Updated the modified flag
                     neuralNetwork.setModified(false);
+                    // Save the network
                     fileHandler.saveNetwork(neuralNetwork);
+                    // Call openNetwork, now top block will execute
                     openNetwork();
                 }
+                // Otherwise
                 else {
+                    // Update the modified flag
                     neuralNetwork.setModified(false);
+                    // Save the network
                     fileHandler.saveNetwork(neuralNetwork);
+                    // Call openNetwork, now top block will execute
                     openNetwork();
                 }
-                // OPEN FILESAVE DIALOG
-                // IMPLEMENT LATER
             }
+            // If dontSave
             else if(result.get().equals(dontSave)){
+                // Set the saved flag
                 neuralNetwork.setSavedFlag(true);
+                // Set the modified flag
                 neuralNetwork.setModified(false);
+                // Call openNetwork, now top block will execute
                 openNetwork();
             }
         }
     }
 
+    /**
+     * Function save()
+     * <p>
+     *     Saves the current network
+     * </p>
+     */
     @FXML
     private void save() {
-        neuralNetwork.setModified(false);
-        fileHandler.saveNetwork(neuralNetwork);
-        write("Network saved successfully");
+        // If the network has been saved before
+        if(neuralNetwork.getSavedFlag()) {
+            // Update the modified flag
+            neuralNetwork.setModified(false);
+            // Save the network
+            fileHandler.saveNetwork(neuralNetwork);
+            // Write success message
+            write("Network saved successfully");
+        }
+        // Otherwise
+        else {
+            // Call saveAs
+            saveAs();
+        }
     }
 
+    /**
+     * Function saveAs()
+     * <p>
+     *     Handles the naming and saving of a network
+     * </p>
+     */
     @FXML
     private void saveAs() {
+        // Create a file chooser
         FileChooser chooser = new FileChooser();
+        // Get the user selected file
         File file = chooser.showSaveDialog(new Stage());
+        // Update the modified flag
         neuralNetwork.setModified(false);
+        // Update the saved flag
         neuralNetwork.setSavedFlag(true);
+        // Set the network name to the file path
         neuralNetwork.setName(file.getAbsolutePath());
+        // Save the network
         fileHandler.saveNetwork(neuralNetwork);
+        // Write success message
         write("Network saved successfully");
     }
 
