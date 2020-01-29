@@ -7,10 +7,14 @@
 package neuralNetwork.components;
 
 import neuralNetwork.activationFunctions.ActivationFunction;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class Neuron {
+public class Neuron implements Serializable {
+
+    private static final long serialversionUID = 1L;
 
     /**
      * activationFunction holds the ActivationFunction for the neuron

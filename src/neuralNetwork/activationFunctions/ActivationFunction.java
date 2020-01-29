@@ -6,9 +6,12 @@
  */
 package neuralNetwork.activationFunctions;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public interface ActivationFunction {
+public interface ActivationFunction extends Serializable {
+
+     long serialversionUID = 1L;
      /**
       * Function activationFunction()
       * <p>

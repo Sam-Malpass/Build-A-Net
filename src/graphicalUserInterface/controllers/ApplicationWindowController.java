@@ -6,6 +6,7 @@
  */
 package graphicalUserInterface.controllers;
 
+import application.fileHandler.FileHandler;
 import application.integrator.Integrator;
 import graphicalUserInterface.MessageBus;
 import graphicalUserInterface.drawers.NetworkDrawer;
@@ -22,6 +23,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import neuralNetwork.Network;
 import neuralNetwork.activationFunctions.ActivationFunction;
@@ -29,10 +31,12 @@ import neuralNetwork.activationFunctions.Linear;
 import neuralNetwork.activationFunctions.Sigmoid;
 import neuralNetwork.components.Neuron;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.Random;
 import java.util.ResourceBundle;
 
@@ -42,6 +46,7 @@ public class ApplicationWindowController implements Initializable {
      * messageBus holds a MessageBus object which is needed to set up communication between the console and all other threads & classes
      */
     private static MessageBus messageBus;
+    private FileHandler fileHandler;
 
     /**
      * console is a TextArea to output messages to the user
@@ -223,9 +228,7 @@ public class ApplicationWindowController implements Initializable {
         });
         // Prepare the canvas
         networkDrawer.resetArea(networkCanvas.getWidth());
-
-
-
+        fileHandler = new FileHandler();
     }
 
     /**
@@ -351,6 +354,119 @@ public class ApplicationWindowController implements Initializable {
     public void write(String line) {
         // Write message to console
         console.appendText("[SYSTEM] " + line + "\n");
+    }
+
+    /**
+     * Function newNetwork()
+     * <p>
+     *     Determines if the network has been saved thus far or if the network has been modified and needs saving and prompts
+     *     the user for instructions on what to do.
+     * </p>
+     */
+    @FXML
+    private void newNetwork() {
+        if(neuralNetwork.getSavedFlag() && !neuralNetwork.getModified()) {
+                neuralNetwork = new Network();
+                selectedLayer = -1;
+                updateNetworkCanvas();
+                updateStatusBox();
+        }
+        else {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Unsaved progress");
+            alert.setContentText("You have unsaved progress, would you like to save first?");
+            ButtonType save = new ButtonType("Save");
+            ButtonType dontSave = new ButtonType("Don't Save");
+            ButtonType cancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+            alert.getButtonTypes().setAll(cancel, dontSave, save);
+            Optional<ButtonType> result = alert.showAndWait();
+            if(result.get().equals(save)){
+                if(neuralNetwork.getName().equals("Untitled")) {
+                    FileChooser chooser = new FileChooser();
+                    File file = chooser.showSaveDialog(new Stage());
+                    neuralNetwork.setName(file.getAbsolutePath());
+                    neuralNetwork.setSavedFlag(true);
+                    neuralNetwork.setModified(false);
+                    fileHandler.saveNetwork(neuralNetwork);
+                    newNetwork();
+                }
+                else {
+                    neuralNetwork.setModified(false);
+                    neuralNetwork.setSavedFlag(true);
+                    fileHandler.saveNetwork(neuralNetwork);
+                    newNetwork();
+                }
+                // OPEN FILESAVE DIALOG
+                // IMPLEMENT LATER
+            }
+            else if(result.get().equals(dontSave)){
+                neuralNetwork.setSavedFlag(true);
+                newNetwork();
+            }
+        }
+    }
+
+    @FXML
+    private void openNetwork() {
+        if(neuralNetwork.getSavedFlag() && !neuralNetwork.getModified()) {
+            FileChooser chooser = new FileChooser();
+            File file = chooser.showOpenDialog(new Stage());
+            neuralNetwork = fileHandler.loadNetwork(file.getAbsolutePath());
+            selectedLayer = -1;
+            updateNetworkCanvas();
+            updateStatusBox();
+        }
+        else {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Unsaved progress");
+            alert.setContentText("You have unsaved progress, would you like to save first?");
+            ButtonType save = new ButtonType("Save");
+            ButtonType dontSave = new ButtonType("Don't Save");
+            ButtonType cancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+            alert.getButtonTypes().setAll(cancel, dontSave, save);
+            Optional<ButtonType> result = alert.showAndWait();
+            if(result.get().equals(save)){
+                if(neuralNetwork.getName().equals("Untitled")) {
+                    FileChooser chooser = new FileChooser();
+                    File file = chooser.showSaveDialog(new Stage());
+                    neuralNetwork.setName(file.getAbsolutePath());
+                    neuralNetwork.setSavedFlag(true);
+                    neuralNetwork.setModified(false);
+                    fileHandler.saveNetwork(neuralNetwork);
+                    openNetwork();
+                }
+                else {
+                    neuralNetwork.setModified(false);
+                    fileHandler.saveNetwork(neuralNetwork);
+                    openNetwork();
+                }
+                // OPEN FILESAVE DIALOG
+                // IMPLEMENT LATER
+            }
+            else if(result.get().equals(dontSave)){
+                neuralNetwork.setSavedFlag(true);
+                neuralNetwork.setModified(false);
+                openNetwork();
+            }
+        }
+    }
+
+    @FXML
+    private void save() {
+        neuralNetwork.setModified(false);
+        fileHandler.saveNetwork(neuralNetwork);
+        write("Network saved successfully");
+    }
+
+    @FXML
+    private void saveAs() {
+        FileChooser chooser = new FileChooser();
+        File file = chooser.showSaveDialog(new Stage());
+        neuralNetwork.setModified(false);
+        neuralNetwork.setSavedFlag(true);
+        neuralNetwork.setName(file.getAbsolutePath());
+        fileHandler.saveNetwork(neuralNetwork);
+        write("Network saved successfully");
     }
 
     /**

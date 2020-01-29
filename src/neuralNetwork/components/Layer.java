@@ -6,9 +6,12 @@
  */
 package neuralNetwork.components;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Layer {
+public class Layer implements Serializable {
+
+    private static final long serialversionUID = 1L;
 
     /**
      * neurons is a list of all the neurons within the layer

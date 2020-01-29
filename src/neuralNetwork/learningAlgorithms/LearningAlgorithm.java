@@ -6,7 +6,11 @@
  */
 package neuralNetwork.learningAlgorithms;
 
-public interface LearningAlgorithm {
+import java.io.Serializable;
+
+public interface LearningAlgorithm extends Serializable {
+
+    long serialversionUID = 1L;
     /**
      * Function runAlgorithm runs the algorithm on the network
      */

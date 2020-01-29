@@ -10,9 +10,12 @@ import application.Main;
 import neuralNetwork.components.Layer;
 import neuralNetwork.components.Neuron;
 import neuralNetwork.learningAlgorithms.LearningAlgorithm;
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Network {
+public class Network implements Serializable {
+
+    private static final long serialversionUID = 1L;
 
     /**
      * networkLayers holds the layers in the network
@@ -38,6 +41,11 @@ public class Network {
      * connected holds whether the network has been connected yet
      */
     private boolean connected = false;
+
+    private boolean modified = false;
+
+    private boolean saved = false;
+
 
     /**
      * Constructor with no arguments
@@ -116,6 +124,7 @@ public class Network {
         connected = false;
         // Reset trained flag;
         trained = false;
+        modified = true;
     }
 
     /**
@@ -133,6 +142,7 @@ public class Network {
         connected = false;
         // Update the trained flag
         trained = false;
+        modified = true;
     }
 
     /**
@@ -150,6 +160,7 @@ public class Network {
         connected = false;
         // Update trained flag
         trained = false;
+        modified = true;
     }
 
     /**
@@ -166,6 +177,7 @@ public class Network {
         connected = false;
         // Update the trained flag
         trained = false;
+        modified = true;
     }
 
     /**
@@ -203,6 +215,7 @@ public class Network {
             Main.passMessage("Connection weights generated successfully");
             // Update the connected flag
             connected = true;
+            modified = true;
         }
     }
 
@@ -222,6 +235,7 @@ public class Network {
             // Run the algorithm
             learningAlgorithm.runAlgorithm();
         }
+        modified = true;
     }
 
     /**
@@ -249,6 +263,7 @@ public class Network {
         connected = false;
         // Update the trained flag
         trained = false;
+        modified = true;
     }
 
     /**
@@ -261,6 +276,7 @@ public class Network {
     public void setName(String name) {
         // Set the name to the passed string
         networkName = name;
+        modified = true;
     }
 
     /**
@@ -353,4 +369,19 @@ public class Network {
         return networkLayers.size();
     }
 
+    public boolean getSavedFlag() {
+        return saved;
+    }
+
+    public void setSavedFlag(boolean passed) {
+        saved = passed;
+    }
+
+    public boolean getModified() {
+        return modified;
+    }
+
+    public void setModified(boolean passed) {
+        modified = passed;
+    }
 }
