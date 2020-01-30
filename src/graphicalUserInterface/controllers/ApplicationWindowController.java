@@ -6,6 +6,8 @@
  */
 package graphicalUserInterface.controllers;
 
+import application.commands.AddLayer;
+import application.commands.Command;
 import application.fileHandler.FileHandler;
 import application.integrator.Integrator;
 import graphicalUserInterface.MessageBus;
@@ -107,7 +109,8 @@ public class ApplicationWindowController implements Initializable {
     private double locYToolbox;
     private int selectedNeuron;
     private int selectedLayer;
-
+    private ArrayList<Command> commandStack = new ArrayList<>();
+    private ArrayList<Command> undoneStack = new ArrayList<>();
 
     /**
      * learningRateSpinner holds the spinner for learning rate
@@ -688,6 +691,7 @@ public class ApplicationWindowController implements Initializable {
      */
     @FXML
     private void addLayer() {
+        /*
         // Add a layer to the network
         neuralNetwork.addLayer();
         // If the number of layers now exceeds tha max that can be displayed at the start
@@ -697,6 +701,11 @@ public class ApplicationWindowController implements Initializable {
             // Update the width of the pane that holds the canvas
             canvasPane.setPrefWidth(canvasPane.getWidth() + 100);
         }
+        updateNetworkCanvas();
+         */
+        AddLayer add = new AddLayer();
+        add.executeCommand(neuralNetwork);
+        commandStack.add(add);
         updateNetworkCanvas();
     }
 
@@ -794,6 +803,7 @@ public class ApplicationWindowController implements Initializable {
             // Round to get precise layer number
             rawLayerNum = Math.ceil(rawLayerNum);
         }
+        /*
         // Remove the selected layer from the network object
         neuralNetwork.removeLayer((int)rawLayerNum);
         // If that layer was the selected layer
@@ -808,6 +818,43 @@ public class ApplicationWindowController implements Initializable {
             // Update the width of the pane holding the canvas
             canvasPane.setPrefWidth(canvasPane.getWidth() - 100);
         }
+         */
+        updateNetworkCanvas();
+    }
+
+    /**
+     * Function undoAction()
+     * <p>
+     *     Gets the most recently executed command and then undoes it
+     * </p>
+     */
+    @FXML
+    private void undoAction() {
+        // Output to console
+        write("Undoing action...");
+        // Get the command
+        Command cmd = commandStack.get(commandStack.size()-1);
+        // Undo it
+        cmd.unExecuteCommand();
+        // Update the canvas
+        updateNetworkCanvas();
+    }
+
+    /**
+     * Function redoAction()
+     * <p>
+     *     Gets the most recent command on the stack and performs the redo function
+     * </p>
+     */
+    @FXML
+    private void redoAction() {
+        // Output to console
+        write("Redoing action...");
+        // Get the command
+        Command cmd = commandStack.get(commandStack.size()-1);
+        // Execute the command
+        cmd.executeCommand();
+        // Update the canvas
         updateNetworkCanvas();
     }
 

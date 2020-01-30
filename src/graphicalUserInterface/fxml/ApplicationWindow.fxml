@@ -54,8 +54,8 @@
                 </Menu>
                 <Menu fx:id="edit" mnemonicParsing="false" text="Edit">
                   <items>
-                    <MenuItem fx:id="undo" mnemonicParsing="false" text="Undo" />
-                        <MenuItem fx:id="redo" mnemonicParsing="false" text="Redo" />
+                    <MenuItem fx:id="undo" mnemonicParsing="false" text="Undo" onAction="#undoAction"/>
+                        <MenuItem fx:id="redo" mnemonicParsing="false" text="Redo" onAction="#redoAction" />
                   </items>
                 </Menu>
                 <Menu fx:id="help" mnemonicParsing="false" text="Help">

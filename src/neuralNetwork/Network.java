@@ -184,7 +184,7 @@ public class Network implements Serializable {
      */
     public void removeLayer(int position) {
         // Remove the layer at the index of the layer
-        networkLayers.remove(position-1);
+        networkLayers.remove(position);
         // Update the connected flag
         connected = false;
         // Update the trained flag

@@ -6,6 +6,8 @@
  */
 package neuralNetwork.components;
 
+import application.generator.Generator;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -23,6 +25,8 @@ public class Layer implements Serializable {
      */
     private ArrayList<Double> outputs;
 
+    private long idNumber;
+
     /**
      * nextLayer holds the next layer in the network
      */
@@ -37,6 +41,8 @@ public class Layer implements Serializable {
     public Layer() {
         // Create an empty list of neurons
         this.neurons = new ArrayList<>();
+        // Create an ID number
+        idNumber = Generator.genLong();
     }
 
     public void connect(int numInputs) {
@@ -170,5 +176,9 @@ public class Layer implements Serializable {
      */
     public ArrayList<Neuron> getNeurons() {
         return neurons;
+    }
+
+    public long getID() {
+        return idNumber;
     }
 }
