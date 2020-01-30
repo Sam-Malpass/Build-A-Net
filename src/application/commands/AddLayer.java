@@ -23,7 +23,7 @@ public class AddLayer extends Command {
         // Store it in the commands store (since Java does it with pointers memory consumption should be minimal)
         dataStore = tmpNet;
         // Add a layer to the network
-        tmpNet.addLayer();
+        tmpNet.addNewLayer();
     }
 
     /**
@@ -41,25 +41,14 @@ public class AddLayer extends Command {
     /**
      * Function unExecuteCommand()
      * <p>
-     *     Overloading the abstract function to take arguments - this will be called by other functions
-     * </p>
-     * @param inputs is the object(s) to be used by the function, in this case a network
-     */
-    private void unExecuteCommand(Object inputs) {
-        // Get the network
-        Network tmpNet = (Network)inputs;
-        // Remove the last layer from the network - we know this will be the previously added layer by this command
-        tmpNet.removeLayer(tmpNet.numLayers() - 1);
-    }
-
-    /**
-     * Function unExecuteCommand()
-     * <p>
      *     The default function to be called by undoAction function
      * </p>
      */
     @Override
     public void unExecuteCommand() {
-        unExecuteCommand(dataStore);
+        // Get the network
+        Network tmpNet = (Network)dataStore;
+        // Remove the last layer from the network - we know this will be the previously added layer by this command
+        tmpNet.removeLayer(tmpNet.numLayers() - 1);;
     }
 }

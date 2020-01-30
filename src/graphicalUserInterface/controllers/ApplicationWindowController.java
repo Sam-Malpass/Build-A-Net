@@ -8,6 +8,7 @@ package graphicalUserInterface.controllers;
 
 import application.commands.AddLayer;
 import application.commands.Command;
+import application.commands.RemoveLayer;
 import application.fileHandler.FileHandler;
 import application.integrator.Integrator;
 import graphicalUserInterface.MessageBus;
@@ -691,22 +692,23 @@ public class ApplicationWindowController implements Initializable {
      */
     @FXML
     private void addLayer() {
-        /*
-        // Add a layer to the network
-        neuralNetwork.addLayer();
-        // If the number of layers now exceeds tha max that can be displayed at the start
+        // Create the command
+        AddLayer add = new AddLayer();
+        // Execute the command
+        add.executeCommand(neuralNetwork);
+        // Add the command to the stack
+        commandStack.add(add);
+        // If the number of layers is greater than the max that can be displayed
         if(neuralNetwork.numLayers() > baseMaxLayers) {
             // Update the width of the canvas
             networkCanvas.setWidth(networkCanvas.getWidth()+100);
             // Update the width of the pane that holds the canvas
             canvasPane.setPrefWidth(canvasPane.getWidth() + 100);
         }
+        // Update the canvas
         updateNetworkCanvas();
-         */
-        AddLayer add = new AddLayer();
-        add.executeCommand(neuralNetwork);
-        commandStack.add(add);
-        updateNetworkCanvas();
+        // Update the status
+        updateStatusBox();
     }
 
     /**
@@ -718,15 +720,8 @@ public class ApplicationWindowController implements Initializable {
     private void addNeuron(ActivationFunction function) {
         if(selectedLayer != -1) {
             // Add the neuron to the given layer
-
-            /*
-            DEBUG
-             */
             neuralNetwork.addNeuron(new Neuron(function), selectedLayer);
-            /*
-            DEBUG
-             */
-
+            // Update canvas
             updateNetworkCanvas();
             // Update the status box
             updateStatusBox();
@@ -803,23 +798,36 @@ public class ApplicationWindowController implements Initializable {
             // Round to get precise layer number
             rawLayerNum = Math.ceil(rawLayerNum);
         }
-        /*
-        // Remove the selected layer from the network object
-        neuralNetwork.removeLayer((int)rawLayerNum);
-        // If that layer was the selected layer
-        if(selectedLayer == rawLayerNum-1) {
+        // Create the command
+        RemoveLayer removeLayer = new RemoveLayer();
+        // Create the list for the arguments
+        ArrayList<Object> args = new ArrayList<>();
+        // Get the position
+        Integer position = new Integer((int)rawLayerNum-1);
+        // Check whether selectedLayer is being removed
+        if(selectedLayer == position) {
             // Reset the selectedLayer
             selectedLayer = -1;
         }
-        // If the number of layers exceeds the base size of the canvas
+        // Check whether we can go back to default view size
         if(neuralNetwork.numLayers() > baseMaxLayers) {
             // Update the width of the canvas
             networkCanvas.setWidth(networkCanvas.getWidth()-100);
             // Update the width of the pane holding the canvas
             canvasPane.setPrefWidth(canvasPane.getWidth() - 100);
         }
-         */
+        // Add the network to the arguments
+        args.add(neuralNetwork);
+        // Add the position ot hte arguments
+        args.add(position);
+        // Execute the command
+        removeLayer.executeCommand(args);
+        // Add command to the stack
+        commandStack.add(removeLayer);
+        // Update the canvas
         updateNetworkCanvas();
+        // Update the status box
+        updateStatusBox();
     }
 
     /**
@@ -830,14 +838,21 @@ public class ApplicationWindowController implements Initializable {
      */
     @FXML
     private void undoAction() {
-        // Output to console
-        write("Undoing action...");
-        // Get the command
-        Command cmd = commandStack.get(commandStack.size()-1);
-        // Undo it
-        cmd.unExecuteCommand();
-        // Update the canvas
-        updateNetworkCanvas();
+        // Check that there is a command to undo
+        if(commandStack.size() > 0) {
+            // Output to console
+            write("Undoing action...");
+            // Get the command
+            Command cmd = commandStack.get(commandStack.size() - 1);
+            // Undo it
+            cmd.unExecuteCommand();
+            // Update the canvas
+            updateNetworkCanvas();
+        }
+        else {
+            // Output error message
+            write("No commands are in the stack", "-e");
+        }
     }
 
     /**
@@ -848,14 +863,21 @@ public class ApplicationWindowController implements Initializable {
      */
     @FXML
     private void redoAction() {
-        // Output to console
-        write("Redoing action...");
-        // Get the command
-        Command cmd = commandStack.get(commandStack.size()-1);
-        // Execute the command
-        cmd.executeCommand();
-        // Update the canvas
-        updateNetworkCanvas();
+        // Check that there is a command to redo
+        if(commandStack.size() > 0) {
+            // Output to console
+            write("Redoing action...");
+            // Get the command
+            Command cmd = commandStack.get(commandStack.size() - 1);
+            // Execute the command
+            cmd.executeCommand();
+            // Update the canvas
+            updateNetworkCanvas();
+        }
+        else  {
+            // Output error message
+            write("No commands are in the stack", "-e");
+        }
     }
 
     /**

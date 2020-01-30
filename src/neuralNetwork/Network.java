@@ -121,17 +121,36 @@ public class Network implements Serializable {
     }
 
     /**
-     * Function addLayer()
+     * Function addNewLayer()
      * <p>
      *     Adds a new layer to the network and updates the status flags
      * </p>
      */
-    public void addLayer() {
+    public void addNewLayer() {
         // Add a layer
         networkLayers.add(new Layer());
         // Reset connected flag
         connected = false;
         // Reset trained flag;
+        trained = false;
+        // Update modified flag
+        modified = true;
+    }
+
+    /**
+     * Function insertLayer()
+     * <p>
+     *     Inserts a pre-made layer at a given position
+     * </p>
+     * @param position is the index at which to insert the layer
+     * @param layer is the layer to be inserted
+     */
+    public void insertLayer(int position, Layer layer) {
+        // Add the layer to the network
+        networkLayers.add(position, layer);
+        // Reset connected flag
+        connected = false;
+        // Reset trained flag
         trained = false;
         // Update modified flag
         modified = true;
