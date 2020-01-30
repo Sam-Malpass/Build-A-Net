@@ -7,6 +7,7 @@
 package graphicalUserInterface.controllers;
 
 import application.commands.AddLayer;
+import application.commands.AddNeuron;
 import application.commands.Command;
 import application.commands.RemoveLayer;
 import application.fileHandler.FileHandler;
@@ -111,7 +112,8 @@ public class ApplicationWindowController implements Initializable {
     private int selectedNeuron;
     private int selectedLayer;
     private ArrayList<Command> commandStack = new ArrayList<>();
-    private ArrayList<Command> undoneStack = new ArrayList<>();
+    private ArrayList<Command> redoStack = new ArrayList<>();
+    private int comController = 1;
 
     /**
      * learningRateSpinner holds the spinner for learning rate
@@ -719,8 +721,13 @@ public class ApplicationWindowController implements Initializable {
      */
     private void addNeuron(ActivationFunction function) {
         if(selectedLayer != -1) {
-            // Add the neuron to the given layer
-            neuralNetwork.addNeuron(new Neuron(function), selectedLayer);
+            AddNeuron add = new AddNeuron();
+            ArrayList<Object> args = new ArrayList<>();
+            args.add(neuralNetwork);
+            args.add(function);
+            args.add(selectedLayer);
+            add.executeCommand(args);
+            commandStack.add(add);
             // Update canvas
             updateNetworkCanvas();
             // Update the status box
@@ -805,7 +812,7 @@ public class ApplicationWindowController implements Initializable {
         // Get the position
         Integer position = new Integer((int)rawLayerNum-1);
         // Check whether selectedLayer is being removed
-        if(selectedLayer == position) {
+        if(selectedLayer == position-1) {
             // Reset the selectedLayer
             selectedLayer = -1;
         }
@@ -844,8 +851,11 @@ public class ApplicationWindowController implements Initializable {
             write("Undoing action...");
             // Get the command
             Command cmd = commandStack.get(commandStack.size() - 1);
+            redoStack.add(cmd);
+            commandStack.remove(cmd);
             // Undo it
             cmd.unExecuteCommand();
+            selectedLayer = -1;
             // Update the canvas
             updateNetworkCanvas();
         }
@@ -864,11 +874,13 @@ public class ApplicationWindowController implements Initializable {
     @FXML
     private void redoAction() {
         // Check that there is a command to redo
-        if(commandStack.size() > 0) {
+        if(redoStack.size() > 0) {
             // Output to console
             write("Redoing action...");
             // Get the command
-            Command cmd = commandStack.get(commandStack.size() - 1);
+            Command cmd = redoStack.get(redoStack.size() - 1);
+            commandStack.add(cmd);
+            redoStack.remove(cmd);
             // Execute the command
             cmd.executeCommand();
             // Update the canvas
