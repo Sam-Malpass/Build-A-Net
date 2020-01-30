@@ -6,10 +6,7 @@
  */
 package graphicalUserInterface.controllers;
 
-import application.commands.AddLayer;
-import application.commands.AddNeuron;
-import application.commands.Command;
-import application.commands.RemoveLayer;
+import application.commands.*;
 import application.fileHandler.FileHandler;
 import application.integrator.Integrator;
 import graphicalUserInterface.MessageBus;
@@ -773,8 +770,13 @@ public class ApplicationWindowController implements Initializable {
                     int index = controller.getIndex();
                     // If index is not default
                     if(index != -1) {
-                        // Remove neuron from selected layer at selected index
-                        neuralNetwork.removeNeuron(selectedLayer, index);
+                        RemoveNeuron removeNeuron = new RemoveNeuron();
+                        ArrayList<Object> args = new ArrayList<>();
+                        args.add(neuralNetwork);
+                        args.add(selectedLayer);
+                        args.add(index);
+                        removeNeuron.executeCommand(args);
+                        commandStack.add(removeNeuron);
                         // Redraw the canvas
                         updateNetworkCanvas();
                         // Update the status box

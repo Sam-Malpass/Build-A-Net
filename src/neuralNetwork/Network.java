@@ -175,6 +175,16 @@ public class Network implements Serializable {
         modified = true;
     }
 
+    public void insertNeuron(int layerID, int position, Neuron n) {
+        networkLayers.get(layerID).insertNeuron(position, n);
+        // Update the connected flag
+        connected = false;
+        // Update the trained flag
+        trained = false;
+        // Update modified flag
+        modified = true;
+    }
+
     /**
      * Function removeNeuron()
      * <p>

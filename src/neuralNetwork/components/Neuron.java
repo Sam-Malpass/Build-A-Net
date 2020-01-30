@@ -202,4 +202,8 @@ public class Neuron implements Serializable {
     public String getNeuronType() {
         return activationFunction.getClass().getName();
     }
+
+    public ActivationFunction getFunction() {
+        return activationFunction;
+    }
 }

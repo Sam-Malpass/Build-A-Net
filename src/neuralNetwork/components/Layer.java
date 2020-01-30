@@ -125,6 +125,10 @@ public class Layer implements Serializable {
         neurons.add(n);
     }
 
+    public void insertNeuron(int position, Neuron n) {
+        neurons.add(position, n);
+    }
+
     /**
      * Function removeNeuron()
      * <p>
