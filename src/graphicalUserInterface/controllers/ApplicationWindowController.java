@@ -11,6 +11,7 @@ import application.fileHandler.FileHandler;
 import application.integrator.Integrator;
 import application.wrappers.DoubleWrapper;
 import application.wrappers.IntegerWrapper;
+import data.Dataset;
 import graphicalUserInterface.MessageBus;
 import graphicalUserInterface.drawers.NetworkDrawer;
 import graphicalUserInterface.drawers.ToolboxDrawer;
@@ -212,6 +213,11 @@ public class ApplicationWindowController implements Initializable {
      * neuralNetwork is the network that is currently loaded/being worked on
      */
     private Network neuralNetwork;
+
+    /**
+     * dataset holds the data to be used
+     */
+    private Dataset dataset = null;
 
     /**
      * Function initialize()
@@ -1269,9 +1275,18 @@ public class ApplicationWindowController implements Initializable {
                 }
             }
         });
+    }
 
+    @FXML
+    private void connectLayers() {
+        if(dataFlag) {
+            if(neuralNetwork.getLayer(0).numNeurons() == dataset.numAttributes()) {
 
-
+            }
+            else {
+                write("You do not have enough neurons in the input layer for this data set\nNeurons required: "+dataset.numAttributes(), "-e");
+            }
+        }
     }
 
 }
