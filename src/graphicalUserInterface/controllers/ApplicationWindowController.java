@@ -12,6 +12,7 @@ import application.integrator.Integrator;
 import application.wrappers.DoubleWrapper;
 import application.wrappers.IntegerWrapper;
 import data.Dataset;
+import data.OR;
 import graphicalUserInterface.MessageBus;
 import graphicalUserInterface.drawers.NetworkDrawer;
 import graphicalUserInterface.drawers.ToolboxDrawer;
