@@ -6,14 +6,17 @@
  */
 package neuralNetwork.components;
 
+import application.generator.Generator;
 import neuralNetwork.activationFunctions.ActivationFunction;
-
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Random;
+
 
 public class Neuron implements Serializable {
 
+    /**
+     * serialversionUID allows the object to be serialized
+     */
     private static final long serialversionUID = 1L;
 
     /**
@@ -155,12 +158,10 @@ public class Neuron implements Serializable {
      * </p>
      */
     public void genWeights() {
-        // Create a Random object
-        Random generator = new Random();
         // For all weights
         for(int i = 0; i < weights.size(); i++) {
             // Generate a new weight
-            weights.set(i, 2.0 * generator.nextDouble() - 1);
+            weights.set(i, 2.0 * Generator.genDouble() - 1);
         }
     }
 
@@ -199,7 +200,27 @@ public class Neuron implements Serializable {
         return activationFunction.getColour();
     }
 
+    /**
+     * Function getNeuronType()
+     * <p>
+     *     Returns the activationFunction's name
+     * </p>
+     * @return the name of the activationFunction
+     */
     public String getNeuronType() {
+        // Return the name of the activationFunction
         return activationFunction.getClass().getName();
+    }
+
+    /**
+     * Function getFunction()
+     * <p>
+     *     Returns the activationFunction
+     * </p>
+     * @return the activationFunction
+     */
+    public ActivationFunction getFunction() {
+        // Return activationFunction
+        return activationFunction;
     }
 }

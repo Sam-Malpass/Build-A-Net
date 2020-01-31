@@ -11,6 +11,9 @@ import java.util.ArrayList;
 
 public class Layer implements Serializable {
 
+    /**
+     * serialversionUID allows for serialization of the object
+     */
     private static final long serialversionUID = 1L;
 
     /**
@@ -125,6 +128,10 @@ public class Layer implements Serializable {
         neurons.add(n);
     }
 
+    public void insertNeuron(int position, Neuron n) {
+        neurons.add(position, n);
+    }
+
     /**
      * Function removeNeuron()
      * <p>
@@ -171,4 +178,5 @@ public class Layer implements Serializable {
     public ArrayList<Neuron> getNeurons() {
         return neurons;
     }
+
 }

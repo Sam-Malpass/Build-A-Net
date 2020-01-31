@@ -1,9 +1,10 @@
-package application; /**
- * application.Main
+/**
+ * Main
  * @author Sam Malpass
  * @version 0.0.1
  * @since 0.0.1
  */
+package application;
 
 import graphicalUserInterface.MessageBus;
 import graphicalUserInterface.controllers.ApplicationWindowController;
