@@ -11,7 +11,11 @@ import java.util.ArrayList;
 
 public interface ActivationFunction extends Serializable {
 
+     /**
+      * serialversionUID is used for serialization of the objects
+      */
      long serialversionUID = 1L;
+
      /**
       * Function activationFunction()
       * <p>
@@ -36,9 +40,9 @@ public interface ActivationFunction extends Serializable {
      /**
       * Function getColour()
       * <p>
-      *     The user can return RGB values in the arraylist to colour the neuron with this activation function
+      *     The user can return RGB values in the ArrayList to colour the neuron with this activation function
       * </p>
-      * @return the RGB values in the arraylist
+      * @return the RGB values in the ArrayList
       */
      ArrayList<Double> getColour();
 }

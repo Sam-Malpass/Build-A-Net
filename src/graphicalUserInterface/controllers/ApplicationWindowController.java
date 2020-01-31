@@ -30,17 +30,13 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import neuralNetwork.Network;
 import neuralNetwork.activationFunctions.ActivationFunction;
-import neuralNetwork.activationFunctions.Linear;
-import neuralNetwork.activationFunctions.Sigmoid;
 import neuralNetwork.components.Neuron;
 
-import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Optional;
-import java.util.Random;
 import java.util.ResourceBundle;
 
 public class ApplicationWindowController implements Initializable {
@@ -49,6 +45,10 @@ public class ApplicationWindowController implements Initializable {
      * messageBus holds a MessageBus object which is needed to set up communication between the console and all other threads & classes
      */
     private static MessageBus messageBus;
+
+    /**
+     * fileHandler allows for the saving and loading of various objects and files within the application
+     */
     private FileHandler fileHandler;
 
     /**
@@ -69,25 +69,26 @@ public class ApplicationWindowController implements Initializable {
     @FXML
     private Canvas networkCanvas;
 
+    /**
+     * toolboxCanvas is the Canvas object for the toolbox area
+     */
     @FXML
     private Canvas toolboxCanvas;
 
+    /**
+     * canvasPane is the anchor of the networkCanvas
+     */
     @FXML
     private AnchorPane canvasPane;
 
-    @FXML
-    private SplitPane splitPaneTop;
-    @FXML
-    private AnchorPane topRightPane;
-
-    @FXML
-    private SplitPane splitPaneBottom;
-
     /**
-     * graphicsContext holds the graphics context of the application
+     * graphicsContext holds the graphics context for the network canvas
      */
     private GraphicsContext networkContext;
 
+    /**
+     * toolboxContext holds the graphics context for the toolbox canvas
+     */
     private GraphicsContext toolboxContext;
 
     /**
@@ -95,7 +96,14 @@ public class ApplicationWindowController implements Initializable {
      */
     private int baseMaxLayers = 11;
 
+    /**
+     * networkDrawer is a special object that allows for the drawing of elements on the network canvas
+     */
     private NetworkDrawer networkDrawer;
+
+    /**
+     * toolboxDrawer is a special object that allows for the drawing of elements to the toolbox canvas
+     */
     private ToolboxDrawer toolboxDrawer;
 
     /**
@@ -113,14 +121,40 @@ public class ApplicationWindowController implements Initializable {
      */
     ArrayList<ActivationFunction> neuronTypes = new ArrayList<>();
 
-    private ContextMenu menu;
+    /**
+     * networkMenu holds the ContextMenu object for the network canvas
+     */
+    private ContextMenu networkMenu;
+
+    /**
+     * locXNetwork is used for determining the layer that is being selected on the network canvas
+     */
     private double locXNetwork;
+
+    /**
+     * locYToolbox is used for determining the layer that is being selected on the toolbox canvas
+     */
     private double locYToolbox;
+
+    /**
+     * selectedNeuron holds the current index of the neuron that has been selected in the toolbox
+     */
     private int selectedNeuron;
+
+    /**
+     * selectedLayer holds the current index of the layer that has been selected in the network
+     */
     private int selectedLayer;
+
+    /**
+     * commandStack holds a list of commands that have been executed already
+     */
     private ArrayList<Command> commandStack = new ArrayList<>();
+
+    /**
+     * redoStack holds a list of commands that were once on the command stack but have been undone
+     */
     private ArrayList<Command> redoStack = new ArrayList<>();
-    private int comController = 1;
 
     /**
      * learningRateSpinner holds the spinner for learning rate
@@ -174,6 +208,9 @@ public class ApplicationWindowController implements Initializable {
      */
     private int currStatus;
 
+    /**
+     * neuralNetwork is the network that is currently loaded/being worked on
+     */
     private Network neuralNetwork;
 
     /**
@@ -228,7 +265,8 @@ public class ApplicationWindowController implements Initializable {
         // Create the menu for the canvas
         createCanvasMenu();
         // Set the menu in the canvas
-        networkCanvas.setOnContextMenuRequested(e -> {menu.show(networkCanvas, e.getScreenX(), e.getScreenY()); locXNetwork = e.getX();});
+        networkCanvas.setOnContextMenuRequested(e -> {
+            networkMenu.show(networkCanvas, e.getScreenX(), e.getScreenY()); locXNetwork = e.getX();});
         // Add a listener for a mouse click to the canvas
         networkCanvas.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
@@ -325,7 +363,7 @@ public class ApplicationWindowController implements Initializable {
         // Gather the items and add them to the menu
         menu.getItems().addAll(addLayer, removeLayer,separator, addNeuronMenu, removeNeuron, separator2, cancel);
         // Set the menu
-        this.menu = menu;
+        this.networkMenu = menu;
     }
 
     /**
@@ -608,15 +646,18 @@ public class ApplicationWindowController implements Initializable {
         window.showAndWait();
         // Check the input is an integer
         if(window.getResult().matches("\\d+")) {
-            // Set it
-            //maxEpochs = Integer.parseInt(window.getResult());
+            // Create the command
             SetMaxEpochs set = new SetMaxEpochs();
+            // Create a list for the arguments
             ArrayList<Object> args = new ArrayList<>();
+            // Add the maxEpochs object to the args (the command will treat this as a pointer)
             args.add(maxEpochs);
+            // Add the new desired value to the args
             args.add(Integer.parseInt(window.getResult()));
+            // Execute the command
             set.executeCommand(args);
+            // Add the command to the stack
             commandStack.add(set);
-            write("Value of maxEpochs: " + maxEpochs);
         }
         // Otherwise
         else {
@@ -646,13 +687,17 @@ public class ApplicationWindowController implements Initializable {
         window.showAndWait();
         // If the input is a double
         if(window.getResult().matches("[0-9]+.[0-9]+")) {
-            // Set the minError
-            //minError = Double.parseDouble(window.getResult());
+            // Create the command
             SetMinError set = new SetMinError();
+            // Create the list of arguments
             ArrayList<Object> args = new ArrayList<>();
+            // Add the minError to the args
             args.add(minError);
+            // Add the desired value to the
             args.add(Double.parseDouble(window.getResult()));
+            // Execute the command
             set.executeCommand(args);
+            // Add the command to the stack
             commandStack.add(set);
         }
         // Otherwise
@@ -702,6 +747,7 @@ public class ApplicationWindowController implements Initializable {
         if(rawLayerNum <= neuralNetwork.numLayers()) {
             // Update the selected layer
             selectedLayer = (int) rawLayerNum - 1;
+            // Update the networkCanvas
             updateNetworkCanvas();
         }
     }
@@ -741,12 +787,19 @@ public class ApplicationWindowController implements Initializable {
      */
     private void addNeuron(ActivationFunction function) {
         if(selectedLayer != -1) {
+            // Create the command
             AddNeuron add = new AddNeuron();
+            // Create a list for arguments
             ArrayList<Object> args = new ArrayList<>();
+            // Add the neuralNetwork to the args
             args.add(neuralNetwork);
+            // Add the selected activation function to list
             args.add(function);
+            // Add the selectedLayer to the args
             args.add(selectedLayer);
+            // Execute the command
             add.executeCommand(args);
+            // Add the command to the stack
             commandStack.add(add);
             // Update canvas
             updateNetworkCanvas();
@@ -793,12 +846,19 @@ public class ApplicationWindowController implements Initializable {
                     int index = controller.getIndex();
                     // If index is not default
                     if(index != -1) {
+                        // Create the command
                         RemoveNeuron removeNeuron = new RemoveNeuron();
+                        // Create a list for the arguments
                         ArrayList<Object> args = new ArrayList<>();
+                        // Add the network to the args
                         args.add(neuralNetwork);
+                        // Add the selected layer index
                         args.add(selectedLayer);
+                        // Add the index of the neuron to the arguments
                         args.add(index);
+                        // Execute the command
                         removeNeuron.executeCommand(args);
+                        // Add the command to the stack
                         commandStack.add(removeNeuron);
                         // Redraw the canvas
                         updateNetworkCanvas();
@@ -807,7 +867,8 @@ public class ApplicationWindowController implements Initializable {
                     }
                 // Catch exception
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    // Write out error message
+                    write("FXMLLoader encountered a problem", "-e");
                 }
             }
         }
@@ -876,7 +937,9 @@ public class ApplicationWindowController implements Initializable {
             write("Undoing action...");
             // Get the command
             Command cmd = commandStack.get(commandStack.size() - 1);
+            // Add the command to the redoStack
             redoStack.add(cmd);
+            // Remove the command from the stack
             commandStack.remove(cmd);
             // Undo it
             cmd.unExecuteCommand();
@@ -906,7 +969,9 @@ public class ApplicationWindowController implements Initializable {
             write("Redoing action...");
             // Get the command
             Command cmd = redoStack.get(redoStack.size() - 1);
+            // Add the command to the stack
             commandStack.add(cmd);
+            // Remove the command from the redoStack
             redoStack.remove(cmd);
             // Execute the command
             cmd.executeCommand();
@@ -963,18 +1028,34 @@ public class ApplicationWindowController implements Initializable {
         statusBox.setText(information);
     }
 
+    /**
+     * Function updateNetworkCanvas()
+     * <p>
+     *     Fully resets and redraws the network canvas using the network drawer
+     * </p>
+     */
     private void updateNetworkCanvas() {
+        // Reset the canvas
         networkDrawer.resetArea(networkCanvas.getWidth());
+        // Draw all the layers
         networkDrawer.drawAllLayers(neuralNetwork.numLayers());
+        // Create the list of colours
         ArrayList<ArrayList<Double>> colours = new ArrayList();
+        // For all layers
         for(int i = 0; i < neuralNetwork.numLayers(); i++) {
+            // For all neurons in the layer
             for(Neuron neuron : neuralNetwork.getLayer(i).getNeurons()) {
+                // Add the neuron colours to the list
                 colours.add(neuron.getColour());
             }
+            // Draw all the neurons
             networkDrawer.drawAllNeurons(i, neuralNetwork.getLayer(i).numNeurons(), colours);
+            // Reset colours list for next layer
             colours = new ArrayList<>();
         }
+        // If the selectedLayer is not -1
         if(selectedLayer != -1) {
+            // Highlight the selectedLayer
             networkDrawer.highlightLayer(selectedLayer);
         }
     }

@@ -41,10 +41,13 @@ public class Linear implements ActivationFunction {
 
     @Override
     public ArrayList<Double> getColour() {
+        // Create a list of doubles
         ArrayList<Double> col = new ArrayList<>();
+        // Add the colour values
         col.add(0.0);
         col.add(0.0);
         col.add(0.0);
+        // Return the list
         return col;
     }
 }

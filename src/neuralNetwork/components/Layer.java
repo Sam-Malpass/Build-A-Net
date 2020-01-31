@@ -11,6 +11,9 @@ import java.util.ArrayList;
 
 public class Layer implements Serializable {
 
+    /**
+     * serialversionUID allows for serialization of the object
+     */
     private static final long serialversionUID = 1L;
 
     /**

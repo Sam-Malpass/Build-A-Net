@@ -25,4 +25,15 @@ public class Generator {
     public static long genLong() {
         return randomiser.nextLong();
     }
+
+    /**
+     * Function genDouble()
+     * <p>
+     *     Returns a random double
+     * </p>
+     * @return radom double
+     */
+    public static double genDouble() {
+        return randomiser.nextDouble();
+    }
 }

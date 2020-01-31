@@ -10,7 +10,11 @@ import java.io.Serializable;
 
 public interface LearningAlgorithm extends Serializable {
 
+    /**
+     * serialversionUID allows for the serialization of objects
+     */
     long serialversionUID = 1L;
+
     /**
      * Function runAlgorithm runs the algorithm on the network
      */

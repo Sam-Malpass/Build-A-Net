@@ -6,7 +6,6 @@
  */
 package application.commands;
 
-import application.Main;
 import application.wrappers.IntegerWrapper;
 import java.util.ArrayList;
 

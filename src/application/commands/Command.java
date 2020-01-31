@@ -6,8 +6,6 @@
  */
 package application.commands;
 
-import java.util.ArrayList;
-
 public abstract class Command {
 
     /**

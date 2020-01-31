@@ -1,3 +1,9 @@
+/**
+ * NeuronSelectWindowController
+ * @author Sam Malpass
+ * @version 0.0.1
+ * @since 0.0.1
+ */
 package graphicalUserInterface.controllers;
 
 import javafx.application.Platform;
