@@ -9,6 +9,8 @@ package graphicalUserInterface.controllers;
 import application.commands.*;
 import application.fileHandler.FileHandler;
 import application.integrator.Integrator;
+import application.wrappers.DoubleWrapper;
+import application.wrappers.IntegerWrapper;
 import graphicalUserInterface.MessageBus;
 import graphicalUserInterface.drawers.NetworkDrawer;
 import graphicalUserInterface.drawers.ToolboxDrawer;
@@ -96,11 +98,19 @@ public class ApplicationWindowController implements Initializable {
     private NetworkDrawer networkDrawer;
     private ToolboxDrawer toolboxDrawer;
 
-    // Declare the list of colour values
+    /**
+     * colourVals holds a list of all the lists of colour values for each neuron type
+     */
     ArrayList<ArrayList<Double>> colourVals = new ArrayList<>();
-    // Declare the list of neuron names
+
+    /**
+     * neuronNames holds a list of names for every type of neuron loaded in the application
+     */
     ArrayList<String> neuronNames = new ArrayList<>();
 
+    /**
+     * neuronTypes holds a list of all the activation functions that have been loaded in
+     */
     ArrayList<ActivationFunction> neuronTypes = new ArrayList<>();
 
     private ContextMenu menu;
@@ -127,12 +137,12 @@ public class ApplicationWindowController implements Initializable {
     /**
      * maxEpochs stores a number for the max epochs as set by the user
      */
-    private int maxEpochs;
+    private IntegerWrapper maxEpochs;
 
     /**
      * minError stores a number for the minimum error to aim for
      */
-    private double minError;
+    private DoubleWrapper minError;
 
     /**
      * learningRate holds the learning rate of the network that is currently being built
@@ -187,9 +197,9 @@ public class ApplicationWindowController implements Initializable {
         // Set the momentum to a default value
         momentum = 0.0;
         // Set the minError to a min value
-        minError = 0.0;
+        minError = new DoubleWrapper(0.0);
         // Set the maxEpochs to a min value
-        maxEpochs = 0;
+        maxEpochs = new IntegerWrapper(0);
         // Create an empty neural network object
         neuralNetwork = new Network();
         // Set the currStatus to status 0
@@ -599,14 +609,21 @@ public class ApplicationWindowController implements Initializable {
         // Check the input is an integer
         if(window.getResult().matches("\\d+")) {
             // Set it
-            maxEpochs = Integer.parseInt(window.getResult());
+            //maxEpochs = Integer.parseInt(window.getResult());
+            SetMaxEpochs set = new SetMaxEpochs();
+            ArrayList<Object> args = new ArrayList<>();
+            args.add(maxEpochs);
+            args.add(Integer.parseInt(window.getResult()));
+            set.executeCommand(args);
+            commandStack.add(set);
+            write("Value of maxEpochs: " + maxEpochs);
         }
         // Otherwise
         else {
             // Output error to user
             write("Given number could not be parsed", "-e");
             // Reset maxEpochs
-            maxEpochs = 0;
+            maxEpochs.value = 0;
         }
         updateStatusBox();
     }
@@ -630,14 +647,20 @@ public class ApplicationWindowController implements Initializable {
         // If the input is a double
         if(window.getResult().matches("[0-9]+.[0-9]+")) {
             // Set the minError
-            minError = Double.parseDouble(window.getResult());
+            //minError = Double.parseDouble(window.getResult());
+            SetMinError set = new SetMinError();
+            ArrayList<Object> args = new ArrayList<>();
+            args.add(minError);
+            args.add(Double.parseDouble(window.getResult()));
+            set.executeCommand(args);
+            commandStack.add(set);
         }
         // Otherwise
         else {
             // Output error to the user
             write("Given number could not be parsed", "-e");
             // Reset the minError
-            minError = 0.0;
+            minError.value = 0.0;
         }
         updateStatusBox();
     }
@@ -860,6 +883,8 @@ public class ApplicationWindowController implements Initializable {
             selectedLayer = -1;
             // Update the canvas
             updateNetworkCanvas();
+            // Update the status box
+            updateStatusBox();
         }
         else {
             // Output error message
@@ -887,6 +912,8 @@ public class ApplicationWindowController implements Initializable {
             cmd.executeCommand();
             // Update the canvas
             updateNetworkCanvas();
+            // Update the status box
+            updateStatusBox();
         }
         else  {
             // Output error message
@@ -1007,14 +1034,14 @@ public class ApplicationWindowController implements Initializable {
         // Create the error message
         String errorMessage = "";
         // If the maxEpochs is less than or equal to 0
-        if(maxEpochs <= 0) {
+        if(maxEpochs.value <= 0) {
             // Update the error message
             errorMessage += "Max epochs ";
             // Set the flag
             paramsFlag = false;
         }
         // If the minError is negative
-        if(minError <= 0.0) {
+        if(minError.value <= 0.0) {
             // Update the error message
             errorMessage += "Min Error ";
             // Set the flag
