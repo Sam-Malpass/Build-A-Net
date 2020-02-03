@@ -1363,7 +1363,7 @@ public class ApplicationWindowController implements Initializable {
             // If not enough neurons in input layer
             else {
                 // Output error message
-                write("You do not have the correct amount of neurons in the input layer for this data set\nNeurons required: "+dataset.numAttributes(), "-e");
+                write("You do not have the correct amount of neurons in the input layer for this data set\nNeurons required: "+dataset.numEntries(), "-e");
             }
         }
         // If no data is loaded

@@ -1,5 +1,5 @@
 /**
- * OR
+ * AND
  * @author Sam Malpass
  * @version 0.0.1
  * @since 0.0.1
@@ -9,32 +9,32 @@ package data;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class OR extends Dataset {
+public class AND extends Dataset {
 
     /**
      * Constructor with no arguments
      * <p>
-     *     Creates the OR data set
+     *     Creates the AND data set
      * </p>
      */
-    public OR() {
-        // Declare and set the column headers
+    public AND() {
+        // Create the ArrayList for headers of columns
         String[] heads = {"X1", "X2", "Output"};
         ArrayList<String> headers = new ArrayList<>(Arrays.asList(heads));
         setColumnHeaders(headers);
-        // Declare and set the dataframe
+        // Create the Dataframe
         ArrayList<ArrayList<Object>> data = new ArrayList<>();
-        Double[][] cols = {{1.0, 1.0, 0.0, 0.0}, {1.0, 0.0, 1.0, 0.0}, {1.0, 1.0, 1.0, 0.0}};
+        Double[][] cols = {{1.0, 1.0, 0.0, 0.0}, {1.0, 0.0, 1.0, 0.0}, {1.0, 0.0, 0.0, 0.0}};
         for(int i = 0; i < cols.length; i++) {
             data.add(new ArrayList<>(Arrays.asList(cols[i])));
         }
         setDataFrame(data);
-        // Set the input columns
+        // Declare the input columns
         ArrayList<Integer> inputs = new ArrayList<>();
         inputs.add(0);
         inputs.add(1);
         setInputCols(inputs);
-        // Set the output columns
+        // Declare the output columns
         ArrayList<Integer> outputs = new ArrayList<>();
         outputs.add(2);
         setOutputCols(outputs);
@@ -43,25 +43,25 @@ public class OR extends Dataset {
     /**
      * Function toString()
      * <p>
-     *     Returns a string of the data frame for output to the console
+     *     Allows for the output of the data set in string format
      * </p>
-     * @return the string
+     * @return the string of the data
      */
     public String toString() {
-        // Declare the String
+        // Declare the string
         String string = "";
         // For all the column headers
         for(String s : getColumnHeaders()) {
-            // Append them to the string
+            // Add them to the string
             string = string + s + "\t";
         }
-        // Add a new line
+        // Add a newline to the string
         string += "\n";
-        // For all datum
+        // For all the datums
         for(int j = 0; j < numEntries(); j++) {
-            // For all columns
+            // For all the columns
             for (int i = 0; i < numAttributes(); i++) {
-                // Add the value from each column of that row
+                // Append the value of each column of the datum to the string
                 string += getDataFrame().get(i).get(j) + "\t";
             }
             // Add a newline

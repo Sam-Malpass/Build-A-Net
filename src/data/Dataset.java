@@ -26,13 +26,13 @@ public abstract class Dataset {
 
 
     /**
-     * Function numAttributes()
+     * Function numEntries()
      * <p>
-     *     Return the number of columns in the data
+     *     Return the number of rows in the data
      * </p>
-     * @return number of columns in data frame
+     * @return number of rows in data frame
      */
-    public int numAttributes() {
+    public int numEntries() {
         // Return the number of attributes
         return dataFrame.get(0).size();
     }
@@ -46,13 +46,13 @@ public abstract class Dataset {
     }
 
     /**
-     * Function numEntries()
+     * Function numAttributes()
      * <p>
-     *     Returns the number of rows in the data
+     *     Returns the number of cols in the data
      * </p>
-     * @return number of rows in data frame
+     * @return number of cols in data frame
      */
-    public int numEntries() {
+    public int numAttributes() {
         // Return the number of rows
         return dataFrame.size();
     }
