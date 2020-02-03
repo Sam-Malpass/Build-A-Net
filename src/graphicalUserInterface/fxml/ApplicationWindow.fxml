@@ -20,7 +20,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="graphicalUserInterface.controllers.ApplicationWindowController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="graphicalUserInterface.controllers.ApplicationWindowController">
    <bottom>
       <SplitPane fx:id="splitPaneBottom" dividerPositions="0.7942097026604069" prefHeight="162.0" prefWidth="1280.0" BorderPane.alignment="CENTER">
         <items>
@@ -44,9 +44,9 @@
                 <Menu fx:id="file" mnemonicParsing="false" text="File">
                   <items>
                         <MenuItem fx:id="newNet" mnemonicParsing="false" onAction="#newNetwork" text="New..." />
-                        <MenuItem fx:id="openNetwork" mnemonicParsing="false" text="Open..." onAction="#openNetwork" />
-                        <MenuItem fx:id="saveNet" mnemonicParsing="false" text="Save" onAction="#save"/>
-                        <MenuItem fx:id="saveNetAs" mnemonicParsing="false" text="Save As..." onAction="#saveAs"/>
+                        <MenuItem fx:id="openNetwork" mnemonicParsing="false" onAction="#openNetwork" text="Open..." />
+                        <MenuItem fx:id="saveNet" mnemonicParsing="false" onAction="#save" text="Save" />
+                        <MenuItem fx:id="saveNetAs" mnemonicParsing="false" onAction="#saveAs" text="Save As..." />
                         <MenuItem fx:id="settings" mnemonicParsing="false" text="Settings" />
                         <SeparatorMenuItem mnemonicParsing="false" />
                     <MenuItem fx:id="exit" mnemonicParsing="false" onAction="#exit" text="Exit" />
@@ -54,8 +54,8 @@
                 </Menu>
                 <Menu fx:id="edit" mnemonicParsing="false" text="Edit">
                   <items>
-                    <MenuItem fx:id="undo" mnemonicParsing="false" text="Undo" onAction="#undoAction"/>
-                        <MenuItem fx:id="redo" mnemonicParsing="false" text="Redo" onAction="#redoAction" />
+                    <MenuItem fx:id="undo" mnemonicParsing="false" onAction="#undoAction" text="Undo" />
+                        <MenuItem fx:id="redo" mnemonicParsing="false" onAction="#redoAction" text="Redo" />
                   </items>
                 </Menu>
                 <Menu fx:id="help" mnemonicParsing="false" text="Help">
@@ -109,9 +109,9 @@
                         <Line endX="100.0" startX="-100.0" />
                         <ScrollPane prefHeight="400.0" prefWidth="245.0">
                           <content>
-                            <AnchorPane fx:id="toolboxPane" minHeight="0.0" minWidth="245.0" prefHeight="400.0" prefWidth="245.0">
+                            <AnchorPane fx:id="toolboxPane" maxWidth="244.0" minHeight="0.0" minWidth="244.0" prefHeight="400.0" prefWidth="244.0">
                                  <children>
-                                    <Canvas fx:id="toolboxCanvas" height="400.0" width="245.0" />
+                                    <Canvas fx:id="toolboxCanvas" height="400.0" width="244.0" />
                                  </children></AnchorPane>
                           </content>
                         </ScrollPane>

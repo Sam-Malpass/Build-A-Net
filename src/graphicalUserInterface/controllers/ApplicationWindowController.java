@@ -83,6 +83,9 @@ public class ApplicationWindowController implements Initializable {
     @FXML
     private AnchorPane canvasPane;
 
+    @FXML
+    private AnchorPane toolboxPane;
+
     /**
      * graphicsContext holds the graphics context for the network canvas
      */
@@ -1250,6 +1253,11 @@ public class ApplicationWindowController implements Initializable {
         }
 
         /*INSERT CODE FOR EXTERNAL NEURONS HERE*/
+
+        if(neuronTypes.size() * 100 > 400) {
+            toolboxCanvas.setHeight(neuronTypes.size() * 100);
+            toolboxPane.setPrefHeight(toolboxCanvas.getHeight());
+        }
 
         toolboxDrawer.drawToolBox(toolboxCanvas.getHeight(), colourVals, neuronNames);
 
