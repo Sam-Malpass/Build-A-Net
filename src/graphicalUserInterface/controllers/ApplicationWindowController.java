@@ -290,6 +290,11 @@ public class ApplicationWindowController implements Initializable {
         // Prepare the canvas
         networkDrawer.resetArea(networkCanvas.getWidth());
         fileHandler = new FileHandler();
+
+        /* DEBUG */
+        dataset = new OR();
+        dataFlag = true;
+        write("OR data loaded:\n" + dataset.toString());
     }
 
     /**
@@ -1068,6 +1073,11 @@ public class ApplicationWindowController implements Initializable {
             // Highlight the selectedLayer
             networkDrawer.highlightLayer(selectedLayer);
         }
+        // If the network is connected
+        if(neuralNetwork.getConnectedFlag()) {
+            // Draw the connections
+            drawConnections();
+        }
     }
 
     /**
@@ -1078,24 +1088,50 @@ public class ApplicationWindowController implements Initializable {
      * @return the string
      */
     private String checkStatus() {
+        // Check that there are at least 2 layers (input and output layers)
         if(neuralNetwork.numLayers() >= 2 && currStatus == 0) {
+            // Set the current status
             currStatus = 1;
         }
+        // Otherwise
         else {
+            // Create a temporary variable
             boolean neurons = true;
+            // Check whether there are no layers
             if(neuralNetwork.numLayers() == 0){
+                // Set the flag to false
                 neurons = false;
             }
-            for (int i = 0; i < neuralNetwork.numLayers(); i++) {
-                if (neuralNetwork.getLayer(i).numNeurons() <= 0) {
-                    neurons = false;
+            // Otherwise
+            else {
+                // For all layers of the network
+                for (int i = 0; i < neuralNetwork.numLayers(); i++) {
+                    // If the layer i has 0 neurons
+                    if (neuralNetwork.getLayer(i).numNeurons() <= 0) {
+                        // Set the flag to false
+                        neurons = false;
+                    }
                 }
             }
-            if (neurons) {
+            // If flag is true
+            if (neurons == true) {
+                // Set the current status
                 currStatus = 2;
-            }
-            else {
-
+                // If the dataset is not null
+                if(!(dataset == null)){
+                    // Set the current status
+                    currStatus = 3;
+                    // Check if the number of input neurons matches the number of input attributes
+                    if(dataset.numInputs() == neuralNetwork.getLayer(0).numNeurons()) {
+                        // Set the current status
+                        currStatus = 4;
+                        // Check if the number of output neurons matches the number of output values
+                        if(dataset.numOutputs() == neuralNetwork.getLayer(neuralNetwork.numLayers()-1).numNeurons()) {
+                            // Set the current status
+                            currStatus = 5;
+                        }
+                    }
+                }
             }
         }
         // Check the status
@@ -1286,15 +1322,54 @@ public class ApplicationWindowController implements Initializable {
         });
     }
 
+    /**
+     * Function drawConnections()
+     * <p>
+     *     Draws the network connections using the networkDrawer
+     * </p>
+     */
+    private void drawConnections() {
+        // Draw network connections
+        networkDrawer.drawConnections(neuralNetwork);
+    }
+
+    /**
+     * Function connectLayers()
+     * <p>
+     *     Checks that the input and output layers have the right amount of neurons for the data sets then attempts
+     *     to connect the network
+     * </p>
+     */
     @FXML
     private void connectLayers() {
+        // Check that data is loaded
         if(dataFlag) {
-            if(neuralNetwork.getLayer(0).numNeurons() == dataset.numAttributes()) {
-
+            // Check that there are the right amount of input neurons
+            if(neuralNetwork.getLayer(0).numNeurons() == dataset.numInputs()) {
+                // Check that there are the right amount of output neurons
+                if(neuralNetwork.getLayer(neuralNetwork.numLayers()-1).numNeurons() == dataset.numOutputs()) {
+                    // Connect the layers
+                    neuralNetwork.connectLayers(dataset.numInputs());
+                    // Draw the connections
+                    drawConnections();
+                    write("Neural network layers connected successfully!");
+                }
+                // If not enough neurons in output layer
+                else {
+                    // Output error message
+                    write("You do not have the correct amount of output neurons for this data set\nNeurons required: " + dataset.numOutputs(), "-e");
+                }
             }
+            // If not enough neurons in input layer
             else {
-                write("You do not have enough neurons in the input layer for this data set\nNeurons required: "+dataset.numAttributes(), "-e");
+                // Output error message
+                write("You do not have the correct amount of neurons in the input layer for this data set\nNeurons required: "+dataset.numAttributes(), "-e");
             }
+        }
+        // If no data is loaded
+        else {
+            // Output error message
+            write("No data file is selected", "-e");
         }
     }
 

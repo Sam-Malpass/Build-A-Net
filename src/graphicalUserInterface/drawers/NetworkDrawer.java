@@ -9,10 +9,13 @@ package graphicalUserInterface.drawers;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.ArcType;
+import neuralNetwork.Network;
 import java.util.ArrayList;
 
 public class NetworkDrawer {
 
+    double yposFrom;
+    double yposTo;
     /**
      * context holds the space to be drawn with
      */
@@ -172,5 +175,95 @@ public class NetworkDrawer {
         context.strokeLine(layer * 100, 475, (layer * 100) + 100, 475);
         // Reset the width
         context.setLineWidth(1);
+    }
+
+    /**
+     * Function drawConnection()
+     * <p>
+     *     Takes the layer that the neurons to draw from are in and draws a connection from that layer to the next at given positions
+     * </p>
+     * @param layerID is the layer being drawn from
+     */
+    private void drawConnection(int layerID) {
+        // Calculate the xposFrom (Starting x coordinate)
+        double xposFrom = (layerID * 100) + 50 + 12.5;
+        // Calculate the xposTo (Ending x coordinate)
+        double xposTo = ((layerID + 1) * 100) + 50 - 12.5;
+        // Set stroke colour
+        context.setStroke(Color.BLACK);
+        // Draw the line
+        context.strokeLine(xposFrom, yposFrom, xposTo, yposTo);
+    }
+
+    /**
+     * Function drawConnections()
+     * <p>
+     *     For all layers in the passed network, finds all neurons in that layer and draws connections between the neurons in said layer to each neuron
+     *     in the next layer
+     * </p>
+     * @param network is the network to connect
+     */
+    public void drawConnections(Network network) {
+        // For all layers
+        for(int i = 0; i < network.numLayers(); i++) {
+            // If the layer is the output layer
+            if(i == network.numLayers() - 1) {
+                // Exit the loop to avoid errors
+                break;
+            }
+            // Set the starting yposFrom for the layer
+            yposFrom = 0;
+            for(int j = 0; j < network.getLayer(i).numNeurons() || j > 7; j++) {
+                // Create a dummy variable
+                double tmp;
+                // Check that number of neurons in the layer is not max displyable
+                if (network.getLayer(i).numNeurons() <= 8) {
+                    // Set the interval
+                    tmp = 475 / (double) network.getLayer(i).numNeurons() + 1;
+                }
+                else {
+                    // Set the interval
+                    tmp = 60.375;
+                }
+                // If yposFrom has not been used yet
+                if(yposFrom == 0) {
+                    // Perform this setting
+                    yposFrom = yposFrom + (0.5 * tmp) - 12.5;
+                }
+                // Otherwise
+                else {
+                    // Set to this value
+                    yposFrom = yposFrom + tmp;
+                }
+                // Set the yposTo to 0
+                yposTo = 0;
+                // For all neurons in the next layer
+                for(int k = 0; k < network.getLayer(i+1).numNeurons() || k > 7; k++) {
+                    // Create a dummy variable
+                    double tmp2;
+                    // Check that the number of neurons in the layer is not max displayable
+                    if (network.getLayer(i+1).numNeurons() <= 8) {
+                        // Set the interval
+                        tmp2 = 475 / (double) network.getLayer(i+1).numNeurons() + 1;
+                    }
+                    else {
+                        // Set the interval
+                        tmp2 = 60.375;
+                    }
+                    // If this is the first neuron
+                    if(yposTo == 0) {
+                        // Set to this
+                        yposTo = yposTo + (0.5 * tmp2) - 12.5;
+                    }
+                    // Otherwise
+                    else {
+                        // Increment as so
+                        yposTo = yposTo + tmp2;
+                    }
+                    // Draw the connection
+                    drawConnection(i);
+                }
+            }
+        }
     }
 }

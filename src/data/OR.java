@@ -27,6 +27,15 @@ public class OR extends Dataset {
             data.add(new ArrayList<>(Arrays.asList(cols[i])));
         }
 
+        ArrayList<Integer> inputs = new ArrayList<>();
+        inputs.add(0);
+        inputs.add(1);
+        setInputCols(inputs);
+
+        ArrayList<Integer> outputs = new ArrayList<>();
+        outputs.add(2);
+        setOutputCols(outputs);
+
         setColumnHeaders(headers);
         setDataFrame(data);
 
@@ -35,13 +44,13 @@ public class OR extends Dataset {
     public String toString() {
         String string = "";
         for(String s : getColumnHeaders()) {
-            string = string + s + " ";
+            string = string + s + "\t";
         }
         string += "\n";
         for(ArrayList<Object> a : getDataFrame())
         {
             for(Object o : a) {
-                string += o.toString() + " ";
+                string += o.toString() + "\t";
             }
             string += "\n";
         }

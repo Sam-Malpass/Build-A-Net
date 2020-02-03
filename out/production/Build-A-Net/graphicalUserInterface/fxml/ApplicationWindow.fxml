@@ -118,7 +118,7 @@
                         <ToolBar prefHeight="42.0" prefWidth="260.0">
                           <items>
                             <Button fx:id="addLayerButton" mnemonicParsing="false" onAction="#addLayer" prefHeight="25.0" prefWidth="120.0" text="Add Layer" />
-                              <Button fx:id="connectLayers" mnemonicParsing="false" prefHeight="25.0" prefWidth="120.0" text="Connect Layers" />
+                              <Button fx:id="connectLayers" mnemonicParsing="false" prefHeight="25.0" prefWidth="120.0" text="Connect Layers" onAction="#connectLayers"/>
                           </items>
                         </ToolBar>
                      </children>

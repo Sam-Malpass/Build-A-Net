@@ -20,10 +20,10 @@ public abstract class Dataset {
      */
     private ArrayList<String> columnHeaders;
 
-    /**
-     * numOutputs holds the number of outputs expected
-     */
-    private int numOutputs;
+    private ArrayList<Integer> inputCols;
+
+    private ArrayList<Integer> outputCols;
+
 
     /**
      * Function numAttributes()
@@ -37,6 +37,14 @@ public abstract class Dataset {
         return dataFrame.get(0).size();
     }
 
+    public int numInputs() {
+        return inputCols.size();
+    }
+
+    public int numOutputs() {
+        return outputCols.size();
+    }
+
     /**
      * Function numEntries()
      * <p>
@@ -47,18 +55,6 @@ public abstract class Dataset {
     public int numEntries() {
         // Return the number of rows
         return dataFrame.size();
-    }
-
-    /**
-     * Function getNumOutputs()
-     * <p>
-     *     Returns the number of outputs expected
-     * </p>
-     * @return numOutputs
-     */
-    public int getNumOutputs() {
-        // Return numOutputs
-        return numOutputs;
     }
 
     /**
@@ -107,5 +103,13 @@ public abstract class Dataset {
     public void setDataFrame(ArrayList<ArrayList<Object>> dataFrame) {
         // Set the dataFrame
         this.dataFrame = dataFrame;
+    }
+
+    public void setInputCols(ArrayList<Integer> colNums) {
+        inputCols = colNums;
+    }
+
+    public void setOutputCols(ArrayList<Integer> colNums) {
+        outputCols = colNums;
     }
 }
