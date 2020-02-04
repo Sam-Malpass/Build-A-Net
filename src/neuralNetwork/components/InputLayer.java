@@ -34,6 +34,7 @@ public class InputLayer extends Layer {
         for(Neuron n : super.getNeurons()) {
             n.connectNeuron(1);
         }
+
     }
 
     /**
@@ -45,6 +46,7 @@ public class InputLayer extends Layer {
      */
     @Override
     public void calculateOutputs(ArrayList<Double> inputs) {
+        getOutputs().clear();
         // For all input items
         for(int i = 0; i < inputs.size(); i++) {
             // Create a temporary list
@@ -67,7 +69,12 @@ public class InputLayer extends Layer {
      */
     @Override
     public void findDeltas(ArrayList<Double> errors) {
-        // STUB LOOK AT LATER
+        return;
+    }
+
+    @Override
+    public void updateWeights(ArrayList<Double> ins, double lRate, double momentum) {
+        return;
     }
 
 }

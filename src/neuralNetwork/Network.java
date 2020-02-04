@@ -7,10 +7,10 @@
 package neuralNetwork;
 
 import application.Main;
+import application.converter.LayerConverter;
 import data.Dataset;
-import neuralNetwork.components.Layer;
-import neuralNetwork.components.Neuron;
-import neuralNetwork.components.NeutralLayer;
+import javafx.application.Platform;
+import neuralNetwork.components.*;
 import neuralNetwork.learningAlgorithms.LearningAlgorithm;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -59,6 +59,9 @@ public class Network implements Serializable {
 
     private double sse = Double.MAX_VALUE;
 
+    private double learnRate;
+
+    private double momentum;
 
     /**
      * Constructor with no arguments
@@ -234,6 +237,7 @@ public class Network implements Serializable {
      * @param numInputAttributes is the number of inputs to the network
      */
     public void connectLayers(int numInputAttributes) {
+        debug();
         // Check there are enough input neurons to handle the inputs
         if(numInputAttributes == networkLayers.get(0).numNeurons()) {
             // Connect the first layer
@@ -280,19 +284,23 @@ public class Network implements Serializable {
         ArrayList<Object> args = new ArrayList<>();
         args.add(this);
         args.add(data);
-        args.add(learnRate);
-        args.add(momentum);
+        this.learnRate = learnRate;
+        this.momentum = momentum;
         Main.passMessage("Beginning Training...");
         // For all epochs
         for(int i = 1; i < maxEpochs; i++) {
             if(sse <= minError) {
                 break;
             }
-            // Run the algorithm
             learningAlgorithm.runAlgorithm(args);
-            sse = learningAlgorithm.getCurrSSE().get(learningAlgorithm.getCurrSSE().size()-1);
-            if(i % 100 == 0) {
-                Main.passMessage("Passing Epoch " + i + " with SSE of: " + sse);
+            final int epoch = i;
+            if(i % 10 == 0) {
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        Main.passMessage("Training at epoch " + epoch + " with an SSE of " + sse);
+                    }
+                });
             }
         }
         Main.passMessage("Training completed with final SSE of: " + sse);
@@ -483,5 +491,29 @@ public class Network implements Serializable {
     public void setModified(boolean passed) {
         // Set the modified flag
         modified = passed;
+    }
+
+    public double getLearnRate() {
+        return learnRate;
+    }
+
+    public double getMomentum() {
+        return momentum;
+    }
+
+    public double getSSE() {
+        return sse;
+    }
+
+    public void setSSE(double newVal) {
+        this.sse = newVal;
+    }
+
+    public void debug(){
+        networkLayers.set(0, LayerConverter.convert(networkLayers.get(0), 0));
+        for(int i = 1; i < networkLayers.size()-1; i++) {
+            networkLayers.set(i, LayerConverter.convert(networkLayers.get(i), 1));
+        }
+        networkLayers.set(networkLayers.size()-1, LayerConverter.convert(networkLayers.get(networkLayers.size()-1), 2));
     }
 }

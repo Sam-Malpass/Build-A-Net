@@ -56,4 +56,9 @@ public class NeutralLayer extends Layer {
     public void findDeltas(ArrayList<Double> errors) {
         return;
     }
+
+    @Override
+    public void updateWeights(ArrayList<Double> ins, double lRate, double momentum) {
+        return;
+    }
 }

@@ -54,6 +54,8 @@ public abstract class Layer implements Serializable {
      * </p>
      */
     public void initializeLayer() {
+        outputs = new ArrayList<>();
+        deltas = new ArrayList<>();
         // For all neurons in the layer
         for(Neuron n : neurons) {
             // Initialize the neuron
@@ -184,5 +186,11 @@ public abstract class Layer implements Serializable {
      */
     public ArrayList<Double> getDeltas() {
         return deltas;
+    }
+
+    public abstract void updateWeights(ArrayList<Double> ins, double lRate, double momentum);
+
+    public void setNeurons(ArrayList<Neuron> neurons) {
+        this.neurons = neurons;
     }
 }

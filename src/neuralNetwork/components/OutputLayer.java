@@ -46,6 +46,7 @@ public class OutputLayer extends Layer {
      */
     @Override
     public void calculateOutputs(ArrayList<Double> inputs) {
+        getOutputs().clear();
         // For all neurons in layer
         for(Neuron n : super.getNeurons()) {
             // Calculate the output
@@ -64,6 +65,16 @@ public class OutputLayer extends Layer {
      */
     @Override
     public void findDeltas(ArrayList<Double> errors) {
-        // STUB FILL LATER
+        for(int i = 0; i < errors.size(); i++) {
+            super.getNeurons().get(i).findDelta(errors.get(i));
+            super.getDeltas().add(super.getNeurons().get(i).getDelta());
+        }
+    }
+
+    @Override
+    public void updateWeights(ArrayList<Double> ins, double lRate, double momentum) {
+        for(Neuron n : super.getNeurons()) {
+            n.updateWeights(ins, lRate, momentum);
+        }
     }
 }
