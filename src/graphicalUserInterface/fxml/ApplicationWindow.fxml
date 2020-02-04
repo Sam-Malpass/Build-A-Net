@@ -67,7 +67,7 @@
             </MenuBar>
             <ToolBar prefHeight="40.0" prefWidth="200.0">
               <items>
-                  <Button fx:id="trainNetwork" mnemonicParsing="false" text="Train Network" />
+                  <Button fx:id="trainNetwork" mnemonicParsing="false" text="Train Network" onAction="#trainNetwork" />
                 <Button fx:id="testNetwork" alignment="CENTER" mnemonicParsing="false" text="Test Network" />
                   <Button fx:id="setEpochs" mnemonicParsing="false" onAction="#setMaxEpochs" text="Set Max Epochs" />
                   <Button fx:id="setError" mnemonicParsing="false" onAction="#setMinError" prefHeight="25.0" prefWidth="100.0" text="Set Min Error" />

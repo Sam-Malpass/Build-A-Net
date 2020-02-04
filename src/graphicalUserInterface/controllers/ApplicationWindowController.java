@@ -33,6 +33,7 @@ import javafx.stage.Stage;
 import neuralNetwork.Network;
 import neuralNetwork.activationFunctions.ActivationFunction;
 import neuralNetwork.components.Neuron;
+import neuralNetwork.learningAlgorithms.Backpropagation;
 
 import java.io.File;
 import java.io.IOException;
@@ -682,6 +683,20 @@ public class ApplicationWindowController implements Initializable {
             maxEpochs.value = 0;
         }
         updateStatusBox();
+    }
+
+    @FXML
+    private void trainNetwork() {
+        neuralNetwork.setLearningAlgorithm(new Backpropagation());
+        learningRate = (Double)learningRateSpinner.getValue();
+        momentum = (Double)momentumSpinner.getValue();
+        Thread t1 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                neuralNetwork.train(maxEpochs.value, minError.value, learningRate, momentum, dataset);
+            }
+        });
+        t1.start();
     }
 
     /**

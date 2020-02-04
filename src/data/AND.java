@@ -23,7 +23,7 @@ public class AND extends Dataset {
         ArrayList<String> headers = new ArrayList<>(Arrays.asList(heads));
         setColumnHeaders(headers);
         // Create the Dataframe
-        ArrayList<ArrayList<Object>> data = new ArrayList<>();
+        ArrayList<ArrayList<Double>> data = new ArrayList<>();
         Double[][] cols = {{1.0, 1.0, 0.0, 0.0}, {1.0, 0.0, 1.0, 0.0}, {1.0, 0.0, 0.0, 0.0}};
         for(int i = 0; i < cols.length; i++) {
             data.add(new ArrayList<>(Arrays.asList(cols[i])));

@@ -7,8 +7,10 @@
 package neuralNetwork;
 
 import application.Main;
+import data.Dataset;
 import neuralNetwork.components.Layer;
 import neuralNetwork.components.Neuron;
+import neuralNetwork.components.NeutralLayer;
 import neuralNetwork.learningAlgorithms.LearningAlgorithm;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -54,6 +56,8 @@ public class Network implements Serializable {
      * saved holds a flag to say whether the network has been saved
      */
     private boolean saved = false;
+
+    private double sse = Double.MAX_VALUE;
 
 
     /**
@@ -128,7 +132,7 @@ public class Network implements Serializable {
      */
     public void addNewLayer() {
         // Add a layer
-        networkLayers.add(new Layer());
+        networkLayers.add(new NeutralLayer());
         // Reset connected flag
         connected = false;
         // Reset trained flag;
@@ -272,12 +276,26 @@ public class Network implements Serializable {
      * @param learnRate is the learning rate
      * @param momentum is the momentum
      */
-    public void train(int maxEpochs, double minError, double learnRate, double momentum) {
+    public void train(int maxEpochs, double minError, double learnRate, double momentum, Dataset data) {
+        ArrayList<Object> args = new ArrayList<>();
+        args.add(this);
+        args.add(data);
+        args.add(learnRate);
+        args.add(momentum);
+        Main.passMessage("Beginning Training...");
         // For all epochs
         for(int i = 1; i < maxEpochs; i++) {
+            if(sse <= minError) {
+                break;
+            }
             // Run the algorithm
-            learningAlgorithm.runAlgorithm();
+            learningAlgorithm.runAlgorithm(args);
+            sse = learningAlgorithm.getCurrSSE().get(learningAlgorithm.getCurrSSE().size()-1);
+            if(i % 100 == 0) {
+                Main.passMessage("Passing Epoch " + i + " with SSE of: " + sse);
+            }
         }
+        Main.passMessage("Training completed with final SSE of: " + sse);
         // Update modified flag
         modified = true;
     }
@@ -291,6 +309,10 @@ public class Network implements Serializable {
      */
     public double test() {
         return 0.0;
+    }
+
+    public ArrayList<Double> getOutputs() {
+        return networkLayers.get(numLayers()-1).getOutputs();
     }
 
     /**

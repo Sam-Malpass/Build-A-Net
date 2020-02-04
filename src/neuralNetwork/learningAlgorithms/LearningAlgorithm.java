@@ -6,7 +6,11 @@
  */
 package neuralNetwork.learningAlgorithms;
 
+import data.Dataset;
+import neuralNetwork.Network;
+
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public interface LearningAlgorithm extends Serializable {
 
@@ -18,5 +22,7 @@ public interface LearningAlgorithm extends Serializable {
     /**
      * Function runAlgorithm runs the algorithm on the network
      */
-    void runAlgorithm();
+    void runAlgorithm(ArrayList<Object> args);
+
+    ArrayList<Double> getCurrSSE();
 }

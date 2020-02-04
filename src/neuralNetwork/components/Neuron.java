@@ -223,4 +223,16 @@ public class Neuron implements Serializable {
         // Return activationFunction
         return activationFunction;
     }
+
+    public ArrayList<Double> getWgtChange() {
+        return wgtChange;
+    }
+
+    public ArrayList<Double> getWeights() {
+        return weights;
+    }
+
+    public double getDelta() {
+        return delta;
+    }
 }

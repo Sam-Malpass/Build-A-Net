@@ -13,7 +13,7 @@ public abstract class Dataset {
     /**
      * dataFrame holds the data that has been read-in, split and pre-processed correctly
      */
-    private ArrayList<ArrayList<Object>> dataFrame;
+    private ArrayList<ArrayList<Double>> dataFrame;
 
     /**
      * columnHeaders is an optional field that allows for including headers when using the data frame
@@ -57,6 +57,26 @@ public abstract class Dataset {
         return dataFrame.size();
     }
 
+    public ArrayList<Double> getRow(int rowIndex) {
+        ArrayList<Double> row = new ArrayList<>();
+        for(int i = 0; i < numAttributes(); i++) {
+            if(!outputCols.contains(i)) {
+                row.add(dataFrame.get(i).get(rowIndex));
+            }
+        }
+        return row;
+    }
+
+    public ArrayList<Double> getRowExpected(int rowIndex) {
+        ArrayList<Double> row = new ArrayList<>();
+        for(int i = 0; i < numAttributes(); i++) {
+            if(outputCols.contains(i)) {
+                row.add(dataFrame.get(i).get(rowIndex));
+            }
+        }
+        return row;
+    }
+
     /**
      * Function getColumnHeaders()
      * <p>
@@ -88,7 +108,7 @@ public abstract class Dataset {
      * </p>
      * @return the dataFrame
      */
-    public ArrayList<ArrayList<Object>> getDataFrame() {
+    public ArrayList<ArrayList<Double>> getDataFrame() {
         // Return the dataFrame
         return dataFrame;
     }
@@ -100,7 +120,7 @@ public abstract class Dataset {
      * </p>
      * @param dataFrame is the new dataFrame
      */
-    public void setDataFrame(ArrayList<ArrayList<Object>> dataFrame) {
+    public void setDataFrame(ArrayList<ArrayList<Double>> dataFrame) {
         // Set the dataFrame
         this.dataFrame = dataFrame;
     }
