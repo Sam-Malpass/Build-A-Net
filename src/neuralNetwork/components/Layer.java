@@ -41,15 +41,11 @@ public abstract class Layer implements Serializable {
     /**
      * Function connect()
      * <p>
-     *     Connects creates the input connections to each neuron in the layer
+     *     Dependent on layer type
      * </p>
      * @param numInputs is the number of input connections each neuron needs
      */
-    public void connect(int numInputs) {
-        for(Neuron n : neurons) {
-            n.connectNeuron(numInputs);
-        }
-    }
+    public abstract void connect(int numInputs);
 
     /**
      * Function initializeLayer()

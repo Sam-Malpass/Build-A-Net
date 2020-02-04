@@ -1,6 +1,6 @@
 /**
- * NeutralLayer
- * @author Sam Malpas
+ * OutputLayer
+ * @author Sam Malpass
  * @version 0.0.1
  * @since 0.0.1
  */
@@ -8,7 +8,7 @@ package neuralNetwork.components;
 
 import java.util.ArrayList;
 
-public class NeutralLayer extends Layer {
+public class OutputLayer extends Layer {
 
     /**
      * Constructor with no arguments
@@ -16,7 +16,7 @@ public class NeutralLayer extends Layer {
      *     Calls parent constructor
      * </p>
      */
-    public NeutralLayer() {
+    public OutputLayer() {
         // Calls parent constructor
         super();
     }
@@ -24,36 +24,46 @@ public class NeutralLayer extends Layer {
     /**
      * Function connect()
      * <p>
-     *     Does nothing since this is a dummy class for building the network
+     *     Sets up neuron connections for each neuron based on the numImputs
      * </p>
      * @param numInputs is the number of input connections each neuron needs
      */
     @Override
     public void connect(int numInputs) {
-        return;
+        // For all neurons in layer
+        for(Neuron n : super.getNeurons()) {
+            // Set up connections for the neuron
+            n.connectNeuron(numInputs);
+        }
     }
 
     /**
      * Function calculateOutputs()
      * <p>
-     *     Does nothing since this is a dummy class for building the network
+     *     Calculates the outputs for the neurons in each layer
      * </p>
      * @param inputs are the inputs to the layer
      */
     @Override
     public void calculateOutputs(ArrayList<Double> inputs) {
-        return;
+        // For all neurons in layer
+        for(Neuron n : super.getNeurons()) {
+            // Calculate the output
+            n.calculateOutput(inputs);
+            // Add output to the list
+            super.getOutputs().add(n.getOutput());
+        }
     }
 
     /**
      * Function findDeltas()
      * <p>
-     *     Does nothing since this is a dummy class for building the network
+     *     Finds the deltas for the neurons in the layer
      * </p>
      * @param errors are the errors for the layer
      */
     @Override
     public void findDeltas(ArrayList<Double> errors) {
-        return;
+        // STUB FILL LATER
     }
 }
