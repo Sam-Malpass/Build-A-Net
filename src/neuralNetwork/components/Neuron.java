@@ -8,6 +8,8 @@ package neuralNetwork.components;
 
 import application.generator.Generator;
 import neuralNetwork.activationFunctions.ActivationFunction;
+
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -18,6 +20,8 @@ public class Neuron implements Serializable {
      * serialversionUID allows the object to be serialized
      */
     private static final long serialversionUID = 1L;
+
+    private String id;
 
     /**
      * activationFunction holds the ActivationFunction for the neuron
@@ -60,6 +64,7 @@ public class Neuron implements Serializable {
         this.activationFunction = activationFunction;
     }
 
+
     public void connectNeuron(int numInputs) {
         // For all inputs
         for(int i = 0; i <= numInputs; i++) {
@@ -96,10 +101,14 @@ public class Neuron implements Serializable {
      * @param inputs are the outputs of the previous layer
      */
     protected void calculateOutput(ArrayList<Double> inputs) {
+        System.out.println("Weights at Neuron " + id + ": " + weights.size());
         // Get the bias weight
         output = weights.get(0);
+        System.out.println("Bias weight is: " + weights.get(0));
         // For all remaining weights
         for (int i = 1; i < weights.size(); i++) {
+
+            System.out.println("Weight " + i + " is " + weights.get(i));
             // Add to the output the input times the weight
             output += inputs.get(i - 1) * weights.get(i);
         }
@@ -234,5 +243,13 @@ public class Neuron implements Serializable {
 
     public double getDelta() {
         return delta;
+    }
+
+    public void setID(String id) {
+        this.id = id;
+    }
+
+    public void setWeights(ArrayList<Double> newWgt) {
+        weights = newWgt;
     }
 }

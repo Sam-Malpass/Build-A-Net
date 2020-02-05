@@ -74,7 +74,21 @@ public class InputLayer extends Layer {
 
     @Override
     public void updateWeights(ArrayList<Double> ins, double lRate, double momentum) {
-        return;
+        ArrayList<Double> newWgts = new ArrayList<>();
+        newWgts.add(0.0);
+        newWgts.add(1.0);
+        for(Neuron n : getNeurons()) {
+            n.setWeights(newWgts);
+        }
     }
 
+    @Override
+    public void generateWeights() {
+        updateWeights(null, 0.0, 0.0);
+    }
+
+    @Override
+    public ArrayList<Double> findWeightedDeltas() {
+        return null;
+    }
 }

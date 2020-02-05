@@ -52,7 +52,7 @@ public class Backpropagation implements LearningAlgorithm {
     private void findDeltas(ArrayList<Double> errors) {
         for(int layerCT = network.numLayers()-1; layerCT > 0; layerCT--) {
             network.getLayer(layerCT).findDeltas(errors);
-            errors = network.getLayer(layerCT).getDeltas();
+            errors = network.getLayer(layerCT).findWeightedDeltas();
         }
     }
 

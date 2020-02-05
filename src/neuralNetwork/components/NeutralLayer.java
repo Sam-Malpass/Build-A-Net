@@ -61,4 +61,9 @@ public class NeutralLayer extends Layer {
     public void updateWeights(ArrayList<Double> ins, double lRate, double momentum) {
         return;
     }
+
+    @Override
+    public ArrayList<Double> findWeightedDeltas() {
+        return null;
+    }
 }

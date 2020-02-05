@@ -261,6 +261,9 @@ public class Network implements Serializable {
                 // Generate the weights
                 layer.generateWeights();
             }
+            for(int i = 0; i < networkLayers.size(); i++) {
+                networkLayers.get(i).generateIDs(i);
+            }
             // Alert the console
             Main.passMessage("Connection weights generated successfully");
             // Update the connected flag

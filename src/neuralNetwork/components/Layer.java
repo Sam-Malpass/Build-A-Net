@@ -193,4 +193,12 @@ public abstract class Layer implements Serializable {
     public void setNeurons(ArrayList<Neuron> neurons) {
         this.neurons = neurons;
     }
+
+     public abstract ArrayList<Double> findWeightedDeltas();
+
+    public void generateIDs(int layerNum) {
+        for(int i = 0; i < neurons.size(); i++) {
+            neurons.get(i).setID(layerNum + "-" + i);
+        }
+    }
 }
