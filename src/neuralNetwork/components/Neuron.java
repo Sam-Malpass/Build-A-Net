@@ -20,6 +20,11 @@ public class Neuron implements Serializable {
     private static final long serialversionUID = 1L;
 
     /**
+     * id holds the id value for the neuron
+     */
+    private String id;
+
+    /**
      * activationFunction holds the ActivationFunction for the neuron
      */
     private ActivationFunction activationFunction;
@@ -60,6 +65,14 @@ public class Neuron implements Serializable {
         this.activationFunction = activationFunction;
     }
 
+    /**
+     * Function connectNeuron()
+     * <p>
+     *     Generates input weights and weight change values in their lists based on the number of
+     *     inputs to the neuron
+     * </p>
+     * @param numInputs is the number of inputs to the neuron
+     */
     public void connectNeuron(int numInputs) {
         // For all inputs
         for(int i = 0; i <= numInputs; i++) {
@@ -69,6 +82,7 @@ public class Neuron implements Serializable {
             wgtChange.add(0.0);
         }
     }
+
     /**
      * Function initializeNeuron()
      * <p>
@@ -222,5 +236,65 @@ public class Neuron implements Serializable {
     public ActivationFunction getFunction() {
         // Return activationFunction
         return activationFunction;
+    }
+
+    /**
+     * Function getWgtChange()
+     * <p>
+     *     Returns the weight changes for neuron
+     * </p>
+     * @return the weight changes
+     */
+    public ArrayList<Double> getWgtChange() {
+        // Return the list of weight changes
+        return wgtChange;
+    }
+
+    /**
+     * Function getWeights()
+     * <p>
+     *     Return the list of weights
+     * </p>
+     * @return the list of weights
+     */
+    public ArrayList<Double> getWeights() {
+        // Return the list of weights
+        return weights;
+    }
+
+    /**
+     * Function getDelta()
+     * <p>
+     *     Return the delta for the neuron
+     * </p>
+     * @return the delta
+     */
+    public double getDelta() {
+        // Return delta
+        return delta;
+    }
+
+    /**
+     * Function setID()
+     * <p>
+     *     Set the id to the passed string
+     * </p>
+     * @param id is the ID to use
+     */
+    public void setID(String id) {
+        // Set the id
+        this.id = id;
+    }
+
+    /**
+     * Function setWeights()
+     * <p>
+     *     Set the list of weights to a passed list
+     * </p>
+     * @param newWgt is the list of weights to use
+     */
+    public void setWeights(ArrayList<Double> newWgt) {
+        // Set weights to the new list
+        weights = newWgt;
     }
 }

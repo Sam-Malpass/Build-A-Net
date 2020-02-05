@@ -14,8 +14,16 @@ import java.util.ArrayList;
 
 public class NetworkDrawer {
 
+    /**
+     * yposFrom holds the y-coordinate on the canvas to draw the start of a connection at
+     */
     double yposFrom;
+
+    /**
+     * yposTo holds the y-coordinate on the canvas to draw the end of a connection at
+     */
     double yposTo;
+
     /**
      * context holds the space to be drawn with
      */

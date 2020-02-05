@@ -7,8 +7,10 @@
 package neuralNetwork;
 
 import application.Main;
-import neuralNetwork.components.Layer;
-import neuralNetwork.components.Neuron;
+import application.converter.LayerConverter;
+import data.Dataset;
+import javafx.application.Platform;
+import neuralNetwork.components.*;
 import neuralNetwork.learningAlgorithms.LearningAlgorithm;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -55,6 +57,20 @@ public class Network implements Serializable {
      */
     private boolean saved = false;
 
+    /**
+     * sse holds the sse for the network as it is being trained
+     */
+    private double sse = Double.MAX_VALUE;
+
+    /**
+     * learnRate holds the learning rate for the network
+     */
+    private double learnRate;
+
+    /**
+     * momentum holds the momentum for the network
+     */
+    private double momentum;
 
     /**
      * Constructor with no arguments
@@ -128,7 +144,7 @@ public class Network implements Serializable {
      */
     public void addNewLayer() {
         // Add a layer
-        networkLayers.add(new Layer());
+        networkLayers.add(new NeutralLayer());
         // Reset connected flag
         connected = false;
         // Reset trained flag;
@@ -230,6 +246,7 @@ public class Network implements Serializable {
      * @param numInputAttributes is the number of inputs to the network
      */
     public void connectLayers(int numInputAttributes) {
+        debug();
         // Check there are enough input neurons to handle the inputs
         if(numInputAttributes == networkLayers.get(0).numNeurons()) {
             // Connect the first layer
@@ -253,6 +270,9 @@ public class Network implements Serializable {
                 // Generate the weights
                 layer.generateWeights();
             }
+            for(int i = 0; i < networkLayers.size(); i++) {
+                networkLayers.get(i).generateIDs(i);
+            }
             // Alert the console
             Main.passMessage("Connection weights generated successfully");
             // Update the connected flag
@@ -272,12 +292,30 @@ public class Network implements Serializable {
      * @param learnRate is the learning rate
      * @param momentum is the momentum
      */
-    public void train(int maxEpochs, double minError, double learnRate, double momentum) {
+    public void train(int maxEpochs, double minError, double learnRate, double momentum, Dataset data) {
+        ArrayList<Object> args = new ArrayList<>();
+        args.add(this);
+        args.add(data);
+        this.learnRate = learnRate;
+        this.momentum = momentum;
+        Main.passMessage("Beginning Training...");
         // For all epochs
         for(int i = 1; i < maxEpochs; i++) {
-            // Run the algorithm
-            learningAlgorithm.runAlgorithm();
+            if(sse <= minError) {
+                break;
+            }
+            learningAlgorithm.runAlgorithm(args);
+            final int epoch = i;
+            if(i % 10 == 0) {
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        Main.passMessage("Training at epoch " + epoch + " with an SSE of " + sse);
+                    }
+                });
+            }
         }
+        Main.passMessage("Training completed with final SSE of: " + sse);
         // Update modified flag
         modified = true;
     }
@@ -291,6 +329,18 @@ public class Network implements Serializable {
      */
     public double test() {
         return 0.0;
+    }
+
+    /**
+     * Function getOutputs()
+     * <p>
+     *     Returns the final output(s) of the network - the outputs from the final layer
+     * </p>
+     * @return the network output(s)
+     */
+    public ArrayList<Double> getOutputs() {
+        // Return the output(s)
+        return networkLayers.get(numLayers()-1).getOutputs();
     }
 
     /**
@@ -461,5 +511,68 @@ public class Network implements Serializable {
     public void setModified(boolean passed) {
         // Set the modified flag
         modified = passed;
+    }
+
+    /**
+     * Function getLearnRate()
+     * <p>
+     *     Returns the learnRate
+     * </p>
+     * @return the learnRate
+     */
+    public double getLearnRate() {
+        // Return the learnRate
+        return learnRate;
+    }
+
+    /**
+     * Function getMomentum()
+     * <p>
+     *     Return the momentum
+     * </p>
+     * @return the momentum
+     */
+    public double getMomentum() {
+        // Return momentum
+        return momentum;
+    }
+
+    /**
+     * Function getSSE()
+     * <p>
+     *     Returns the sse
+     * </p>
+     * @return the sse
+     */
+    public double getSSE() {
+        // Return sse
+        return sse;
+    }
+
+    /**
+     * Function setSSE()
+     * <p>
+     *     Sets the sse to a passed value
+     * </p>
+     * @param newVal is the newVal of the sse
+     */
+    public void setSSE(double newVal) {
+        // Set the sse to a passed value
+        this.sse = newVal;
+    }
+
+    /**
+     * Function debug()
+     * <p>
+     *     A temporary function to handle the conversion of layer types until full layer selection
+     *     is implemented.
+     * </p>
+     */
+    public void debug(){
+        networkLayers.set(0, LayerConverter.convert(networkLayers.get(0), 0));
+        for(int i = 1; i < networkLayers.size()-1; i++) {
+            networkLayers.set(i, LayerConverter.convert(networkLayers.get(i), 1));
+        }
+        networkLayers.set(networkLayers.size()-1, LayerConverter.convert(networkLayers.get(networkLayers.size()-1), 2));
     }
 }
