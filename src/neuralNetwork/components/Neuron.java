@@ -101,14 +101,10 @@ public class Neuron implements Serializable {
      * @param inputs are the outputs of the previous layer
      */
     protected void calculateOutput(ArrayList<Double> inputs) {
-        System.out.println("Weights at Neuron " + id + ": " + weights.size());
         // Get the bias weight
         output = weights.get(0);
-        System.out.println("Bias weight is: " + weights.get(0));
         // For all remaining weights
         for (int i = 1; i < weights.size(); i++) {
-
-            System.out.println("Weight " + i + " is " + weights.get(i));
             // Add to the output the input times the weight
             output += inputs.get(i - 1) * weights.get(i);
         }

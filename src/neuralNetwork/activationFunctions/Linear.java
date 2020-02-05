@@ -39,6 +39,13 @@ public class Linear implements ActivationFunction {
         return error;
     }
 
+    /**
+     * Function getColour()
+     * <p>
+     *     Returns the colour values for this activation function
+     * </p>
+     * @return the colour values as a list
+     */
     @Override
     public ArrayList<Double> getColour() {
         // Create a list of doubles
