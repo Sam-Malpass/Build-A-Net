@@ -64,41 +64,62 @@ public class HiddenLayer extends Layer {
      */
     @Override
     public void findDeltas(ArrayList<Double> errors) {
+        // For all errors in the list
         for(int i = 0; i < errors.size(); i++) {
+            // Get the given neuron at index i, and find the delta using the corresponding error
             super.getNeurons().get(i).findDelta(errors.get(i));
+            // Add the delta to the list of deltas in the layer
             super.getDeltas().add(super.getNeurons().get(i).getDelta());
         }
     }
 
+    /**
+     * Function updateWeights()
+     * <p>
+     *     Goes through all the neurons in the layer and updates their weights using the passed values
+     * </p>
+     * @param ins are the inputs to the layer
+     * @param lRate is the learning rate
+     * @param momentum is the momentum
+     */
     @Override
     public void updateWeights(ArrayList<Double> ins, double lRate, double momentum) {
+        // For all the neurons in the layer
         for(Neuron n : super.getNeurons()) {
+            // Update the weights of that neuron
             n.updateWeights(ins, lRate, momentum);
         }
     }
 
+    /**
+     * Function findWeightedDeltas()
+     * <p>
+     *     For all neurons, multiplies its delta by each of its weights and sums the total
+     *     That total is then added to the list of weighted deltas
+     * </p>
+     * @return the weighted deltas
+     */
     @Override
     public ArrayList<Double> findWeightedDeltas() {
-        //Declare Arraylist
-        ArrayList<Double> wtDeltas = new ArrayList<Double>();
-        //Declare Temporary Variables:
-        //delta sum
+        // Declare Arraylist
+        ArrayList<Double> wtDeltas = new ArrayList<>();
+        // Declare temporary variable
         double ds = 0;
-        //for all inputs
+        // For all inputs
         for(int inct = 0; inct < getNeurons().get(0).numWeights()-1; inct++)
         {
-            //for all neurons
+            // For all neurons
             for(int nct = 0; nct < numNeurons(); nct++)
             {
-                //add to delta sum using the delta at index of the neuron and weight relevant weight
+                // Add to ds the delta multiplied by the weight for each input
                 ds += (getDeltas().get(nct)* getNeuron(nct).getWeights().get(nct * (getNeurons().get(0).numWeights()) + inct + 1));
             }
-            //add the delta sum to wtDeltas
+            // Add the delta sum to wtDeltas
             wtDeltas.add(ds);
-            //reset delta sum for next input
+            // Reset delta sum for next input
             ds = 0;
         }
-        //return the wtDeltas
+        // Return the wtDeltas
         return wtDeltas;
     }
 }
