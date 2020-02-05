@@ -188,16 +188,49 @@ public abstract class Layer implements Serializable {
         return deltas;
     }
 
+    /**
+     * Function updateWeights()
+     * <p>
+     *     The nature of this function is dependent on the layer type
+     * </p>
+     * @param ins are the inputs to the layer
+     * @param lRate is the learning rate of the network
+     * @param momentum is the momentum of the network
+     */
     public abstract void updateWeights(ArrayList<Double> ins, double lRate, double momentum);
 
+    /**
+     * Function setNeurons()
+     * <p>
+     *     Sets the neurons of the layer to the passed list of neurons
+     * </p>
+     * @param neurons are the neurons to use
+     */
     public void setNeurons(ArrayList<Neuron> neurons) {
+        // Set the neurons in the layer
         this.neurons = neurons;
     }
 
-     public abstract ArrayList<Double> findWeightedDeltas();
+    /**
+     * Function findWeightedDeltas()
+     * <p>
+     *     Neture of this function depends on the layer type
+     * </p>
+     * @return the weightedDeltas of a layer
+     */
+    public abstract ArrayList<Double> findWeightedDeltas();
 
+    /**
+     * Function generateIDs()
+     * <p>
+     *     Useful for debugging. Assigns a unique ID to every neuron in the layer
+     * </p>
+     * @param layerNum is the index of the layer in the network
+     */
     public void generateIDs(int layerNum) {
+        // For all neurons in the layer
         for(int i = 0; i < neurons.size(); i++) {
+            // Set the neuron's ID to a unique ID
             neurons.get(i).setID(layerNum + "-" + i);
         }
     }

@@ -120,7 +120,7 @@ public class InputLayer extends Layer {
      */
     @Override
     public ArrayList<Double> findWeightedDeltas() {
-        // Return null 
+        // Return null
         return null;
     }
 }
