@@ -57,11 +57,27 @@ public class NeutralLayer extends Layer {
         return;
     }
 
+    /**
+     * Function updateWeights()
+     * <p>
+     *     Does nothing since this is a dummy class for building the network
+     * </p>
+     * @param ins are the inputs to the layer
+     * @param lRate is the learning rate of the network
+     * @param momentum is the momentum of the network
+     */
     @Override
     public void updateWeights(ArrayList<Double> ins, double lRate, double momentum) {
         return;
     }
 
+    /**
+     * Function findWeightedDeltas()
+     * <p>
+     *     Does nothing since this is a dummy class for building the network
+     * </p>
+     * @return null
+     */
     @Override
     public ArrayList<Double> findWeightedDeltas() {
         return null;
