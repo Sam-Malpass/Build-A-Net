@@ -84,6 +84,9 @@ public class ApplicationWindowController implements Initializable {
     @FXML
     private AnchorPane canvasPane;
 
+    /**
+     * toolboxPane holds the toolboxCanvas and is needed to resize the canvas when more elements are included
+     */
     @FXML
     private AnchorPane toolboxPane;
 
@@ -685,18 +688,25 @@ public class ApplicationWindowController implements Initializable {
         updateStatusBox();
     }
 
+    /**
+     * Function trainNetwork()
+     * <p>
+     *     Sets the learning algorithm to the selected algorithm.
+     *     Sets the learning rate to the spinner value.
+     *     Sets the momentum to the spinner value
+     *     Then trains the network.
+     * </p>
+     */
     @FXML
     private void trainNetwork() {
+        // Set the learning algorithm
         neuralNetwork.setLearningAlgorithm(new Backpropagation());
+        // Set the learning rate
         learningRate = (Double)learningRateSpinner.getValue();
+        // Set the momentum
         momentum = (Double)momentumSpinner.getValue();
-        Thread t1 = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                neuralNetwork.train(maxEpochs.value, minError.value, learningRate, momentum, dataset);
-            }
-        });
-        t1.start();
+        // Train the network
+        neuralNetwork.train(maxEpochs.value, minError.value, learningRate, momentum, dataset);
     }
 
     /**
