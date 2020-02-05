@@ -71,35 +71,52 @@ public class OutputLayer extends Layer {
         }
     }
 
+    /**
+     * Function updateWeights()
+     * <p>
+     *     For all the neurons in the layer, update the weights
+     * </p>
+     * @param ins are the inputs to the layer
+     * @param lRate is the learning rate of the network
+     * @param momentum is the momentum of the network
+     */
     @Override
     public void updateWeights(ArrayList<Double> ins, double lRate, double momentum) {
+        // For all the neurons in the layer
         for(Neuron n : super.getNeurons()) {
+            // Update the weights of the neuron
             n.updateWeights(ins, lRate, momentum);
         }
     }
 
+    /**
+     * Function findWeightedDeltas()
+     * <p>
+     *     For all the neurons, sums their delta multiplies by each weight
+     * </p>
+     * @return the list of weighted deltas
+     */
     @Override
     public ArrayList<Double> findWeightedDeltas() {
-        //Declare Arraylist
-        ArrayList<Double> wtDeltas = new ArrayList<Double>();
-        //Declare Temporary Variables:
-        //delta sum
+        // Declare ArrayList
+        ArrayList<Double> wtDeltas = new ArrayList<>();
+        //Declare temporary variable
         double ds = 0;
-        //for all inputs
+        // For all inputs
         for(int inct = 0; inct < getNeurons().get(0).numWeights()-1; inct++)
         {
-            //for all neurons
+            // For all neurons
             for(int nct = 0; nct < numNeurons(); nct++)
             {
-                //add to delta sum using the delta at index of the neuron and weight relevant weight
+                // Sum the delta multiplied by each weight
                 ds += (getDeltas().get(nct)* getNeuron(nct).getWeights().get(nct * (getNeurons().get(0).numWeights()) + inct + 1));
             }
-            //add the delta sum to wtDeltas
+            // Add delta sum to the list
             wtDeltas.add(ds);
-            //reset delta sum for next input
+            // Reset the delta sum for the next neuron
             ds = 0;
         }
-        //return the wtDeltas
+        // Return the wtDeltas
         return wtDeltas;
     }
 }
