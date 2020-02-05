@@ -57,10 +57,19 @@ public class Network implements Serializable {
      */
     private boolean saved = false;
 
+    /**
+     * sse holds the sse for the network as it is being trained
+     */
     private double sse = Double.MAX_VALUE;
 
+    /**
+     * learnRate holds the learning rate for the network
+     */
     private double learnRate;
 
+    /**
+     * momentum holds the momentum for the network
+     */
     private double momentum;
 
     /**
@@ -322,7 +331,15 @@ public class Network implements Serializable {
         return 0.0;
     }
 
+    /**
+     * Function getOutputs()
+     * <p>
+     *     Returns the final output(s) of the network - the outputs from the final layer
+     * </p>
+     * @return the network output(s)
+     */
     public ArrayList<Double> getOutputs() {
+        // Return the output(s)
         return networkLayers.get(numLayers()-1).getOutputs();
     }
 
@@ -496,22 +513,61 @@ public class Network implements Serializable {
         modified = passed;
     }
 
+    /**
+     * Function getLearnRate()
+     * <p>
+     *     Returns the learnRate
+     * </p>
+     * @return the learnRate
+     */
     public double getLearnRate() {
+        // Return the learnRate
         return learnRate;
     }
 
+    /**
+     * Function getMomentum()
+     * <p>
+     *     Return the momentum
+     * </p>
+     * @return the momentum
+     */
     public double getMomentum() {
+        // Return momentum
         return momentum;
     }
 
+    /**
+     * Function getSSE()
+     * <p>
+     *     Returns the sse
+     * </p>
+     * @return the sse
+     */
     public double getSSE() {
+        // Return sse
         return sse;
     }
 
+    /**
+     * Function setSSE()
+     * <p>
+     *     Sets the sse to a passed value
+     * </p>
+     * @param newVal is the newVal of the sse
+     */
     public void setSSE(double newVal) {
+        // Set the sse to a passed value
         this.sse = newVal;
     }
 
+    /**
+     * Function debug()
+     * <p>
+     *     A temporary function to handle the conversion of layer types until full layer selection
+     *     is implemented.
+     * </p>
+     */
     public void debug(){
         networkLayers.set(0, LayerConverter.convert(networkLayers.get(0), 0));
         for(int i = 1; i < networkLayers.size()-1; i++) {
