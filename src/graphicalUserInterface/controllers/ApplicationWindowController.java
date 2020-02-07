@@ -32,13 +32,14 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import neuralNetwork.Network;
 import neuralNetwork.activationFunctions.ActivationFunction;
-import neuralNetwork.components.Neuron;
+import neuralNetwork.components.neuron.Neuron;
 import neuralNetwork.learningAlgorithms.Backpropagation;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -299,6 +300,7 @@ public class ApplicationWindowController implements Initializable {
         dataset = new OR();
         dataFlag = true;
         write("OR data loaded:\n" + dataset.toString());
+
     }
 
     /**
@@ -499,6 +501,7 @@ public class ApplicationWindowController implements Initializable {
             else if(result.get().equals(dontSave)){
                 // Set the saved flag
                 neuralNetwork.setSavedFlag(true);
+                neuralNetwork.setModified(false);
                 // Call newNetwork again, flags are updated, top block will execute
                 newNetwork();
             }

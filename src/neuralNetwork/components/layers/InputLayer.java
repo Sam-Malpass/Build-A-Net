@@ -4,7 +4,9 @@
  * @version 0.0.1
  * @since 0.0.1
  */
-package neuralNetwork.components;
+package neuralNetwork.components.layers;
+
+import neuralNetwork.components.neuron.Neuron;
 
 import java.util.ArrayList;
 

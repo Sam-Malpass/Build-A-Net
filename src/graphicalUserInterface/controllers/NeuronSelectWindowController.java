@@ -12,7 +12,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
 import javafx.stage.Stage;
-import neuralNetwork.components.Neuron;
+import neuralNetwork.components.neuron.Neuron;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;

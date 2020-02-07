@@ -4,7 +4,9 @@
  * @version 0.0.1
  * @since 0.0.1
  */
-package neuralNetwork.components;
+package neuralNetwork.components.layers;
+
+import neuralNetwork.components.neuron.Neuron;
 
 import java.util.ArrayList;
 
@@ -106,18 +108,28 @@ public class HiddenLayer extends Layer {
         // Declare temporary variable
         double ds = 0;
         // For all inputs
+        /*
         for(int inct = 0; inct < getNeurons().get(0).numWeights()-1; inct++)
         {
             // For all neurons
             for(int nct = 0; nct < numNeurons(); nct++)
             {
                 // Add to ds the delta multiplied by the weight for each input
-                ds += (getDeltas().get(nct)* getNeuron(nct).getWeights().get(nct * (getNeurons().get(0).numWeights()) + inct + 1));
+                ds += (getDeltas().get(nct)* getNeuron(nct).getWeights().get(inct + 1));
+
             }
             // Add the delta sum to wtDeltas
             wtDeltas.add(ds);
             // Reset delta sum for next input
             ds = 0;
+        }
+        */
+        for(Neuron n : getNeurons()) {
+            for(int i = 1; i < n.numWeights()-1; i++) {
+                ds += n.getDelta() * n.getWeights().get(i);
+            }
+            wtDeltas.add(ds);
+            ds=0;
         }
         // Return the wtDeltas
         return wtDeltas;

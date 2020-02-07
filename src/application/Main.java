@@ -73,8 +73,6 @@ public class Main extends Application {
             mainScene = new Scene(root, windowWidth, windowHeight);
             // Setup the MessageBus
             messageInterface = ApplicationWindowController.getMessageBus();
-            // Output the message - also tests the MessageBus
-            messageInterface.write("Application loaded successfully!");
         // Catch
         } catch (Exception e) {
             // Error handling occurs here
@@ -111,4 +109,5 @@ public class Main extends Application {
         // Send a message through the MessageBus
         messageInterface.write(line, mode);
     }
+
 }

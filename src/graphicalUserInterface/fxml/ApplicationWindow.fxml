@@ -11,6 +11,8 @@
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -67,7 +69,7 @@
             </MenuBar>
             <ToolBar prefHeight="40.0" prefWidth="200.0">
               <items>
-                  <Button fx:id="trainNetwork" mnemonicParsing="false" text="Train Network" onAction="#trainNetwork" />
+                  <Button fx:id="trainNetwork" mnemonicParsing="false" onAction="#trainNetwork" text="Train Network" />
                 <Button fx:id="testNetwork" alignment="CENTER" mnemonicParsing="false" text="Test Network" />
                   <Button fx:id="setEpochs" mnemonicParsing="false" onAction="#setMaxEpochs" text="Set Max Epochs" />
                   <Button fx:id="setError" mnemonicParsing="false" onAction="#setMinError" prefHeight="25.0" prefWidth="100.0" text="Set Min Error" />
@@ -107,18 +109,39 @@
                            </font>
                         </Text>
                         <Line endX="100.0" startX="-100.0" />
-                        <ScrollPane prefHeight="400.0" prefWidth="245.0">
-                          <content>
-                            <AnchorPane fx:id="toolboxPane" maxWidth="244.0" minHeight="0.0" minWidth="244.0" prefHeight="400.0" prefWidth="244.0">
-                                 <children>
-                                    <Canvas fx:id="toolboxCanvas" height="400.0" width="244.0" />
-                                 </children></AnchorPane>
-                          </content>
-                        </ScrollPane>
+                        <TabPane prefHeight="399.0" prefWidth="199.0" tabClosingPolicy="UNAVAILABLE">
+                          <tabs>
+                            <Tab text="Layers">
+                                 <content>
+                                    <ScrollPane prefHeight="400.0" prefWidth="245.0">
+                                       <content>
+                                          <AnchorPane fx:id="toolboxPaneLayers" maxWidth="244.0" minHeight="0.0" minWidth="244.0" prefHeight="400.0" prefWidth="244.0">
+                                             <children>
+                                                <Canvas fx:id="toolboxCanvasLayers" height="400.0" width="244.0" />
+                                             </children>
+                                          </AnchorPane>
+                                       </content>
+                                    </ScrollPane>
+                                 </content></Tab>
+                            <Tab text="Neurons">
+                                 <content>
+                                    <ScrollPane prefHeight="400.0" prefWidth="245.0">
+                                      <content>
+                                        <AnchorPane fx:id="toolboxPane" maxWidth="244.0" minHeight="0.0" minWidth="244.0" prefHeight="400.0" prefWidth="244.0">
+                                             <children>
+                                                <Canvas fx:id="toolboxCanvas" height="400.0" width="244.0" />
+                                             </children>
+                                          </AnchorPane>
+                                      </content>
+                                    </ScrollPane>
+                                 </content>
+                            </Tab>
+                          </tabs>
+                        </TabPane>
                         <ToolBar prefHeight="42.0" prefWidth="260.0">
                           <items>
                             <Button fx:id="addLayerButton" mnemonicParsing="false" onAction="#addLayer" prefHeight="25.0" prefWidth="120.0" text="Add Layer" />
-                              <Button fx:id="connectLayers" mnemonicParsing="false" prefHeight="25.0" prefWidth="120.0" text="Connect Layers" onAction="#connectLayers"/>
+                              <Button fx:id="connectLayers" mnemonicParsing="false" onAction="#connectLayers" prefHeight="25.0" prefWidth="120.0" text="Connect Layers" />
                           </items>
                         </ToolBar>
                      </children>

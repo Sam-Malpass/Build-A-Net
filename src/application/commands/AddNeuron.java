@@ -8,7 +8,7 @@ package application.commands;
 
 import neuralNetwork.Network;
 import neuralNetwork.activationFunctions.ActivationFunction;
-import neuralNetwork.components.Neuron;
+import neuralNetwork.components.neuron.Neuron;
 import java.util.ArrayList;
 
 public class AddNeuron extends Command {

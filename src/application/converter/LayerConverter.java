@@ -6,7 +6,10 @@
  */
 package application.converter;
 
-import neuralNetwork.components.*;
+import neuralNetwork.components.layers.HiddenLayer;
+import neuralNetwork.components.layers.InputLayer;
+import neuralNetwork.components.layers.Layer;
+import neuralNetwork.components.layers.OutputLayer;
 
 public class LayerConverter {
 

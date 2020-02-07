@@ -7,7 +7,7 @@
 package application.commands;
 
 import neuralNetwork.Network;
-import neuralNetwork.components.Layer;
+import neuralNetwork.components.layers.Layer;
 import java.util.ArrayList;
 
 public class RemoveLayer extends Command {

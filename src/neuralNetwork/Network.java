@@ -10,7 +10,9 @@ import application.Main;
 import application.converter.LayerConverter;
 import data.Dataset;
 import javafx.application.Platform;
-import neuralNetwork.components.*;
+import neuralNetwork.components.layers.Layer;
+import neuralNetwork.components.layers.NeutralLayer;
+import neuralNetwork.components.neuron.Neuron;
 import neuralNetwork.learningAlgorithms.LearningAlgorithm;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -60,7 +62,12 @@ public class Network implements Serializable {
     /**
      * sse holds the sse for the network as it is being trained
      */
-    private double sse = Double.MAX_VALUE;
+    private volatile double sse = Double.MAX_VALUE;
+
+    /**
+     * sseLog holds a list of the SSE at every given epoch verbose
+     */
+    private ArrayList<Double> sseLog = new ArrayList<>();
 
     /**
      * learnRate holds the learning rate for the network
@@ -294,25 +301,25 @@ public class Network implements Serializable {
      */
     public void train(int maxEpochs, double minError, double learnRate, double momentum, Dataset data) {
         ArrayList<Object> args = new ArrayList<>();
+        sseLog = new ArrayList<>();
         args.add(this);
         args.add(data);
         this.learnRate = learnRate;
         this.momentum = momentum;
         Main.passMessage("Beginning Training...");
+        sse = Double.MAX_VALUE;
         // For all epochs
+        sseLog.add(Double.MAX_VALUE);
         for(int i = 1; i < maxEpochs; i++) {
             if(sse <= minError) {
                 break;
             }
             learningAlgorithm.runAlgorithm(args);
-            final int epoch = i;
-            if(i % 10 == 0) {
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        Main.passMessage("Training at epoch " + epoch + " with an SSE of " + sse);
-                    }
-                });
+            sseLog.add(sse);
+
+            if(i % 100 == 0) {
+                int index = (int) i / 100;
+                Main.passMessage("Training at epoch " + i + " with an SSE of " + sseLog.get(index));
             }
         }
         Main.passMessage("Training completed with final SSE of: " + sse);

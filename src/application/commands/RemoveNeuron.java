@@ -7,7 +7,7 @@
 package application.commands;
 
 import neuralNetwork.Network;
-import neuralNetwork.components.Neuron;
+import neuralNetwork.components.neuron.Neuron;
 import java.util.ArrayList;
 
 public class RemoveNeuron extends Command {
