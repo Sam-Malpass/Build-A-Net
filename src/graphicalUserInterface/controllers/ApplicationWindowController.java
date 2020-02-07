@@ -16,6 +16,7 @@ import data.OR;
 import graphicalUserInterface.MessageBus;
 import graphicalUserInterface.drawers.NetworkDrawer;
 import graphicalUserInterface.drawers.ToolboxDrawer;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -34,6 +35,7 @@ import neuralNetwork.Network;
 import neuralNetwork.activationFunctions.ActivationFunction;
 import neuralNetwork.components.neuron.Neuron;
 import neuralNetwork.learningAlgorithms.Backpropagation;
+import neuralNetwork.learningAlgorithms.LearningAlgorithm;
 
 import java.io.File;
 import java.io.IOException;
@@ -130,6 +132,13 @@ public class ApplicationWindowController implements Initializable {
      * neuronTypes holds a list of all the activation functions that have been loaded in
      */
     ArrayList<ActivationFunction> neuronTypes = new ArrayList<>();
+
+    @FXML
+    private ComboBox algorithmBox;
+
+    ArrayList<String> learningAlgorithmNames = new ArrayList<>();
+    ArrayList<LearningAlgorithm> learningAlgorithms = new ArrayList<>();
+
 
     /**
      * networkMenu holds the ContextMenu object for the network canvas
@@ -295,6 +304,8 @@ public class ApplicationWindowController implements Initializable {
         // Prepare the canvas
         networkDrawer.resetArea(networkCanvas.getWidth());
         fileHandler = new FileHandler();
+
+        createLearningAlgorithmList();
 
         /* DEBUG */
         dataset = new OR();
@@ -1348,6 +1359,40 @@ public class ApplicationWindowController implements Initializable {
                 }
             }
         });
+    }
+
+    private void createLearningAlgorithmList() {
+        // Find all the activation functions in the system
+        ArrayList<File> algorithms = Integrator.getInternalClasses("neuralNetwork/learningAlgorithms");
+        // Set the index to zero - we use this to remove the interface class from the list
+        int index = 0;
+        // For all classes
+        for(File f : algorithms) {
+            // If the file is the interface file
+            if(f.getName().equals("LearningAlgorithm.class")){
+                // Set the index to the index of the interface
+                index = algorithms.indexOf(f);
+            }
+        }
+        // Remove the interface from the list of classes
+        algorithms.remove(index);
+        learningAlgorithmNames = new ArrayList<>();
+        learningAlgorithms = new ArrayList<>();
+
+        // For all the activation functions
+        for(File f : algorithms) {
+            // Create a temporary object of that class
+            LearningAlgorithm tmp = Integrator.createAlgorithm("neuralNetwork/learningAlgorithms", f.getName());
+            learningAlgorithms.add(tmp);
+            // Get their colour values
+            // Get the name of the neuron
+            String name = f.getName().replace(".class", "");
+            learningAlgorithmNames.add(name);
+        }
+
+        /*INSERT CODE FOR EXTERNAL ALGORITHMS HERE*/
+        algorithmBox.getItems().add("-");
+        algorithmBox.getItems().addAll(FXCollections.observableList(learningAlgorithmNames));
     }
 
     /**

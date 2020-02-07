@@ -107,28 +107,16 @@ public class HiddenLayer extends Layer {
         ArrayList<Double> wtDeltas = new ArrayList<>();
         // Declare temporary variable
         double ds = 0;
-        // For all inputs
-        /*
-        for(int inct = 0; inct < getNeurons().get(0).numWeights()-1; inct++)
-        {
-            // For all neurons
-            for(int nct = 0; nct < numNeurons(); nct++)
-            {
-                // Add to ds the delta multiplied by the weight for each input
-                ds += (getDeltas().get(nct)* getNeuron(nct).getWeights().get(inct + 1));
-
-            }
-            // Add the delta sum to wtDeltas
-            wtDeltas.add(ds);
-            // Reset delta sum for next input
-            ds = 0;
-        }
-        */
+        // For all neurons
         for(Neuron n : getNeurons()) {
-            for(int i = 1; i < n.numWeights()-1; i++) {
+            // For all inputs
+            for(int i = 1; i < n.numWeights(); i++) {
+                // Add to the delta sum, the delta multiplied by the weight of the input connection (we leave the bias out)
                 ds += n.getDelta() * n.getWeights().get(i);
             }
+            // Add the delta sum to the list
             wtDeltas.add(ds);
+            // Reset the delta sum
             ds=0;
         }
         // Return the wtDeltas

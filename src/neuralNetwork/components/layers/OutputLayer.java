@@ -105,26 +105,15 @@ public class OutputLayer extends Layer {
         //Declare temporary variable
         double ds = 0;
         // For all inputs
-        /*
-        for(int inct = 0; inct < getNeurons().get(0).numWeights()-1; inct++)
-        {
-            // For all neurons
-            for(int nct = 0; nct < numNeurons(); nct++)
-            {
-                // Sum the delta multiplied by each weight
-                ds += (getDeltas().get(nct)* getNeuron(nct).getWeights().get(inct + 1));
-            }
-            // Add delta sum to the list
-            wtDeltas.add(ds);
-            // Reset the delta sum for the next neuron
-            ds = 0;
-        }
-        */
         for(Neuron n : getNeurons()) {
-            for(int i = 1; i < n.numWeights()-1; i++) {
+            // For all the inputs (Excluding the bias weight)
+            for(int i = 1; i < n.numWeights(); i++) {
+                // Add to the delta sum, the delta of the neuron multiplied by the weight of the input
                 ds += n.getDelta() * n.getWeights().get(i);
             }
+            // Add the delta sum to the list
             wtDeltas.add(ds);
+            // Reset the delta sum
             ds=0;
         }
         // Return the wtDeltas
