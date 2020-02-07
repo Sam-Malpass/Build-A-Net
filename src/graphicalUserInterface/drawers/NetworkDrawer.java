@@ -221,7 +221,10 @@ public class NetworkDrawer {
             }
             // Set the starting yposFrom for the layer
             yposFrom = 0;
-            for(int j = 0; j < network.getLayer(i).numNeurons() || j > 7; j++) {
+            for(int j = 0; j < network.getLayer(i).numNeurons(); j++) {
+                if(j == 8) {
+                    break;
+                }
                 // Create a dummy variable
                 double tmp;
                 // Check that number of neurons in the layer is not max displyable
@@ -246,7 +249,10 @@ public class NetworkDrawer {
                 // Set the yposTo to 0
                 yposTo = 0;
                 // For all neurons in the next layer
-                for(int k = 0; k < network.getLayer(i+1).numNeurons() || k > 7; k++) {
+                for(int k = 0; k < network.getLayer(i+1).numNeurons(); k++) {
+                    if(k == 8) {
+                        break;
+                    }
                     // Create a dummy variable
                     double tmp2;
                     // Check that the number of neurons in the layer is not max displayable
