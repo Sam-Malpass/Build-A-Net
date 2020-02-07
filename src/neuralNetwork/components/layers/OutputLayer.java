@@ -68,8 +68,10 @@ public class OutputLayer extends Layer {
     @Override
     public void findDeltas(ArrayList<Double> errors) {
         for(int i = 0; i < errors.size(); i++) {
-            super.getNeurons().get(i).findDelta(errors.get(i));
-            super.getDeltas().add(super.getNeurons().get(i).getDelta());
+            for(Neuron n : getNeurons()) {
+                n.findDelta(errors.get(i));
+                super.getDeltas().add(n.getDelta());
+            }
         }
     }
 

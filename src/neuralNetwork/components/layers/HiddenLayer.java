@@ -68,10 +68,10 @@ public class HiddenLayer extends Layer {
     public void findDeltas(ArrayList<Double> errors) {
         // For all errors in the list
         for(int i = 0; i < errors.size(); i++) {
-            // Get the given neuron at index i, and find the delta using the corresponding error
-            super.getNeurons().get(i).findDelta(errors.get(i));
-            // Add the delta to the list of deltas in the layer
-            super.getDeltas().add(super.getNeurons().get(i).getDelta());
+            for(Neuron n : getNeurons()) {
+                n.findDelta(errors.get(i));
+                super.getDeltas().add(n.getDelta());
+            }
         }
     }
 

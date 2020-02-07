@@ -284,7 +284,7 @@ public class Network implements Serializable {
      * @param numInputAttributes is the number of inputs to the network
      */
     public void connectLayers(int numInputAttributes) {
-        debug();
+        //debug();
         // Check there are enough input neurons to handle the inputs
         if(numInputAttributes == networkLayers.get(0).numNeurons()) {
             // Connect the first layer
