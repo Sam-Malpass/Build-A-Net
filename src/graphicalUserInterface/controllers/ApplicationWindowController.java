@@ -306,11 +306,16 @@ public class ApplicationWindowController implements Initializable {
         fileHandler = new FileHandler();
 
         createLearningAlgorithmList();
+        minError.value = 0.01;
+        maxEpochs.value = 1000;
 
         /* DEBUG */
         dataset = new OR();
         dataFlag = true;
         write("OR data loaded:\n" + dataset.toString());
+
+        updateNetworkCanvas();
+        updateStatusBox();
 
     }
 
@@ -713,14 +718,16 @@ public class ApplicationWindowController implements Initializable {
      */
     @FXML
     private void trainNetwork() {
-        // Set the learning algorithm
-        neuralNetwork.setLearningAlgorithm(new Backpropagation());
-        // Set the learning rate
-        learningRate = (Double)learningRateSpinner.getValue();
-        // Set the momentum
-        momentum = (Double)momentumSpinner.getValue();
-        // Train the network
-        neuralNetwork.train(maxEpochs.value, minError.value, learningRate, momentum, dataset);
+        if(algorithmBox.getValue() != "-" && maxEpochs.value > 0 && minError.value > 0) {
+            // Set the learning algorithm
+            neuralNetwork.setLearningAlgorithm(learningAlgorithms.get(learningAlgorithmNames.indexOf(algorithmBox.getValue().toString())));
+            // Set the learning rate
+            learningRate = (Double) learningRateSpinner.getValue();
+            // Set the momentum
+            momentum = (Double) momentumSpinner.getValue();
+            // Train the network
+            neuralNetwork.train(maxEpochs.value, minError.value, learningRate, momentum, dataset);
+        }
     }
 
     /**

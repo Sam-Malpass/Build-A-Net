@@ -71,6 +71,13 @@ public class NetworkDrawer {
     public void drawAllLayers(int numLayersToDraw) {
         // For all layers to be drawn
         for(int i = 0; i < numLayersToDraw; i++) {
+            context.setFill(Color.BLACK);
+            if(i == 0) {
+                context.fillText(" INPUT LAYER", 10, 465);
+            }
+            else if(i == numLayersToDraw-1) {
+                context.fillText("OUTPUT LAYER", 10+(i*100), 465);
+            }
             // Draw the layer
             drawLayerBox(i * 100);
         }

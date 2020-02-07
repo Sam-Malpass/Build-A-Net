@@ -10,8 +10,7 @@ import application.Main;
 import application.converter.LayerConverter;
 import data.Dataset;
 import javafx.application.Platform;
-import neuralNetwork.components.layers.Layer;
-import neuralNetwork.components.layers.NeutralLayer;
+import neuralNetwork.components.layers.*;
 import neuralNetwork.components.neuron.Neuron;
 import neuralNetwork.learningAlgorithms.LearningAlgorithm;
 import java.io.Serializable;
@@ -90,6 +89,8 @@ public class Network implements Serializable {
         networkName = "Untitled";
         // Create a new list for the layers
         networkLayers = new ArrayList<>();
+        networkLayers.add(new InputLayer());
+        networkLayers.add(new OutputLayer());
         // Set the learning algorithm to null
         learningAlgorithm = null;
     }
@@ -151,7 +152,37 @@ public class Network implements Serializable {
      */
     public void addNewLayer() {
         // Add a layer
-        networkLayers.add(new NeutralLayer());
+        insertLayer(numLayers()-1, new HiddenLayer());
+        // Reset connected flag
+        connected = false;
+        // Reset trained flag;
+        trained = false;
+        // Update modified flag
+        modified = true;
+    }
+
+    public void addNewLayer(Layer layer) {
+        insertLayer(numLayers()-1, layer);
+        // Reset connected flag
+        connected = false;
+        // Reset trained flag;
+        trained = false;
+        // Update modified flag
+        modified = true;
+    }
+
+    public void addNewLayerBefore(int selectedLayer, Layer layer) {
+        insertLayer(selectedLayer, layer);
+        // Reset connected flag
+        connected = false;
+        // Reset trained flag;
+        trained = false;
+        // Update modified flag
+        modified = true;
+    }
+
+    public void addNewLayerAfter(int selectedLayer, Layer layer) {
+        insertLayer(selectedLayer+1, layer);
         // Reset connected flag
         connected = false;
         // Reset trained flag;
