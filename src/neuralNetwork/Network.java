@@ -596,19 +596,4 @@ public class Network implements Serializable {
         // Set the sse to a passed value
         this.sse = newVal;
     }
-
-    /**
-     * Function debug()
-     * <p>
-     *     A temporary function to handle the conversion of layer types until full layer selection
-     *     is implemented.
-     * </p>
-     */
-    public void debug(){
-        networkLayers.set(0, LayerConverter.convert(networkLayers.get(0), 0));
-        for(int i = 1; i < networkLayers.size()-1; i++) {
-            networkLayers.set(i, LayerConverter.convert(networkLayers.get(i), 1));
-        }
-        networkLayers.set(networkLayers.size()-1, LayerConverter.convert(networkLayers.get(networkLayers.size()-1), 2));
-    }
 }
