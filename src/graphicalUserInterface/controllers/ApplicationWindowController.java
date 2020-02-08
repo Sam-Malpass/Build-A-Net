@@ -15,7 +15,7 @@ import data.Dataset;
 import data.OR;
 import graphicalUserInterface.MessageBus;
 import graphicalUserInterface.drawers.NetworkDrawer;
-import graphicalUserInterface.drawers.ToolboxDrawer;
+import graphicalUserInterface.drawers.NeuronToolboxDrawer;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -34,14 +34,12 @@ import javafx.stage.Stage;
 import neuralNetwork.Network;
 import neuralNetwork.activationFunctions.ActivationFunction;
 import neuralNetwork.components.neuron.Neuron;
-import neuralNetwork.learningAlgorithms.Backpropagation;
 import neuralNetwork.learningAlgorithms.LearningAlgorithm;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -116,7 +114,7 @@ public class ApplicationWindowController implements Initializable {
     /**
      * toolboxDrawer is a special object that allows for the drawing of elements to the toolbox canvas
      */
-    private ToolboxDrawer toolboxDrawer;
+    private NeuronToolboxDrawer neuronToolboxDrawer;
 
     /**
      * colourVals holds a list of all the lists of colour values for each neuron type
@@ -284,7 +282,7 @@ public class ApplicationWindowController implements Initializable {
         networkContext = networkCanvas.getGraphicsContext2D();
         toolboxContext = toolboxCanvas.getGraphicsContext2D();
         networkDrawer = new NetworkDrawer(networkContext);
-        toolboxDrawer = new ToolboxDrawer(toolboxContext);
+        neuronToolboxDrawer = new NeuronToolboxDrawer(toolboxContext);
         initializeToolbox();
         // Create the menu for the canvas
         createCanvasMenu();
@@ -1341,12 +1339,12 @@ public class ApplicationWindowController implements Initializable {
             toolboxPane.setPrefHeight(toolboxCanvas.getHeight());
         }
 
-        toolboxDrawer.drawToolBox(toolboxCanvas.getHeight(), colourVals, neuronNames);
+        neuronToolboxDrawer.drawToolBox(toolboxCanvas.getHeight(), colourVals, neuronNames);
 
         // Set the behaviour for when the canvas is clicked
         toolboxCanvas.setOnMouseClicked(e -> {
             // Redraw the toolbox - this is done to remove previous highlighting
-            toolboxDrawer.drawToolBox(toolboxCanvas.getHeight(), colourVals, neuronNames);
+            neuronToolboxDrawer.drawToolBox(toolboxCanvas.getHeight(), colourVals, neuronNames);
             // Get the Y coordinate of the mouse on the canvas
             locYToolbox = e.getY();
             // Translate this into a rough estimate for the neuron that is being selected
@@ -1358,7 +1356,7 @@ public class ApplicationWindowController implements Initializable {
                 // Set the selected neuron number - this is the equivalent of an index
                 selectedNeuron = (int)rawLayerNum - 1;
                 // Highlight the selected neuron
-                toolboxDrawer.highlightBox(selectedNeuron);
+                neuronToolboxDrawer.highlightBox(selectedNeuron);
                 // If the selectedLayer is not -1 - that is to say there is a selected layer
                 if(selectedLayer != -1) {
                     // Add the selectedNeuron to the selectedLayer in the network
