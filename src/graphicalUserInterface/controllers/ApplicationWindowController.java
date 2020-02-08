@@ -14,6 +14,7 @@ import application.wrappers.IntegerWrapper;
 import data.Dataset;
 import data.OR;
 import graphicalUserInterface.MessageBus;
+import graphicalUserInterface.drawers.LayerToolboxDrawer;
 import graphicalUserInterface.drawers.NetworkDrawer;
 import graphicalUserInterface.drawers.NeuronToolboxDrawer;
 import javafx.collections.FXCollections;
@@ -33,6 +34,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import neuralNetwork.Network;
 import neuralNetwork.activationFunctions.ActivationFunction;
+import neuralNetwork.components.layers.Layer;
 import neuralNetwork.components.neuron.Neuron;
 import neuralNetwork.learningAlgorithms.LearningAlgorithm;
 
@@ -79,6 +81,12 @@ public class ApplicationWindowController implements Initializable {
     @FXML
     private Canvas toolboxCanvas;
 
+    @FXML
+    private Canvas toolboxCanvasLayers;
+
+    @FXML
+    private AnchorPane toolboxPaneLayers;
+
     /**
      * canvasPane is the anchor of the networkCanvas
      */
@@ -101,6 +109,8 @@ public class ApplicationWindowController implements Initializable {
      */
     private GraphicsContext toolboxContext;
 
+    private GraphicsContext toolboxContextLayers;
+
     /**
      * baseMaxLayers holds the max number of layers that can be displayed before the canvas must be resized
      */
@@ -116,6 +126,8 @@ public class ApplicationWindowController implements Initializable {
      */
     private NeuronToolboxDrawer neuronToolboxDrawer;
 
+    private LayerToolboxDrawer layerToolboxDrawer;
+
     /**
      * colourVals holds a list of all the lists of colour values for each neuron type
      */
@@ -130,6 +142,10 @@ public class ApplicationWindowController implements Initializable {
      * neuronTypes holds a list of all the activation functions that have been loaded in
      */
     ArrayList<ActivationFunction> neuronTypes = new ArrayList<>();
+
+
+    ArrayList<String> layerNames = new ArrayList<>();
+    ArrayList<Layer> layerTypes = new ArrayList<>();
 
     @FXML
     private ComboBox algorithmBox;
@@ -157,6 +173,8 @@ public class ApplicationWindowController implements Initializable {
      * selectedNeuron holds the current index of the neuron that has been selected in the toolbox
      */
     private int selectedNeuron;
+
+    private int selectedLayerBox;
 
     /**
      * selectedLayer holds the current index of the layer that has been selected in the network
@@ -281,9 +299,12 @@ public class ApplicationWindowController implements Initializable {
         // Create the graphicsContext
         networkContext = networkCanvas.getGraphicsContext2D();
         toolboxContext = toolboxCanvas.getGraphicsContext2D();
+        toolboxContextLayers = toolboxCanvasLayers.getGraphicsContext2D();
         networkDrawer = new NetworkDrawer(networkContext);
         neuronToolboxDrawer = new NeuronToolboxDrawer(toolboxContext);
-        initializeToolbox();
+        layerToolboxDrawer = new LayerToolboxDrawer(toolboxContextLayers);
+        initializeNeuronToolbox();
+        initializeLayerToolbox();
         // Create the menu for the canvas
         createCanvasMenu();
         // Set the menu in the canvas
@@ -1298,7 +1319,7 @@ public class ApplicationWindowController implements Initializable {
      *     Handles the setup of the toolbox canvas in the application
      * </p>
      */
-    private void initializeToolbox() {
+    private void initializeNeuronToolbox() {
         // Find all the activation functions in the system
         ArrayList<File> functions = Integrator.getInternalClasses("neuralNetwork/activationFunctions");
         // Set the index to zero - we use this to remove the interface class from the list
@@ -1361,6 +1382,61 @@ public class ApplicationWindowController implements Initializable {
                 if(selectedLayer != -1) {
                     // Add the selectedNeuron to the selectedLayer in the network
                     addNeuron(neuronTypes.get(selectedNeuron));
+                }
+            }
+        });
+    }
+
+    private void initializeLayerToolbox() {
+        // Find all the activation functions in the system
+        ArrayList<File> functions = Integrator.getInternalClasses("neuralNetwork/components/layers");
+        // Set the index to zero - we use this to remove the interface class from the list
+        ArrayList<File> indices = new ArrayList<>();
+        // For all classes
+        for(File f : functions) {
+            // If the file is the interface file
+            if(f.getName().equals("Layer.class") || f.getName().equals("InputLayer.class") || f.getName().equals("OutputLayer.class")){
+                // Set the index to the index of the interface
+                indices.add(f);
+            }
+        }
+        // Remove the interface from the list of classes
+        for(File i : indices) {
+            functions.remove(i);
+        }
+        for(File f : functions) {
+            // Create a temporary object of that class
+            Layer tmp = Integrator.createLayer("neuralNetwork/components/layers", f.getName());
+            layerTypes.add(tmp);
+            // Get the name of the neuron
+            layerNames.add(f.getName().replace(".class", ""));
+        }
+
+        if(layerTypes.size() * 100 > 400) {
+            toolboxCanvasLayers.setHeight(layerTypes.size() * 100);
+            toolboxPaneLayers.setPrefHeight(toolboxPaneLayers.getHeight());
+        }
+
+        layerToolboxDrawer.drawToolBox(toolboxCanvasLayers.getHeight(), layerNames);
+        // Set the behaviour for when the canvas is clicked
+        toolboxCanvasLayers.setOnMouseClicked(e -> {
+            // Redraw the toolbox - this is done to remove previous highlighting
+            layerToolboxDrawer.drawToolBox(toolboxCanvasLayers.getHeight(), layerNames);
+            // Get the Y coordinate of the mouse on the canvas
+            locYToolbox = e.getY();
+            // Translate this into a rough estimate for the neuron that is being selected
+            double rawLayerNum = (locYToolbox / 100);
+            // Round to actual layer number
+            rawLayerNum = Math.ceil(rawLayerNum);
+            // If the number is less than or equal to the total number of neurons
+            if(rawLayerNum <= layerNames.size()) {
+                // Set the selected neuron number - this is the equivalent of an index
+                selectedLayerBox = (int)rawLayerNum - 1;
+                // Highlight the selected neuron
+                layerToolboxDrawer.highlightBox(selectedLayerBox);
+                // If the selectedLayer is not -1 - that is to say there is a selected layer
+                if(selectedLayer != -1) {
+                    /* CODE TO ADDD LAYER   */
                 }
             }
         });

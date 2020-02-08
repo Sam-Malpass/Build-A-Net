@@ -8,6 +8,7 @@ package application.integrator;
 
 import application.Main;
 import neuralNetwork.activationFunctions.ActivationFunction;
+import neuralNetwork.components.layers.Layer;
 import neuralNetwork.learningAlgorithms.LearningAlgorithm;
 
 import java.io.File;
@@ -110,6 +111,40 @@ public class Integrator {
         }
         // Return object
         return (LearningAlgorithm) instance;
+    }
+
+    /**
+     * Function createLayer()
+     * <p>
+     *     This function takes an internal path and a class name, then generates and returns an object of that class
+     * </p>
+     * @param path is the package path for the class
+     * @param name is the name of the class
+     * @return the instantiated object of the given class
+     */
+    public static Layer createLayer(String path, String name) {
+        // Create a null object
+        Object instance = null;
+        // Attempt
+        try {
+            // Fix the path to a package name structure
+            path = path.replace("/",".");
+            // Remove .class from the name
+            name = name.replace(".class", "");
+            // Concatenate path with class name
+            path = path + "." + name;
+            // Generate a ClassLoader
+            ClassLoader loader = Integrator.class.getClassLoader();
+            // Create a Class object
+            Class aClass = Class.forName(path);
+            // Make an instantiation of that class
+            instance = aClass.newInstance();
+        }
+        catch (Exception e) {
+            Main.passMessage("There was an issue creating an object for <" + name + ">", "-e");
+        }
+        // Return object
+        return (Layer) instance;
     }
 }
 
