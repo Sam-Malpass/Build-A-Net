@@ -391,8 +391,6 @@ public class Network implements Serializable {
     public void setLearningAlgorithm(LearningAlgorithm algorithm) {
         // Update learningAlgorithm
         learningAlgorithm = algorithm;
-        // Update connected flag
-        connected = false;
         // Update the trained flag
         trained = false;
         // Update modified flag
