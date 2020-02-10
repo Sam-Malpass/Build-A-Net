@@ -1417,9 +1417,72 @@ public class ApplicationWindowController implements Initializable {
             toolboxPaneLayers.setPrefHeight(toolboxPaneLayers.getHeight());
         }
 
-        layerToolboxDrawer.drawToolBox(toolboxCanvasLayers.getHeight(), layerNames);
-        // Set the behaviour for when the canvas is clicked
-        toolboxCanvasLayers.setOnMouseClicked(e -> {
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem addBefore = new MenuItem("Add Before Selected Layer");
+        MenuItem addAfter = new MenuItem("Add After Selected Layer");
+        addBefore.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                // Translate this into a rough estimate for the neuron that is being selected
+                double rawLayerNum = (locYToolbox / 100);
+                // Round to actual layer number
+                rawLayerNum = Math.ceil(rawLayerNum);
+                // If the number is less than or equal to the total number of neurons
+                if (rawLayerNum <= layerNames.size()) {
+                    // Set the selected neuron number - this is the equivalent of an index
+                    selectedLayerBox = (int) rawLayerNum - 1;
+                    // Highlight the selected neuron
+                    layerToolboxDrawer.highlightBox(selectedLayerBox);
+                    // If the selectedLayer is not -1 - that is to say there is a selected layer
+                    if (selectedLayer != -1 && selectedLayer != 0) {
+                        Layer layerToAdd = null;
+                        try {
+                            layerToAdd = layerTypes.get(selectedLayerBox).getClass().newInstance();
+                        } catch (InstantiationException e) {
+                            e.printStackTrace();
+                        } catch (IllegalAccessException e) {
+                            e.printStackTrace();
+                        }
+                        neuralNetwork.insertLayer(selectedLayer, layerToAdd);
+                        updateNetworkCanvas();
+                        updateStatusBox();
+                    }
+                }
+            }
+        });
+        addAfter.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                // Translate this into a rough estimate for the neuron that is being selected
+                double rawLayerNum = (locYToolbox / 100);
+                // Round to actual layer number
+                rawLayerNum = Math.ceil(rawLayerNum);
+                // If the number is less than or equal to the total number of neurons
+                if (rawLayerNum <= layerNames.size()) {
+                    // Set the selected neuron number - this is the equivalent of an index
+                    selectedLayerBox = (int) rawLayerNum - 1;
+                    // Highlight the selected neuron
+                    layerToolboxDrawer.highlightBox(selectedLayerBox);
+                    // If the selectedLayer is not -1 - that is to say there is a selected layer
+                    if (selectedLayer != -1 && selectedLayer != neuralNetwork.numLayers()-1) {
+                        Layer layerToAdd = null;
+                        try {
+                            layerToAdd = layerTypes.get(selectedLayerBox).getClass().newInstance();
+                        } catch (InstantiationException e) {
+                            e.printStackTrace();
+                        } catch (IllegalAccessException e) {
+                            e.printStackTrace();
+                        }
+                        neuralNetwork.insertLayer(selectedLayer + 1, layerToAdd);
+                        updateNetworkCanvas();
+                        updateStatusBox();
+                    }
+                }
+            }
+        });
+        MenuItem cancel = new MenuItem("Cancel");
+        contextMenu.getItems().addAll(addBefore, addAfter, cancel);
+        toolboxCanvasLayers.setOnContextMenuRequested(e -> {
             // Redraw the toolbox - this is done to remove previous highlighting
             layerToolboxDrawer.drawToolBox(toolboxCanvasLayers.getHeight(), layerNames);
             // Get the Y coordinate of the mouse on the canvas
@@ -1429,17 +1492,17 @@ public class ApplicationWindowController implements Initializable {
             // Round to actual layer number
             rawLayerNum = Math.ceil(rawLayerNum);
             // If the number is less than or equal to the total number of neurons
-            if(rawLayerNum <= layerNames.size()) {
+            if (rawLayerNum <= layerNames.size()) {
                 // Set the selected neuron number - this is the equivalent of an index
-                selectedLayerBox = (int)rawLayerNum - 1;
+                selectedLayerBox = (int) rawLayerNum - 1;
                 // Highlight the selected neuron
                 layerToolboxDrawer.highlightBox(selectedLayerBox);
-                // If the selectedLayer is not -1 - that is to say there is a selected layer
-                if(selectedLayer != -1) {
-                    /* CODE TO ADDD LAYER   */
-                }
             }
+            contextMenu.show(toolboxCanvasLayers, e.getScreenX(), e.getScreenY());
         });
+
+        // Redraw the toolbox - this is done to remove previous highlighting
+        layerToolboxDrawer.drawToolBox(toolboxCanvasLayers.getHeight(), layerNames);
     }
 
     private void createLearningAlgorithmList() {

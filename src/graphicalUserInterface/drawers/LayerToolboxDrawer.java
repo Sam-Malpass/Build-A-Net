@@ -18,6 +18,8 @@ public class LayerToolboxDrawer {
      */
     private GraphicsContext context;
 
+    private double startY = 50;
+
     /**
      * Constructor with arguments()
      * <P>
@@ -42,6 +44,18 @@ public class LayerToolboxDrawer {
         context.setFill(Color.LIGHTGRAY);
         // Draw the rectangle
         context.fillRect(0,0, 475, height);
+        //
+        startY = 50;
+    }
+
+    private void drawLayer(String name) {
+        context.setFill(Color.ORANGE);
+        context.fillRect(5, startY-45, 235, startY+40);
+        context.strokeLine(5, startY-45, 5, startY+45);
+        context.strokeLine(5, startY-45, 240, startY-45);
+        context.strokeLine(5, startY+45, 240, startY+45);
+        context.strokeLine(240, startY-45, 240, startY+45);
+        context.strokeText(name, 75, startY);
     }
 
     /**
@@ -99,5 +113,10 @@ public class LayerToolboxDrawer {
         resetArea(height);
         // Draw the debug lines - Debug function
         drawDebugLines();
+        // Draw all Layers
+        for (String s : layerNames) {
+            drawLayer(s);
+            startY += 100;
+        }
     }
 }

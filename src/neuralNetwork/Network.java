@@ -200,14 +200,14 @@ public class Network implements Serializable {
      * @param layer is the layer to be inserted
      */
     public void insertLayer(int position, Layer layer) {
-        // Add the layer to the network
-        networkLayers.add(position, layer);
-        // Reset connected flag
-        connected = false;
-        // Reset trained flag
-        trained = false;
-        // Update modified flag
-        modified = true;
+            // Add the layer to the network
+            networkLayers.add(position, layer);
+            // Reset connected flag
+            connected = false;
+            // Reset trained flag
+            trained = false;
+            // Update modified flag
+            modified = true;
     }
 
     /**
