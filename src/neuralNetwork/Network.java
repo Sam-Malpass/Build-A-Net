@@ -343,7 +343,7 @@ public class Network implements Serializable {
         sseLog.add(Double.MAX_VALUE);
         int interval = Math.max(1, maxEpochs/100);
         int epochsRun = 0;
-        for(int i = 1; i < maxEpochs; i++) {
+        for(int i = 1; i < maxEpochs+1; i++) {
             if(sse <= minError) {
                 break;
             }
