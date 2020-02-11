@@ -348,15 +348,63 @@ public class ApplicationWindowController implements Initializable {
         // Create the ContextMenu object
         ContextMenu menu = new ContextMenu();
         // Create the addLayer MenuItem
-        MenuItem addLayer = new MenuItem("Add Layer");
-        // Set the action
-        addLayer.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                // Call the addLayer function
-                addLayer();
-            }
-        });
+        Menu addLayer = new Menu("Add Layer...");
+        Menu addBefore = new Menu("Add Before");
+        for(String s : layerNames) {
+            MenuItem name = new MenuItem(s);
+            name.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent actionEvent) {
+                    if(selectedLayer != 0) {
+                        Layer layerToAdd = null;
+                        try {
+                            layerToAdd = layerTypes.get(layerNames.indexOf(s)).getClass().newInstance();
+                        } catch (InstantiationException e) {
+                            e.printStackTrace();
+                        } catch (IllegalAccessException e) {
+                            e.printStackTrace();
+                        }
+                        addLayer(selectedLayer, layerToAdd);
+                    }
+                    else {
+                        write("Cannot add layer before input layer", "-e");
+                    }
+                }
+            });
+            addBefore.getItems().add(name);
+        }
+        SeparatorMenuItem separatorMenuItemBefore = new SeparatorMenuItem();
+        MenuItem cancelAddBefore = new MenuItem("Cancel");
+        addBefore.getItems().addAll(separatorMenuItemBefore, cancelAddBefore);
+        Menu addAfter = new Menu("Add After");
+        for(String s : layerNames) {
+            MenuItem name = new MenuItem(s);
+            name.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent actionEvent) {
+                    if(selectedLayer != neuralNetwork.numLayers()-1) {
+                        Layer layerToAdd = null;
+                        try {
+                            layerToAdd = layerTypes.get(layerNames.indexOf(s)).getClass().newInstance();
+                        } catch (InstantiationException e) {
+                            e.printStackTrace();
+                        } catch (IllegalAccessException e) {
+                            e.printStackTrace();
+                        }
+                        addLayer(selectedLayer + 1, layerToAdd);
+                    }
+                    else {
+                        write("Cannot add layer after output layer", "-e");
+                    }
+                }
+            });
+            addAfter.getItems().add(name);
+        }
+        SeparatorMenuItem separatorMenuItemAfter = new SeparatorMenuItem();
+        MenuItem cancelAddAfter = new MenuItem("Cancel");
+        addAfter.getItems().addAll(separatorMenuItemAfter, cancelAddAfter);
+        addLayer.getItems().addAll(addBefore, addAfter);
+
         // Create the removeLayer MenuItem
         MenuItem removeLayer = new MenuItem("Remove Layer");
         // Set the action
@@ -364,7 +412,12 @@ public class ApplicationWindowController implements Initializable {
             @Override
             public void handle(ActionEvent actionEvent) {
                     // Call the removeLayer function
-                    removeLayer();
+                    if(selectedLayer != -1 && selectedLayer != 0 && selectedLayer != neuralNetwork.numLayers()-1) {
+                        removeLayer();
+                    }
+                    else {
+                        write("Cannot remove input/output layer", "-e");
+                    }
                 }
         });
         // Create addNeuron MenuItem
@@ -832,20 +885,16 @@ public class ApplicationWindowController implements Initializable {
         }
     }
 
-    /**
-     * Function addLayer()
-     * <p>
-     *     Handles the adding of a layer
-     * </p>
-     */
-    @FXML
-    private void addLayer() {
-        // Create the command
+    private void addLayer(int position, Layer layer) {
+        ArrayList<Object> args = new ArrayList<>();
+        args.add(neuralNetwork);
+        args.add(position);
+        args.add(layer);
+
         AddLayer add = new AddLayer();
-        // Execute the command
-        add.executeCommand(neuralNetwork);
-        // Add the command to the stack
+        add.executeCommand(args);
         commandStack.add(add);
+
         // If the number of layers is greater than the max that can be displayed
         if(neuralNetwork.numLayers() > baseMaxLayers) {
             // Update the width of the canvas
@@ -1443,7 +1492,7 @@ public class ApplicationWindowController implements Initializable {
                         } catch (IllegalAccessException e) {
                             e.printStackTrace();
                         }
-                        neuralNetwork.insertLayer(selectedLayer, layerToAdd);
+                        addLayer(selectedLayer, layerToAdd);
                         updateNetworkCanvas();
                         updateStatusBox();
                     }
@@ -1473,7 +1522,7 @@ public class ApplicationWindowController implements Initializable {
                         } catch (IllegalAccessException e) {
                             e.printStackTrace();
                         }
-                        neuralNetwork.insertLayer(selectedLayer + 1, layerToAdd);
+                        addLayer(selectedLayer + 1, layerToAdd);
                         updateNetworkCanvas();
                         updateStatusBox();
                     }

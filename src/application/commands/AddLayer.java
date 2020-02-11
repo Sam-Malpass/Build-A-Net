@@ -7,6 +7,9 @@
 package application.commands;
 
 import neuralNetwork.Network;
+import neuralNetwork.components.layers.Layer;
+
+import java.util.ArrayList;
 
 public class AddLayer extends Command {
 
@@ -18,12 +21,13 @@ public class AddLayer extends Command {
      * @param inputs is the input object(s) in this case the network
      */
     public void executeCommand(Object inputs) {
+        dataStore = inputs;
         // Get the network
-        Network tmpNet = (Network)inputs;
-        // Store it in the commands store (since Java does it with pointers memory consumption should be minimal)
-        dataStore = tmpNet;
+        Network tmpNet = (Network)((ArrayList)inputs).get(0);
+        int position = (int)((ArrayList)inputs).get(1);
+        Layer layer = (Layer)((ArrayList)inputs).get(2);
         // Add a layer to the network
-        tmpNet.addNewLayer();
+        tmpNet.insertLayer(position, layer);
     }
 
     /**
@@ -48,7 +52,8 @@ public class AddLayer extends Command {
     public void unExecuteCommand() {
         // Get the network
         Network tmpNet = (Network)dataStore;
+        int position = (int)((ArrayList)dataStore).get(1);
         // Remove the last layer from the network - we know this will be the previously added layer by this command
-        tmpNet.removeLayer(tmpNet.numLayers() - 1);;
+        tmpNet.removeLayer(position);
     }
 }

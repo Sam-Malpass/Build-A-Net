@@ -341,19 +341,23 @@ public class Network implements Serializable {
         sse = Double.MAX_VALUE;
         // For all epochs
         sseLog.add(Double.MAX_VALUE);
+        int interval = Math.max(1, maxEpochs/100);
+        int epochsRun = 0;
         for(int i = 1; i < maxEpochs; i++) {
             if(sse <= minError) {
                 break;
             }
+
             learningAlgorithm.runAlgorithm(args);
             sseLog.add(sse);
 
-            if(i % 100 == 0) {
-                int index = (int) i / 100;
+            if(i % interval == 0) {
+                int index = (int) i / interval;
                 Main.passMessage("Training at epoch " + i + " with an SSE of " + sseLog.get(index));
             }
+            epochsRun = i;
         }
-        Main.passMessage("Training completed with final SSE of: " + sse);
+        Main.passMessage("Training completed in " + epochsRun +  " with final SSE of: " + sse);
         // Update modified flag
         modified = true;
     }

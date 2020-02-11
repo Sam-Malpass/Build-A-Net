@@ -110,7 +110,7 @@ public class HiddenLayer extends Layer {
         // For all neurons
         for(Neuron n : getNeurons()) {
             // For all inputs
-            for(int i = 1; i < n.numWeights(); i++) {
+            for(int i = 0; i < n.numWeights(); i++) {
                 // Add to the delta sum, the delta multiplied by the weight of the input connection (we leave the bias out)
                 ds += n.getDelta() * n.getWeights().get(i);
             }

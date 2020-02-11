@@ -109,7 +109,7 @@ public class OutputLayer extends Layer {
         // For all inputs
         for(Neuron n : getNeurons()) {
             // For all the inputs (Excluding the bias weight)
-            for(int i = 1; i < n.numWeights(); i++) {
+            for(int i = 0; i < n.numWeights(); i++) {
                 // Add to the delta sum, the delta of the neuron multiplied by the weight of the input
                 ds += n.getDelta() * n.getWeights().get(i);
             }

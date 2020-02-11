@@ -22,7 +22,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="graphicalUserInterface.controllers.ApplicationWindowController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="graphicalUserInterface.controllers.ApplicationWindowController">
    <bottom>
       <SplitPane fx:id="splitPaneBottom" dividerPositions="0.7942097026604069" prefHeight="162.0" prefWidth="1280.0" BorderPane.alignment="CENTER">
         <items>
@@ -140,8 +140,7 @@
                         </TabPane>
                         <ToolBar prefHeight="42.0" prefWidth="260.0">
                           <items>
-                            <Button fx:id="addLayerButton" mnemonicParsing="false" onAction="#addLayer" prefHeight="25.0" prefWidth="120.0" text="Add Layer" />
-                              <Button fx:id="connectLayers" mnemonicParsing="false" onAction="#connectLayers" prefHeight="25.0" prefWidth="120.0" text="Connect Layers" />
+                              <Button fx:id="connectLayers" mnemonicParsing="false" onAction="#connectLayers" prefHeight="25.0" prefWidth="247.0" text="Connect Layers" />
                           </items>
                         </ToolBar>
                      </children>

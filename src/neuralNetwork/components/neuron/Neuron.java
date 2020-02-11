@@ -176,8 +176,10 @@ public class Neuron implements Serializable {
     public void genWeights() {
         // For all weights
         for(int i = 0; i < weights.size(); i++) {
-            // Generate a new weight
-            weights.set(i, 2.0 * Generator.genDouble() - 1);
+            if(weights.get(i) == 0.0) {
+                // Generate a new weight
+                weights.set(i, 2.0 * Generator.genDouble() - 1);
+            }
         }
     }
 
