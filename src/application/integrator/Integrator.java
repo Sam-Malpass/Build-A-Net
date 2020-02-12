@@ -12,9 +12,15 @@ import neuralNetwork.components.layers.Layer;
 import neuralNetwork.learningAlgorithms.LearningAlgorithm;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.jar.JarEntry;
+import java.util.jar.JarInputStream;
 
 public class Integrator {
 
@@ -144,6 +150,39 @@ public class Integrator {
         }
         // Return object
         return (Layer) instance;
+    }
+
+    public static ArrayList<Object> loadFunctions() throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
+        ArrayList<Object> functions = new ArrayList<>();
+        // Generate an array of Files
+        File[] fileList = new File("plugins/functions").listFiles();
+        // Convert the array to an ArrayList because they are just better
+        ArrayList<File> files = new ArrayList<File>(Arrays.asList(fileList));
+        for(File f : files) {
+            String jarName = f.getAbsolutePath();
+            JarInputStream jarFile = new JarInputStream(new FileInputStream(jarName));
+            JarEntry jarEntry;
+            while (true) {
+
+                jarEntry = jarFile.getNextJarEntry();
+
+                if (jarEntry == null) {
+                    break;
+                }
+                if (jarEntry.getName().endsWith(".class")) {
+                    URL jarPath = f.toURI().toURL();
+                    String jarURL = "jar:"+jarPath+"!/";
+                    URL[] urls = {new URL(jarURL)};
+                    URLClassLoader child = new URLClassLoader(urls);
+                    Class load = Class.forName(jarEntry.getName().replace(".class",""), true, child);
+                    Object instance = load.newInstance();
+                    if(instance instanceof ActivationFunction) {
+                        functions.add(instance);
+                    }
+                }
+            }
+        }
+        return functions;
     }
 }
 

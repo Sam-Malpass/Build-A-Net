@@ -1447,7 +1447,17 @@ public class ApplicationWindowController implements Initializable {
         }
 
         /*INSERT CODE FOR EXTERNAL NEURONS HERE*/
-
+        try {
+            ArrayList<Object> dummy = Integrator.loadFunctions();
+            for(Object o : dummy) {
+                neuronTypes.add((ActivationFunction)o);
+                neuronNames.add(o.getClass().getName().replace(".class", ""));
+                colourVals.add(((ActivationFunction) o).getColour());
+            }
+        }
+        catch (Exception e) {
+            write("Integrator failed to load external functions", "-e");
+        }
         if(neuronTypes.size() * 100 > 400) {
             toolboxCanvas.setHeight(neuronTypes.size() * 100);
             toolboxPane.setPrefHeight(toolboxCanvas.getHeight());
