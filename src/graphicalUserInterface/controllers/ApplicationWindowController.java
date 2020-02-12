@@ -81,9 +81,15 @@ public class ApplicationWindowController implements Initializable {
     @FXML
     private Canvas toolboxCanvas;
 
+    /**
+     * toolboxCanvasLayers is the toolboxCanvas for the layers tab of the toolbox
+     */
     @FXML
     private Canvas toolboxCanvasLayers;
 
+    /**
+     * toolboxPaneLayers is the pane that holds the toolboxCanvasLayers
+     */
     @FXML
     private AnchorPane toolboxPaneLayers;
 
@@ -109,6 +115,9 @@ public class ApplicationWindowController implements Initializable {
      */
     private GraphicsContext toolboxContext;
 
+    /**
+     * toolboxContextLayers holds the GraphicsContext for the toolboxCanvasLayers
+     */
     private GraphicsContext toolboxContextLayers;
 
     /**
@@ -126,6 +135,9 @@ public class ApplicationWindowController implements Initializable {
      */
     private NeuronToolboxDrawer neuronToolboxDrawer;
 
+    /**
+     * layerToolboxDrawer holds the drawer object for the layer toolbox
+     */
     private LayerToolboxDrawer layerToolboxDrawer;
 
     /**
@@ -143,14 +155,30 @@ public class ApplicationWindowController implements Initializable {
      */
     ArrayList<ActivationFunction> neuronTypes = new ArrayList<>();
 
-
+    /**
+     * layerNames holds a list of all the layer types that can be added
+     */
     ArrayList<String> layerNames = new ArrayList<>();
+
+    /**
+     * layerTypes holds a list of all the layers loaded
+     */
     ArrayList<Layer> layerTypes = new ArrayList<>();
 
+    /**
+     * algorithmBox holds a drop-down list of all the algorithms for learning
+     */
     @FXML
     private ComboBox algorithmBox;
 
+    /**
+     * learningAlgorithmsNames holds a list of all the algorithm names loaded
+     */
     ArrayList<String> learningAlgorithmNames = new ArrayList<>();
+
+    /**
+     * learningAlgorithms holds a list of the algorithms loaded in the application
+     */
     ArrayList<LearningAlgorithm> learningAlgorithms = new ArrayList<>();
 
 
@@ -174,6 +202,9 @@ public class ApplicationWindowController implements Initializable {
      */
     private int selectedNeuron;
 
+    /**
+     * selectedLayerBox holds the position of the selected layer in the layer toolbox
+     */
     private int selectedLayerBox;
 
     /**
@@ -885,16 +916,29 @@ public class ApplicationWindowController implements Initializable {
         }
     }
 
+    /**
+     * Function addLayer()
+     * <p>
+     *     Takes a position and a layer then performs the operation of adding the layer to the network at the given position
+     * </p>
+     * @param position is the position to insert the layer
+     * @param layer is the layer to add
+     */
     private void addLayer(int position, Layer layer) {
+        // Create the argument list
         ArrayList<Object> args = new ArrayList<>();
+        // Add the network
         args.add(neuralNetwork);
+        // Add the position
         args.add(position);
+        // Add the layer
         args.add(layer);
-
+        // Create the command
         AddLayer add = new AddLayer();
+        // Execute the command
         add.executeCommand(args);
+        // Add the command to the stack
         commandStack.add(add);
-
         // If the number of layers is greater than the max that can be displayed
         if(neuralNetwork.numLayers() > baseMaxLayers) {
             // Update the width of the canvas
@@ -1436,6 +1480,12 @@ public class ApplicationWindowController implements Initializable {
         });
     }
 
+    /**
+     * Function initializeLayerToolbox()
+     * <p>
+     *     Sets up the layer toolbox section
+     * </p>
+     */
     private void initializeLayerToolbox() {
         // Find all the activation functions in the system
         ArrayList<File> functions = Integrator.getInternalClasses("neuralNetwork/components/layers");
@@ -1451,24 +1501,32 @@ public class ApplicationWindowController implements Initializable {
         }
         // Remove the interface from the list of classes
         for(File i : indices) {
+            // Remove the files that are flagged for removal
             functions.remove(i);
         }
+        // For all files left
         for(File f : functions) {
             // Create a temporary object of that class
             Layer tmp = Integrator.createLayer("neuralNetwork/components/layers", f.getName());
+            // Add the layer to the list of layers
             layerTypes.add(tmp);
             // Get the name of the neuron
             layerNames.add(f.getName().replace(".class", ""));
         }
-
+        // If the amount of layers is too much than can be displayed by default
         if(layerTypes.size() * 100 > 400) {
+            // Resize the canvas
             toolboxCanvasLayers.setHeight(layerTypes.size() * 100);
+            // Resize the pane
             toolboxPaneLayers.setPrefHeight(toolboxPaneLayers.getHeight());
         }
-
+        // Create the contextMenu
         ContextMenu contextMenu = new ContextMenu();
+        // Create a MenuItem
         MenuItem addBefore = new MenuItem("Add Before Selected Layer");
+        // Create a MenuItem
         MenuItem addAfter = new MenuItem("Add After Selected Layer");
+        // Set an action
         addBefore.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
@@ -1484,21 +1542,33 @@ public class ApplicationWindowController implements Initializable {
                     layerToolboxDrawer.highlightBox(selectedLayerBox);
                     // If the selectedLayer is not -1 - that is to say there is a selected layer
                     if (selectedLayer != -1 && selectedLayer != 0) {
+                        // Setup a layer
                         Layer layerToAdd = null;
                         try {
+                            // Try and make a new instance of the given layer class
                             layerToAdd = layerTypes.get(selectedLayerBox).getClass().newInstance();
-                        } catch (InstantiationException e) {
-                            e.printStackTrace();
-                        } catch (IllegalAccessException e) {
-                            e.printStackTrace();
                         }
+                        // Catch error
+                        catch (InstantiationException e) {
+                            // Output error message
+                            write("Problem instantiating layer object", "-e");
+                        }
+                        // Catch error
+                        catch (IllegalAccessException e) {
+                            // Output error message
+                            write("Illegal Access Exception", "-e");
+                        }
+                        // Call the add layer function with parameters
                         addLayer(selectedLayer, layerToAdd);
+                        // Update the network canvas
                         updateNetworkCanvas();
+                        // Update the status box
                         updateStatusBox();
                     }
                 }
             }
         });
+        // Set an action
         addAfter.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
@@ -1514,23 +1584,39 @@ public class ApplicationWindowController implements Initializable {
                     layerToolboxDrawer.highlightBox(selectedLayerBox);
                     // If the selectedLayer is not -1 - that is to say there is a selected layer
                     if (selectedLayer != -1 && selectedLayer != neuralNetwork.numLayers()-1) {
+                        // Set up a dummy layer
                         Layer layerToAdd = null;
                         try {
+                            // Try and create a layer
                             layerToAdd = layerTypes.get(selectedLayerBox).getClass().newInstance();
-                        } catch (InstantiationException e) {
-                            e.printStackTrace();
-                        } catch (IllegalAccessException e) {
-                            e.printStackTrace();
                         }
+                        // Catch error
+                        catch (InstantiationException e) {
+                            // Output error message
+                            write("Problem instantiating the layer", "-e");
+                        }
+                        // Catch error
+                        catch (IllegalAccessException e) {
+                            // Output error message
+                            write("Illegal access exception", "-e");
+                        }
+                        // Call the addLayer function
                         addLayer(selectedLayer + 1, layerToAdd);
+                        // Update the network canvas
                         updateNetworkCanvas();
+                        // Update the status box
                         updateStatusBox();
                     }
                 }
             }
         });
+        // Create a SeparatorMenuItem
+        SeparatorMenuItem separatorMenuItem = new SeparatorMenuItem();
+        // Create a MenuItem
         MenuItem cancel = new MenuItem("Cancel");
-        contextMenu.getItems().addAll(addBefore, addAfter, cancel);
+        // Add all menu items to the menu
+        contextMenu.getItems().addAll(addBefore, addAfter, separatorMenuItem, cancel);
+        // Set the behaviour for when the context menu is requested.
         toolboxCanvasLayers.setOnContextMenuRequested(e -> {
             // Redraw the toolbox - this is done to remove previous highlighting
             layerToolboxDrawer.drawToolBox(toolboxCanvasLayers.getHeight(), layerNames);
@@ -1547,6 +1633,7 @@ public class ApplicationWindowController implements Initializable {
                 // Highlight the selected neuron
                 layerToolboxDrawer.highlightBox(selectedLayerBox);
             }
+            // Show the menu
             contextMenu.show(toolboxCanvasLayers, e.getScreenX(), e.getScreenY());
         });
 
@@ -1554,6 +1641,12 @@ public class ApplicationWindowController implements Initializable {
         layerToolboxDrawer.drawToolBox(toolboxCanvasLayers.getHeight(), layerNames);
     }
 
+    /**
+     * Function createLearningAlgorithmList()
+     * <p>
+     *     Loads all the learning algorithms into the application and applies the list of names to the ComboBox
+     * </p>
+     */
     private void createLearningAlgorithmList() {
         // Find all the activation functions in the system
         ArrayList<File> algorithms = Integrator.getInternalClasses("neuralNetwork/learningAlgorithms");
@@ -1569,22 +1662,26 @@ public class ApplicationWindowController implements Initializable {
         }
         // Remove the interface from the list of classes
         algorithms.remove(index);
+        // Make new list
         learningAlgorithmNames = new ArrayList<>();
+        // Make new list
         learningAlgorithms = new ArrayList<>();
-
         // For all the activation functions
         for(File f : algorithms) {
             // Create a temporary object of that class
             LearningAlgorithm tmp = Integrator.createAlgorithm("neuralNetwork/learningAlgorithms", f.getName());
+            // Add the object to the list of algorithms
             learningAlgorithms.add(tmp);
-            // Get their colour values
-            // Get the name of the neuron
+            // Get the name
             String name = f.getName().replace(".class", "");
+            // Add the name to the list of names
             learningAlgorithmNames.add(name);
         }
 
         /*INSERT CODE FOR EXTERNAL ALGORITHMS HERE*/
+        // Add a dummy name for deselection
         algorithmBox.getItems().add("-");
+        // Add all names to the combo box
         algorithmBox.getItems().addAll(FXCollections.observableList(learningAlgorithmNames));
     }
 
