@@ -24,6 +24,11 @@ public class Network implements Serializable {
     private static final long serialversionUID = 1L;
 
     /**
+     * classification holds a boolean value - true for classification network, false for regression networks
+     */
+    private boolean classification = true;
+
+    /**
      * networkLayers holds the layers in the network
      */
     private ArrayList<Layer> networkLayers;

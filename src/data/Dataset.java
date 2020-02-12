@@ -30,7 +30,6 @@ public abstract class Dataset {
      */
     private ArrayList<Integer> outputCols;
 
-
     /**
      * Function numEntries()
      * <p>

@@ -21,7 +21,7 @@ public class RectifiedLinearUnits implements ActivationFunction {
      */
     @Override
     public Double activationFunction(Double currOutput) {
-        // STUB FILL LATER
+        // Find the max out of currOutput and 0.0 and return it
         return Math.max(0.0, currOutput);
     }
 
@@ -36,11 +36,14 @@ public class RectifiedLinearUnits implements ActivationFunction {
      */
     @Override
     public Double findDelta(Double error, Double output) {
-        // STUB FILL LATER
+        // If the output is greater than 0, output the error * 1
         if(output > 0) {
-            return 1.0;
+            // Return error * 1
+            return error * 1.0;
         }
+        // Otherwise
         else {
+            // Return 0.0
             return 0.0;
         }
     }
