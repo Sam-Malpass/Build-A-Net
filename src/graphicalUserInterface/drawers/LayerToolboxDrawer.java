@@ -18,6 +18,9 @@ public class LayerToolboxDrawer {
      */
     private GraphicsContext context;
 
+    /**
+     * startY holds the value for starting position in the toolbox
+     */
     private double startY = 50;
 
     /**

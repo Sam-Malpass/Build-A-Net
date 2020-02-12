@@ -27,8 +27,7 @@ public class Integrator {
      * @param packagePath is the package path in the application
      * @return the list of files in that package
      */
-    public static ArrayList<File> getInternalClasses(String packagePath)
-    {
+    public static ArrayList<File> getInternalClasses(String packagePath) {
         // Declare the list
         ArrayList<File> files;
         // Create the ClassLoader object

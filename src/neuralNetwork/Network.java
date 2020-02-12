@@ -145,53 +145,6 @@ public class Network implements Serializable {
     }
 
     /**
-     * Function addNewLayer()
-     * <p>
-     *     Adds a new layer to the network and updates the status flags
-     * </p>
-     */
-    public void addNewLayer() {
-        // Add a layer
-        insertLayer(numLayers()-1, new HiddenLayer());
-        // Reset connected flag
-        connected = false;
-        // Reset trained flag;
-        trained = false;
-        // Update modified flag
-        modified = true;
-    }
-
-    public void addNewLayer(Layer layer) {
-        insertLayer(numLayers()-1, layer);
-        // Reset connected flag
-        connected = false;
-        // Reset trained flag;
-        trained = false;
-        // Update modified flag
-        modified = true;
-    }
-
-    public void addNewLayerBefore(int selectedLayer, Layer layer) {
-        insertLayer(selectedLayer, layer);
-        // Reset connected flag
-        connected = false;
-        // Reset trained flag;
-        trained = false;
-        // Update modified flag
-        modified = true;
-    }
-
-    public void addNewLayerAfter(int selectedLayer, Layer layer) {
-        insertLayer(selectedLayer+1, layer);
-        // Reset connected flag
-        connected = false;
-        // Reset trained flag;
-        trained = false;
-        // Update modified flag
-        modified = true;
-    }
-
-    /**
      * Function insertLayer()
      * <p>
      *     Inserts a pre-made layer at a given position
@@ -229,6 +182,15 @@ public class Network implements Serializable {
         modified = true;
     }
 
+    /**
+     * Function insertNeuron()
+     * <p>
+     *     Inserts a given neuron into a specific layer and at a specific location within that layer
+     * </p>
+     * @param layerID is the layer to add the neuron to
+     * @param position is the position in the layer to add the neuron to
+     * @param n is the neuron in question
+     */
     public void insertNeuron(int layerID, int position, Neuron n) {
         networkLayers.get(layerID).insertNeuron(position, n);
         // Update the connected flag
