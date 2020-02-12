@@ -152,36 +152,135 @@ public class Integrator {
         return (Layer) instance;
     }
 
+    /**
+     * Function loadFunctions()
+     * <p>
+     *     Iterates over all files in the functions folder and then creates objects of each class in those JARs.
+     *     If the object is then an instance of the ActivationFunction then it is added to a list. This list it then
+     *     returned to the prior function
+     * </p>
+     * @return a list of ActivationFunctions
+     * @throws IOException is and input/output error
+     * @throws ClassNotFoundException is an error where the class is not found when loading
+     * @throws IllegalAccessException is an issue with accessing the file(s)
+     * @throws InstantiationException is where the class could not be instantiated
+     */
     public static ArrayList<Object> loadFunctions() throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
+        // Create a list for the functions
         ArrayList<Object> functions = new ArrayList<>();
         // Generate an array of Files
         File[] fileList = new File("plugins/functions").listFiles();
         // Convert the array to an ArrayList because they are just better
         ArrayList<File> files = new ArrayList<File>(Arrays.asList(fileList));
+        // For all files in the folder
         for(File f : files) {
-            String jarName = f.getAbsolutePath();
-            JarInputStream jarFile = new JarInputStream(new FileInputStream(jarName));
-            JarEntry jarEntry;
-            while (true) {
-
-                jarEntry = jarFile.getNextJarEntry();
-
-                if (jarEntry == null) {
-                    break;
-                }
-                if (jarEntry.getName().endsWith(".class")) {
-                    URL jarPath = f.toURI().toURL();
-                    String jarURL = "jar:"+jarPath+"!/";
-                    URL[] urls = {new URL(jarURL)};
-                    URLClassLoader child = new URLClassLoader(urls);
-                    Class load = Class.forName(jarEntry.getName().replace(".class",""), true, child);
-                    Object instance = load.newInstance();
-                    if(instance instanceof ActivationFunction) {
-                        functions.add(instance);
+            // Check the file is a JAR
+            if(f.getName().endsWith(".jar")) {
+                // Get the names of the JAR
+                String jarName = f.getAbsolutePath();
+                // Setup a stream
+                JarInputStream jarFile = new JarInputStream(new FileInputStream(jarName));
+                // Declare the entry
+                JarEntry jarEntry;
+                // Repeat until broken
+                while (true) {
+                    // Get the next entry in the JAR
+                    jarEntry = jarFile.getNextJarEntry();
+                    // If it is null
+                    if (jarEntry == null) {
+                        // Break
+                        break;
+                    }
+                    // If the name ends with .class
+                    if (jarEntry.getName().endsWith(".class")) {
+                        // Setup the URL
+                        URL jarPath = f.toURI().toURL();
+                        // Get the jarURL
+                        String jarURL = "jar:" + jarPath + "!/";
+                        // Add it to a list of URLs
+                        URL[] urls = {new URL(jarURL)};
+                        // Get the URLClassLoader setup
+                        URLClassLoader child = new URLClassLoader(urls);
+                        // Get the class
+                        Class load = Class.forName(jarEntry.getName().replace(".class", ""), true, child);
+                        // Create an object
+                        Object instance = load.newInstance();
+                        // If it is an instance of ActivationFunction
+                        if (instance instanceof ActivationFunction) {
+                            // Add it to the list of functions
+                            functions.add(instance);
+                        }
                     }
                 }
             }
         }
+        // Return the list of functions
+        return functions;
+    }
+
+    /**
+     * Function loadAlgorithms()
+     * <p>
+     *     Iterates over all files in the algorithms folder and then creates objects of each class in those JARs.
+     *     If the object is then an instance of the Algorithm then it is added to a list. This list it then
+     *     returned to the prior function
+     * </p>
+     * @return a list of Algorithms
+     * @throws IOException is and input/output error
+     * @throws ClassNotFoundException is an error where the class is not found when loading
+     * @throws IllegalAccessException is an issue with accessing the file(s)
+     * @throws InstantiationException is where the class could not be instantiated
+     */
+    public static ArrayList<Object> loadAlgorithms() throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
+        // Create a list for the functions
+        ArrayList<Object> functions = new ArrayList<>();
+        // Generate an array of Files
+        File[] fileList = new File("plugins/algorithms").listFiles();
+        // Convert the array to an ArrayList because they are just better
+        ArrayList<File> files = new ArrayList<File>(Arrays.asList(fileList));
+        // For all files in the folder
+        for(File f : files) {
+            // Check the file is a JAR
+            if(f.getName().endsWith(".jar")) {
+                // Get the names of the JAR
+                String jarName = f.getAbsolutePath();
+                // Setup a stream
+                JarInputStream jarFile = new JarInputStream(new FileInputStream(jarName));
+                // Declare the entry
+                JarEntry jarEntry;
+                // Repeat until broken
+                while (true) {
+                    // Get the next entry in the JAR
+                    jarEntry = jarFile.getNextJarEntry();
+                    // If it is null
+                    if (jarEntry == null) {
+                        // Break
+                        break;
+                    }
+                    // If the name ends with .class
+                    if (jarEntry.getName().endsWith(".class")) {
+                        // Setup the URL
+                        URL jarPath = f.toURI().toURL();
+                        // Get the jarURL
+                        String jarURL = "jar:" + jarPath + "!/";
+                        // Add it to a list of URLs
+                        URL[] urls = {new URL(jarURL)};
+                        // Get the URLClassLoader setup
+                        URLClassLoader child = new URLClassLoader(urls);
+                        // Get the class
+                        Class load = Class.forName(jarEntry.getName().replace(".class", ""), true, child);
+                        // Create an object
+                        Object instance = load.newInstance();
+                        // If it is an instance of ActivationFunction
+                        if (instance instanceof LearningAlgorithm) {
+                            // Add it to the list of functions
+                            functions.add(instance);
+                        }
+                    }
+                }
+            }
+        }
+        // Return the list of functions
         return functions;
     }
 }

@@ -1689,6 +1689,16 @@ public class ApplicationWindowController implements Initializable {
         }
 
         /*INSERT CODE FOR EXTERNAL ALGORITHMS HERE*/
+        try {
+            ArrayList<Object> dummy = Integrator.loadAlgorithms();
+            for(Object o : dummy) {
+                learningAlgorithms.add((LearningAlgorithm)o);
+                learningAlgorithmNames.add(o.getClass().getName().replace(".class", ""));
+            }
+        }
+        catch (Exception e) {
+            write("Issue loading external learning algorithms", "-e");
+        }
         // Add a dummy name for deselection
         algorithmBox.getItems().add("-");
         // Add all names to the combo box
