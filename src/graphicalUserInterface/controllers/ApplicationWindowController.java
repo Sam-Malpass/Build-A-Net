@@ -13,6 +13,7 @@ import application.wrappers.DoubleWrapper;
 import application.wrappers.IntegerWrapper;
 import data.Dataset;
 import data.OR;
+import data.XOR;
 import graphicalUserInterface.MessageBus;
 import graphicalUserInterface.drawers.LayerToolboxDrawer;
 import graphicalUserInterface.drawers.NetworkDrawer;
@@ -360,9 +361,9 @@ public class ApplicationWindowController implements Initializable {
         maxEpochs.value = 1000;
 
         /* DEBUG */
-        dataset = new OR();
+        dataset = new XOR();
         dataFlag = true;
-        write("OR data loaded:\n" + dataset.toString());
+        write("XOR data loaded:\n" + dataset.toString());
 
         updateNetworkCanvas();
         updateStatusBox();

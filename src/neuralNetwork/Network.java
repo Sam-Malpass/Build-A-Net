@@ -269,7 +269,12 @@ public class Network implements Serializable {
                 layer.initializeLayer();
             }
             // Alert in console
-            Main.passMessage("Network layers initialized successfully");
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    Main.passMessage("Network layers initialized successfully");
+                }
+            });
             // For all the layers
             for(Layer layer : networkLayers) {
                 // Generate the weights
