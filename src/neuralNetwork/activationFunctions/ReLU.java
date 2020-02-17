@@ -9,7 +9,7 @@ package neuralNetwork.activationFunctions;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class RectifiedLinearUnits implements ActivationFunction {
+public class ReLU implements ActivationFunction {
 
     /**
      * Function activationFunction()

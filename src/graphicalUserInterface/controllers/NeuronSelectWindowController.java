@@ -6,6 +6,7 @@
  */
 package graphicalUserInterface.controllers;
 
+import application.fileHandler.FileHandler;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -62,6 +63,8 @@ public class NeuronSelectWindowController implements Initializable {
             }
             // Set the listView items to names
             listView.getItems().addAll(FXCollections.observableArrayList(names));
+            Stage tmp = (Stage) listView.getScene().getWindow();
+            tmp.getIcons().add(new FileHandler().loadIcon());
         });
     }
 

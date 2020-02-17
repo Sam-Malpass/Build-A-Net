@@ -6,6 +6,7 @@
  */
 package application;
 
+import application.fileHandler.FileHandler;
 import graphicalUserInterface.MessageBus;
 import graphicalUserInterface.controllers.ApplicationWindowController;
 import javafx.application.Application;
@@ -13,6 +14,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+
+import java.io.File;
 
 public class Main extends Application {
     /**
@@ -65,6 +68,7 @@ public class Main extends Application {
     public void start(Stage stage) throws Exception {
         // Set the mainStage
         mainStage = stage;
+        FileHandler fileHandler = new FileHandler();
         // Attempt
         try {
             // Load the FXML
@@ -80,6 +84,7 @@ public class Main extends Application {
         // Run the setup function
         setup();
         // Disables resizing the window
+        mainStage.getIcons().add(fileHandler.loadIcon());
         mainStage.setResizable(false);
         // Show the window
         mainStage.show();

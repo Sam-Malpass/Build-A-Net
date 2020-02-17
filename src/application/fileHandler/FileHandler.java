@@ -6,6 +6,7 @@
 package application.fileHandler;
 
 import application.Main;
+import javafx.scene.image.Image;
 import neuralNetwork.Network;
 import java.io.*;
 
@@ -76,5 +77,21 @@ public class FileHandler {
         }
         // If error does occur, function will return null
         return null;
+    }
+
+    public Image loadIcon() {
+        Image icon = null;
+        try {
+            /*Open a file*/
+            File test = new File("src/resources/icon.png");
+            /*Make a file input stream*/
+            FileInputStream input = new FileInputStream(test);
+            icon = new Image(input);
+        }
+        catch (Exception e) {
+            Main.passMessage("Issue loading the application icon", "-e");
+
+        }
+        return icon;
     }
 }

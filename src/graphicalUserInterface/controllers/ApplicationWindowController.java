@@ -29,6 +29,7 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
@@ -367,7 +368,6 @@ public class ApplicationWindowController implements Initializable {
 
         updateNetworkCanvas();
         updateStatusBox();
-
     }
 
     /**
@@ -572,6 +572,9 @@ public class ApplicationWindowController implements Initializable {
         else {
             // Create an alert
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            Stage tmp = (Stage) alert.getDialogPane().getScene().getWindow();
+            tmp.getIcons().add(fileHandler.loadIcon());
+            alert.setGraphic(null);
             // Set the alert title
             alert.setTitle("Unsaved progress");
             // Set the alert content text
@@ -885,6 +888,12 @@ public class ApplicationWindowController implements Initializable {
     private void about() {
         // Create the Alert
         Alert window = new Alert(Alert.AlertType.INFORMATION);
+        Stage tmp = (Stage) window.getDialogPane().getScene().getWindow();
+        tmp.getIcons().add(fileHandler.loadIcon());
+        ImageView imageView = new ImageView(fileHandler.loadIcon());
+        imageView.setFitHeight(100);
+        imageView.setFitWidth(100);
+        window.setGraphic(imageView);
         // Set the title
         window.setTitle("About");
         // Set the header text
