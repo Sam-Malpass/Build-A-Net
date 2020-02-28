@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <bottom>
+      <ToolBar prefHeight="43.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+        <items>
+            <HBox prefHeight="3.0" prefWidth="428.0" spacing="430.0">
+               <children>
+                <Button maxWidth="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefWidth="75.0" text="Cancel" />
+                  <Button maxWidth="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefWidth="75.0" text="Next" />
+               </children>
+               <padding>
+                  <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+               </padding>
+            </HBox>
+        </items>
+      </ToolBar>
+   </bottom>
+   <center>
+      <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+         <children>
+            <HBox alignment="CENTER" prefHeight="54.0" prefWidth="595.0">
+               <VBox.margin>
+                  <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+               </VBox.margin>
+               <children>
+                  <ComboBox prefHeight="26.0" prefWidth="225.0" promptText="Select Data..." />
+               </children>
+            </HBox>
+            <VBox alignment="BOTTOM_CENTER" prefHeight="317.0" prefWidth="600.0">
+               <children>
+                  <HBox alignment="TOP_CENTER" prefHeight="30.0" prefWidth="600.0" spacing="2.0">
+                     <children>
+                        <TextField prefHeight="26.0" prefWidth="238.0" promptText="Select File..." />
+                        <Button mnemonicParsing="false" text="Browse" />
+                     </children>
+                     <padding>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </padding>
+                  </HBox>
+                  <HBox alignment="CENTER" prefHeight="30.0" prefWidth="600.0" spacing="10.0">
+                     <children>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Delimiter:" />
+                        <CheckBox mnemonicParsing="false" text="Comma" />
+                        <CheckBox mnemonicParsing="false" text="Tab" />
+                        <CheckBox mnemonicParsing="false" text="Space" />
+                        <CheckBox mnemonicParsing="false" text="Other" />
+                        <TextField editable="false" focusTraversable="false" opacity="0.3" promptText="Input delimiter..." />
+                     </children>
+                     <VBox.margin>
+                        <Insets top="2.0" />
+                     </VBox.margin>
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </HBox>
+                  <HBox alignment="CENTER" prefHeight="189.0" prefWidth="595.0">
+                     <children>
+                        <TableView prefHeight="185.0" prefWidth="586.0">
+                          <columns>
+                            <TableColumn prefWidth="75.0" text="C1" />
+                            <TableColumn prefWidth="75.0" text="C2" />
+                          </columns>
+                        </TableView>
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </VBox.margin>
+                     <padding>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </padding>
+                  </HBox>
+                  <HBox alignment="CENTER" prefHeight="34.0" prefWidth="600.0" spacing="10.0">
+                     <children>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Select Input Columns: " />
+                        <TextField promptText="Comma Separated List..." />
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Select Output Column(s): " />
+                        <TextField promptText="Comma Separated List..." />
+                     </children>
+                     <padding>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </padding>
+                  </HBox>
+               </children>
+            </VBox>
+         </children>
+      </VBox>
+   </center>
+</BorderPane>
