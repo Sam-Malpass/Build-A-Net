@@ -13,15 +13,14 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <bottom>
       <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <items>
             <HBox alignment="CENTER_LEFT" prefHeight="36.0" prefWidth="594.0" spacing="445.0">
                <children>
-                <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="75.0" text="Back..." />
-                  <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="75.0" text="Finish" />
+                <Button fx:id="backButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="75.0" text="Back..." />
+                  <Button fx:id="finishButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="75.0" text="Finish" />
                </children>
             </HBox>
         </items>
@@ -93,7 +92,7 @@
                      <children>
                         <HBox alignment="CENTER" prefHeight="40.0" prefWidth="200.0">
                            <children>
-                              <CheckBox mnemonicParsing="false" text="Test Set">
+                              <CheckBox fx:id="testCheckBox" mnemonicParsing="false" text="Test Set">
                                  <font>
                                     <Font size="20.0" />
                                  </font>
@@ -147,7 +146,7 @@
                      <children>
                         <HBox alignment="CENTER" prefHeight="40.0" prefWidth="200.0">
                            <children>
-                              <CheckBox mnemonicParsing="false" text="Validation Set">
+                              <CheckBox fx:id="validationCheckBox" mnemonicParsing="false" text="Validation Set">
                                  <font>
                                     <Font size="20.0" />
                                  </font>
@@ -162,7 +161,7 @@
                               <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                            </padding>
                            <children>
-                              <Spinner prefHeight="25.0" prefWidth="180.0" />
+                              <Spinner fx:id="valSetSpinner" prefHeight="25.0" prefWidth="180.0" />
                               <HBox alignment="CENTER_LEFT" prefHeight="30.0" prefWidth="200.0" spacing="10.0">
                                  <children>
                                     <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Total Entries:" />
@@ -209,7 +208,7 @@
                         <Separator prefWidth="200.0" />
                         <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                            <children>
-                              <ComboBox prefHeight="26.0" prefWidth="193.0" promptText="Select Sampling Method..." />
+                              <ComboBox fx:id="samplingComboBox" prefHeight="26.0" prefWidth="193.0" promptText="Select Sampling Method..." />
                            </children>
                         </HBox>
                      </children>
