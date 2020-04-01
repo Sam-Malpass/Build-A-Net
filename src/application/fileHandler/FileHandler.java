@@ -6,9 +6,11 @@
 package application.fileHandler;
 
 import application.Main;
+import data.UserSpecified;
 import javafx.scene.image.Image;
 import neuralNetwork.Network;
 import java.io.*;
+import java.util.ArrayList;
 
 public class FileHandler {
 
@@ -93,5 +95,22 @@ public class FileHandler {
 
         }
         return icon;
+    }
+
+    public ArrayList<String> loadData(String filePath) {
+        ArrayList<String> data = new ArrayList<>();
+        try {
+            File file = new File(filePath);
+            FileReader fileReader = new FileReader(file);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            String line = bufferedReader.readLine();
+            while(line != null) {
+                data.add(line);
+            }
+        }
+        catch (Exception e) {
+
+        }
+        return data;
     }
 }
