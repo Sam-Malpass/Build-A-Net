@@ -30,6 +30,8 @@ public abstract class Dataset {
      */
     private ArrayList<Integer> outputCols;
 
+    private String name;
+
     /**
      * Function numEntries()
      * <p>
@@ -195,5 +197,13 @@ public abstract class Dataset {
     public void setOutputCols(ArrayList<Integer> colNums) {
         // Set outputCols to passed value
         outputCols = colNums;
+    }
+
+    public void setName(String nom) {
+        this.name = nom;
+    }
+
+    public String getName() {
+        return name;
     }
 }

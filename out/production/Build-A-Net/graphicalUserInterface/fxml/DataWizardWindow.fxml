@@ -13,15 +13,14 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="graphicalUserInterface.controllers.DataWizardWindowController">
    <bottom>
       <ToolBar prefHeight="43.0" prefWidth="600.0" BorderPane.alignment="CENTER">
         <items>
             <HBox prefHeight="3.0" prefWidth="428.0" spacing="430.0">
                <children>
-                <Button maxWidth="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefWidth="75.0" text="Cancel" />
-                  <Button maxWidth="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefWidth="75.0" text="Next" />
+                <Button fx:id="cancelButton" maxWidth="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#cancel" prefWidth="75.0" text="Cancel" />
+                  <Button fx:id="nextButton" maxWidth="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefWidth="75.0" text="Next..." onAction="#next" />
                </children>
                <padding>
                   <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
@@ -38,28 +37,29 @@
                   <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                </VBox.margin>
                <children>
-                  <ComboBox prefHeight="26.0" prefWidth="225.0" promptText="Select Data..." />
+                  <ComboBox fx:id="dataComboBox" prefHeight="26.0" prefWidth="225.0" promptText="Select Data..." />
                </children>
             </HBox>
             <VBox alignment="BOTTOM_CENTER" prefHeight="317.0" prefWidth="600.0">
                <children>
-                  <HBox alignment="TOP_CENTER" prefHeight="30.0" prefWidth="600.0" spacing="2.0">
+                  <HBox fx:id="hbox1" alignment="TOP_CENTER" prefHeight="30.0" prefWidth="600.0" spacing="2.0">
                      <children>
-                        <TextField prefHeight="26.0" prefWidth="238.0" promptText="Select File..." />
-                        <Button mnemonicParsing="false" text="Browse" />
+                        <TextField fx:id="filePathField" prefHeight="26.0" prefWidth="238.0" promptText="Select File..." />
+                        <Button fx:id="browseButton" mnemonicParsing="false" text="Browse" />
+                        <CheckBox fx:id="includesHeadersCheckBox" mnemonicParsing="false" prefHeight="30.0" text="Includes Headers?" />
                      </children>
                      <padding>
                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                      </padding>
                   </HBox>
-                  <HBox alignment="CENTER" prefHeight="30.0" prefWidth="600.0" spacing="10.0">
+                  <HBox fx:id="hbox2" alignment="CENTER" prefHeight="30.0" prefWidth="600.0" spacing="10.0">
                      <children>
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Delimiter:" />
-                        <CheckBox mnemonicParsing="false" text="Comma" />
-                        <CheckBox mnemonicParsing="false" text="Tab" />
-                        <CheckBox mnemonicParsing="false" text="Space" />
-                        <CheckBox mnemonicParsing="false" text="Other" />
-                        <TextField editable="false" focusTraversable="false" opacity="0.3" promptText="Input delimiter..." />
+                        <CheckBox fx:id="commaCheckBox" mnemonicParsing="false" text="Comma" />
+                        <CheckBox fx:id="tabCheckBox" mnemonicParsing="false" text="Tab" />
+                        <CheckBox fx:id="spaceCheckBox" mnemonicParsing="false" text="Space" />
+                        <CheckBox fx:id="otherCheckBox" mnemonicParsing="false" text="Other" />
+                        <TextField fx:id="otherDelimiterField" editable="false" focusTraversable="false" opacity="0.3" promptText="Input delimiter..." />
                      </children>
                      <VBox.margin>
                         <Insets top="2.0" />
@@ -70,7 +70,7 @@
                   </HBox>
                   <HBox alignment="CENTER" prefHeight="189.0" prefWidth="595.0">
                      <children>
-                        <TableView prefHeight="185.0" prefWidth="586.0">
+                        <TableView fx:id="dataTable" prefHeight="185.0" prefWidth="586.0">
                           <columns>
                             <TableColumn prefWidth="75.0" text="C1" />
                             <TableColumn prefWidth="75.0" text="C2" />
@@ -84,12 +84,12 @@
                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                      </padding>
                   </HBox>
-                  <HBox alignment="CENTER" prefHeight="34.0" prefWidth="600.0" spacing="10.0">
+                  <HBox fx:id="hbox3" alignment="CENTER" prefHeight="34.0" prefWidth="600.0" spacing="10.0">
                      <children>
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Select Input Columns: " />
-                        <TextField promptText="Comma Separated List..." />
+                        <TextField fx:id="inputColumnsField" promptText="Comma Separated List..." />
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Select Output Column(s): " />
-                        <TextField promptText="Comma Separated List..." />
+                        <TextField fx:id="outputColumnsField" promptText="Comma Separated List..." />
                      </children>
                      <padding>
                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />

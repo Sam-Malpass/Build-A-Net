@@ -361,11 +361,6 @@ public class ApplicationWindowController implements Initializable {
         minError.value = 0.01;
         maxEpochs.value = 1000;
 
-        /* DEBUG */
-        dataset = new XOR();
-        dataFlag = true;
-        write("XOR data loaded:\n" + dataset.toString());
-
         updateNetworkCanvas();
         updateStatusBox();
     }
@@ -1763,6 +1758,37 @@ public class ApplicationWindowController implements Initializable {
         else {
             // Output error message
             write("No data file is selected", "-e");
+        }
+    }
+
+    @FXML
+    private void setData() {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../fxml/DataWizardWindow.fxml"));
+            // Get the scene side
+            Parent root = fxmlLoader.load();
+            DataWizardWindowController controller = fxmlLoader.getController();
+            // Set the scene to the loaded FXML
+            Scene scene = new Scene(root, 600, 400);
+            // Create a stage (a window)
+            Stage stage = new Stage();
+            // Set the scene of the stage
+            stage.setScene(scene);
+            // Set the window's title
+            stage.setTitle("Select...");
+            stage.getIcons().add(fileHandler.loadIcon());
+            // Make it un-resizable
+            stage.setResizable(false);
+            // Show the window and wait for a response
+            stage.showAndWait();
+            if(controller.getLoadedData() != null) {
+                dataset = controller.getLoadedData();
+                write("Data for " + dataset.getName() + " loaded successfully!");
+                dataFlag = true;
+            }
+        }
+        catch(Exception e) {
+            write("Problem opening the data wizard window", "-e");
         }
     }
 
