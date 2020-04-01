@@ -106,6 +106,7 @@ public class FileHandler {
             String line = bufferedReader.readLine();
             while(line != null) {
                 data.add(line);
+                line = bufferedReader.readLine();
             }
         }
         catch (Exception e) {

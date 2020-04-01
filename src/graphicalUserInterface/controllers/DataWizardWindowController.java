@@ -1,9 +1,8 @@
 package graphicalUserInterface.controllers;
 
-import data.AND;
-import data.Dataset;
-import data.OR;
-import data.XOR;
+import application.Main;
+import application.fileHandler.FileHandler;
+import data.*;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -14,6 +13,8 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -55,6 +56,7 @@ public class DataWizardWindowController implements Initializable {
     private CheckBox includesHeadersCheckBox;
 
     /* Delimiters */
+    private String delimiter;
     /**
      * commaCheckBox specifies whether the file has a comma delimiter
      */
@@ -98,12 +100,14 @@ public class DataWizardWindowController implements Initializable {
      */
     @FXML
     private TextField inputColumnsField;
+    private ArrayList<Integer> inputs = new ArrayList<>();
 
     /**
      * outputColumnsField is a field for the list of columns to be used as output attribute
      */
     @FXML
     private TextField outputColumnsField;
+    private ArrayList<Integer> outputs = new ArrayList<>();
     /* Inputs/Outputs*/
 
     /* Progression Buttons */
@@ -130,6 +134,7 @@ public class DataWizardWindowController implements Initializable {
     /* Needed boxes */
 
     private Dataset loadedData;
+    private String fileName;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -162,6 +167,8 @@ public class DataWizardWindowController implements Initializable {
                     tabCheckBox.setSelected(!newValue);
                     spaceCheckBox.setSelected(!newValue);
                     otherCheckBox.setSelected(!newValue);
+                    delimiter = ",";
+                    testConditions();
                 }
             }
         });
@@ -172,6 +179,8 @@ public class DataWizardWindowController implements Initializable {
                     commaCheckBox.setSelected(!newValue);
                     spaceCheckBox.setSelected(!newValue);
                     otherCheckBox.setSelected(!newValue);
+                    delimiter = "\t";
+                    testConditions();
                 }
             }
         });
@@ -182,6 +191,8 @@ public class DataWizardWindowController implements Initializable {
                     tabCheckBox.setSelected(!newValue);
                     commaCheckBox.setSelected(!newValue);
                     otherCheckBox.setSelected(!newValue);
+                    delimiter = " ";
+                    testConditions();
                 }
             }
         });
@@ -192,7 +203,45 @@ public class DataWizardWindowController implements Initializable {
                     tabCheckBox.setSelected(!newValue);
                     spaceCheckBox.setSelected(!newValue);
                     commaCheckBox.setSelected(!newValue);
+                    otherDelimiterField.setDisable(false);
+                    testConditions();
                 }
+                else {
+                    otherDelimiterField.setDisable(true);
+                }
+            }
+        });
+        otherDelimiterField.setOnKeyReleased(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                if(keyEvent.getCode() == KeyCode.ENTER) {
+                    testConditions();
+                }
+            }
+        });
+
+        inputColumnsField.setOnKeyReleased(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                if(keyEvent.getCode() == KeyCode.ENTER) {
+                    checkInputs();
+                }
+            }
+        });
+        outputColumnsField.setOnKeyReleased(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                if(keyEvent.getCode() == KeyCode.ENTER) {
+                    checkOutputs();
+                }
+            }
+        });
+        inputColumnsField.setStyle("-fx-text-inner-color: rgb(0,128,0);");
+        outputColumnsField.setStyle("-fx-text-inner-color: rgb(128,0,0);");
+        includesHeadersCheckBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) {
+                testConditions();
             }
         });
 
@@ -204,6 +253,7 @@ public class DataWizardWindowController implements Initializable {
                 // Get the selected file
                 File file = chooser.showOpenDialog(new Stage());
                 filePathField.setText(file.getAbsolutePath());
+                fileName = file.getName();
                 if(filePathField.getText().endsWith(".csv")) {
                     autoCheck(",");
                 }
@@ -219,6 +269,7 @@ public class DataWizardWindowController implements Initializable {
 
     @FXML
     private void cancel() {
+        loadedData = null;
         // Get the window
         Stage stage = (Stage) dataTable.getScene().getWindow();
         // Close the window
@@ -261,44 +312,38 @@ public class DataWizardWindowController implements Initializable {
         }
         dataTable.getColumns().clear();
         dataTable.setItems(data);
-        for (int i = 0; i < data.get(0).size(); i++) {
-            final int curCol = i;
-            final TableColumn<ObservableList<String>, String> column = new TableColumn<>(
-                    dataset.getColumnHeaders().get(i)
-            );
-            column.setMinWidth(100);
-            column.setCellValueFactory(
-                    param -> new ReadOnlyObjectWrapper<>(param.getValue().get(curCol))
-            );
-            dataTable.getColumns().add(column);
-        }
-
+            for (int i = 0; i < data.get(0).size(); i++) {
+                final int curCol = i;
+                String nom = "Col";
+                if(includesHeadersCheckBox.isSelected() || !dataComboBox.getValue().equals("From File")) {
+                    nom = dataset.getColumnHeaders().get(i);
+                }
+                else {
+                    nom = "Col " + i;
+                }
+                final TableColumn<ObservableList<String>, String> column = new TableColumn<>(
+                        nom
+                );
+                column.setMinWidth(100);
+                column.setCellValueFactory(
+                        param -> new ReadOnlyObjectWrapper<>(param.getValue().get(curCol))
+                );
+                dataTable.getColumns().add(column);
+            }
     }
 
     private void autoCheck(String delim) {
         switch(delim) {
             case ",":
                 commaCheckBox.setSelected(true);
-                tabCheckBox.setSelected(false);
-                spaceCheckBox.setSelected(false);
-                otherCheckBox.setSelected(false);
                 break;
             case "\t":
-                commaCheckBox.setSelected(false);
                 tabCheckBox.setSelected(true);
-                spaceCheckBox.setSelected(false);
-                otherCheckBox.setSelected(false);
                 break;
             case " ":
-                commaCheckBox.setSelected(false);
-                tabCheckBox.setSelected(false);
                 spaceCheckBox.setSelected(true);
-                otherCheckBox.setSelected(false);
                 break;
             default:
-                commaCheckBox.setSelected(false);
-                tabCheckBox.setSelected(false);
-                spaceCheckBox.setSelected(false);
                 otherCheckBox.setSelected(true);
                 break;
         }
@@ -307,14 +352,108 @@ public class DataWizardWindowController implements Initializable {
     @FXML
     private void next() {
         if(dataComboBox.getValue().equals("From File")) {
-
+            loadedData.setInputCols(inputs);
+            loadedData.setOutputCols(outputs);
+            Stage stage = (Stage) dataTable.getScene().getWindow();
+            stage.close();
         }
         else {
-            cancel();
+            Stage stage = (Stage) dataTable.getScene().getWindow();
+            stage.close();
         }
     }
 
     public Dataset getLoadedData() {
         return loadedData;
+    }
+
+
+    private void testConditions() {
+        if((filePathField.getText().endsWith(".csv") || filePathField.getText().endsWith(".tsv") || filePathField.getText().endsWith(".txt") || filePathField.getText().endsWith(".data"))) {
+            if(commaCheckBox.isSelected() || tabCheckBox.isSelected() || spaceCheckBox.isSelected() || (otherCheckBox.isSelected() && (!otherDelimiterField.getText().equals("") || !otherDelimiterField.getText().isEmpty()))) {
+                FileHandler fileHandler = new FileHandler();
+                if(otherCheckBox.isSelected()) {
+                    delimiter = otherDelimiterField.getText();
+                }
+                loadedData = new UserSpecified(fileName, fileHandler.loadData(filePathField.getText()), delimiter, includesHeadersCheckBox.isSelected());
+                updateTable(loadedData);
+            }
+            else {
+                Main.passMessage("No delimiter selected, please select/specify delimiter for the data", "-e");
+            }
+        }
+        else {
+            Main.passMessage("Invalid file type selected! Valid types are: .csv, .tsv, .txt", "-e");
+        }
+    }
+
+    private void checkInputs() {
+        String[] vals = inputColumnsField.getText().split(",");
+        for(String x : vals) {
+            try{
+                int y = Integer.parseInt(x);
+                inputs.add(y-1);
+            }
+            catch (Exception e) {
+                Main.passMessage("Please use integers for column numbers in a comma-separated list");
+                inputs.clear();
+                return;
+            }
+        }
+        for(Integer i : inputs) {
+            TableColumn col = (TableColumn)dataTable.getColumns().get(i);
+            col.setCellFactory(e -> new TableCell<Double, String>() {
+                @Override
+                public void updateItem(String item, boolean empty)
+                {
+                    super.updateItem(item, empty);
+                    setStyle("-fx-background-color: rgba(0, 128, 0, 0.3);");
+                    if (item == null || empty)
+                    {
+                        setText(null);
+                    } else
+                    {
+                        setText(item);
+                    }
+                }
+            });
+        }
+    }
+
+    private void checkOutputs() {
+        String[] vals = outputColumnsField.getText().split(",");
+        for(String x : vals) {
+            try{
+                int y = Integer.parseInt(x);
+                outputs.add(y-1);
+            }
+            catch (Exception e) {
+                Main.passMessage("Please use integers for column numbers in a comma-separated list");
+                outputs.clear();
+                return;
+            }
+        }
+        for(Integer i : outputs) {
+            TableColumn col = (TableColumn)dataTable.getColumns().get(i);
+            col.setCellFactory(e -> new TableCell<Double, String>() {
+                @Override
+                public void updateItem(String item, boolean empty)
+                {
+                    super.updateItem(item, empty);
+                    setStyle("-fx-background-color: rgba(128, 0, 0, 0.3);");
+                    if (item == null || empty)
+                    {
+                        setText(null);
+                    } else
+                    {
+                        setText(item);
+                    }
+                }
+            });
+        }
+    }
+    private void checkInOut() {
+            checkInputs();
+            checkOutputs();
     }
 }

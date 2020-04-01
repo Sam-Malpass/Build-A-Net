@@ -59,7 +59,7 @@
                         <CheckBox fx:id="tabCheckBox" mnemonicParsing="false" text="Tab" />
                         <CheckBox fx:id="spaceCheckBox" mnemonicParsing="false" text="Space" />
                         <CheckBox fx:id="otherCheckBox" mnemonicParsing="false" text="Other" />
-                        <TextField fx:id="otherDelimiterField" editable="false" focusTraversable="false" opacity="0.3" promptText="Input delimiter..." />
+                        <TextField fx:id="otherDelimiterField" focusTraversable="false" promptText="Input delimiter..." />
                      </children>
                      <VBox.margin>
                         <Insets top="2.0" />

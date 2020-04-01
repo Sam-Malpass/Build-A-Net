@@ -20,7 +20,7 @@
             <HBox prefHeight="3.0" prefWidth="428.0" spacing="430.0">
                <children>
                 <Button fx:id="cancelButton" maxWidth="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#cancel" prefWidth="75.0" text="Cancel" />
-                  <Button fx:id="nextButton" maxWidth="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefWidth="75.0" text="Next..." onAction="#next" />
+                  <Button fx:id="nextButton" maxWidth="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#next" prefWidth="75.0" text="Next..." />
                </children>
                <padding>
                   <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
@@ -59,7 +59,7 @@
                         <CheckBox fx:id="tabCheckBox" mnemonicParsing="false" text="Tab" />
                         <CheckBox fx:id="spaceCheckBox" mnemonicParsing="false" text="Space" />
                         <CheckBox fx:id="otherCheckBox" mnemonicParsing="false" text="Other" />
-                        <TextField fx:id="otherDelimiterField" editable="false" focusTraversable="false" opacity="0.3" promptText="Input delimiter..." />
+                        <TextField fx:id="otherDelimiterField" focusTraversable="false" promptText="Input delimiter..." />
                      </children>
                      <VBox.margin>
                         <Insets top="2.0" />
