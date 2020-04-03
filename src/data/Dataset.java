@@ -30,6 +30,9 @@ public abstract class Dataset {
      */
     private ArrayList<Integer> outputCols;
 
+    /**
+     * name holds the name of the dataset
+     */
     private String name;
 
     /**
@@ -187,10 +190,24 @@ public abstract class Dataset {
         inputCols = colNums;
     }
 
+    /**
+     * Function getInputCols()
+     * <p>
+     *     Returns the list of column indices to use as the input cols
+     * </p>
+     * @return the list of indices
+     */
     public ArrayList<Integer> getInputCols() {
         return inputCols;
     }
 
+    /**
+     * Function getOutputCols()
+     * <p>
+     *     Returns the list of indices to use as output columns
+     * </p>
+     * @return the list of indices
+     */
     public ArrayList<Integer> getOutputCols() {
         return outputCols;
     }
@@ -207,25 +224,61 @@ public abstract class Dataset {
         outputCols = colNums;
     }
 
+    /**
+     * Function setName()
+     * <p>
+     *     Takes a string and sets the name to the passed value
+     * </p>
+     * @param nom is the new name to use
+     */
     public void setName(String nom) {
         this.name = nom;
     }
 
+    /**
+     * Function getName()
+     * <p>
+     *     Returns the name of the dataset
+     * </p>
+     * @return the name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Function getWholeRow()
+     * <p>
+     *     Returns both the input and output columns of the data set - the whole row
+     * </p>
+     * @param rowIndex the row to be returned
+     * @return the row itself
+     */
     public ArrayList<Double> getWholeRow(int rowIndex) {
+        // Get the input cols in the row
         ArrayList<Double> row = this.getRow(rowIndex);
+        // Get the output cols in the row
         row.addAll(this.getRowExpected(rowIndex));
+        // Return the row
         return row;
     }
 
+    /**
+     * Function addWholeRow()
+     * <p>
+     *     Takes a row and adds each attribute to the appropriate column of the dataframe
+     * </p>
+     * @param row is the row to be added
+     */
     public void addWholeRow(ArrayList<Double> row) {
+        // Check that the row being added will fit in the table
         if(row.size() != numAttributes()) {
+            // Return if not
             return;
         }
+        // Otherwise iterate through the the columns
         for(int i = 0; i < row.size(); i++) {
+            // Add each value in the row to the given column
             dataFrame.get(i).add(row.get(i));
         }
     }

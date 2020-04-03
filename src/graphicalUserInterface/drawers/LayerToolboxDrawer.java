@@ -51,13 +51,24 @@ public class LayerToolboxDrawer {
         startY = 50;
     }
 
+    /**
+     * Function drawLayer()
+     * <p>
+     *     Draws a layer object with its name in the toolbox
+     * </p>
+     * @param name is the name of the layer type
+     */
     private void drawLayer(String name) {
+        // Set the fill color
         context.setFill(Color.ORANGE);
+        // Fill the layer block
         context.fillRect(5, startY-45, 235, startY+40);
+        // Add the outline
         context.strokeLine(5, startY-45, 5, startY+45);
         context.strokeLine(5, startY-45, 240, startY-45);
         context.strokeLine(5, startY+45, 240, startY+45);
         context.strokeLine(240, startY-45, 240, startY+45);
+        // Add the name
         context.strokeText(name, 75, startY);
     }
 
