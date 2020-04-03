@@ -31,9 +31,11 @@ public class Generator {
      * <p>
      *     Returns a random double
      * </p>
-     * @return radom double
+     * @return random double
      */
     public static double genDouble() {
         return randomiser.nextDouble();
     }
+
+    public static int genInt(int bound) { return randomiser.nextInt(bound);}
 }

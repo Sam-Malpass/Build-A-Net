@@ -206,4 +206,19 @@ public abstract class Dataset {
     public String getName() {
         return name;
     }
+
+    public ArrayList<Double> getWholeRow(int rowIndex) {
+        ArrayList<Double> row = this.getRow(rowIndex);
+        row.addAll(this.getRowExpected(rowIndex));
+        return row;
+    }
+
+    public void addWholeRow(ArrayList<Double> row) {
+        if(row.size() != numAttributes()) {
+            return;
+        }
+        for(int i = 0; i < row.size(); i++) {
+            dataFrame.get(i).add(row.get(i));
+        }
+    }
 }

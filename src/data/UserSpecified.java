@@ -13,6 +13,11 @@ public class UserSpecified extends Dataset {
         setName(name);
     }
 
+    public UserSpecified(String name) {
+        setName(name);
+        setDataFrame(new ArrayList<>());
+    }
+
     private void setup(ArrayList<String> dataFile, String delimiter, boolean includeHeaders) {
         ArrayList<ArrayList<Double>> dataFramePre = new ArrayList<>();
         Double value = 0.0;
