@@ -35,7 +35,7 @@ public class IntegerWrapper {
      * <p>
      *     Returns the string of the value
      * </p>
-     * @return
+     * @return the String for the IntegerWrapper
      */
     @Override
     public String toString() {

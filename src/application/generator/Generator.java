@@ -36,6 +36,4 @@ public class Generator {
     public static double genDouble() {
         return randomiser.nextDouble();
     }
-
-    public static int genInt(int bound) { return randomiser.nextInt(bound);}
 }
