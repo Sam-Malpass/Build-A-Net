@@ -2,6 +2,8 @@ package data.samplers;
 
 import data.Dataset;
 
+import java.util.ArrayList;
+
 public interface Sampler {
-    Dataset sample(String name, Dataset data, int sampleSize);
+    ArrayList<Dataset> sample(Dataset data, ArrayList<Integer> sizes);
 }

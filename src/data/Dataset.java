@@ -187,6 +187,14 @@ public abstract class Dataset {
         inputCols = colNums;
     }
 
+    public ArrayList<Integer> getInputCols() {
+        return inputCols;
+    }
+
+    public ArrayList<Integer> getOutputCols() {
+        return outputCols;
+    }
+
     /**
      * Function setOutputCols()
      * <p>

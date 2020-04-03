@@ -13,8 +13,10 @@ public class UserSpecified extends Dataset {
         setName(name);
     }
 
-    public UserSpecified(String name) {
+    public UserSpecified(String name, ArrayList<Integer> ins, ArrayList<Integer> outs) {
         setName(name);
+        setInputCols(ins);
+        setOutputCols(outs);
         setDataFrame(new ArrayList<>());
     }
 

@@ -7,24 +7,25 @@ import java.util.Random;
 
 public class RandomSampler implements Sampler {
 
-    private ArrayList<Integer> sampledIndices;
-    private Dataset sample;
-
     @Override
-    public Dataset sample(String name, Dataset data, int sampleSize) {
-        if(data.numEntries() >= sampleSize) {
-            sampledIndices = new ArrayList<>();
-            sample = new UserSpecified(name);
-            int count = 0;
-            while (count != sampleSize) {
+    public ArrayList<Dataset> sample(Dataset data, ArrayList<Integer> sizes) {
+        ArrayList<Dataset> splits = new ArrayList<>();
+        ArrayList<Integer> sampledIndices = new ArrayList<>();
+        Integer splitCount = 1;
+        for(Integer i : sizes) {
+            String name = data.getName().concat("split").concat(splitCount.toString());
+            UserSpecified split = new UserSpecified(name, data.getInputCols(), data.getOutputCols());
+            int counter = 0;
+            while(counter != i) {
                 int index = new Random().nextInt(data.numEntries());
                 if(!sampledIndices.contains(index)) {
-                    sample.addWholeRow(data.getWholeRow(index));
-                    count++;
+                    split.addWholeRow(data.getWholeRow(index));
+                    sampledIndices.add(index);
+                    counter++;
                 }
             }
-            return sample;
+            splits.add(split);
         }
-        else { return null; }
+        return splits;
     }
 }
