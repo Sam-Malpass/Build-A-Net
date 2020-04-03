@@ -159,7 +159,7 @@ public class NetworkDrawer {
      * <p>
      *     Resets the area
      * </p>
-     * @param width
+     * @param width is the size of the area
      */
     public void resetArea(double width) {
         // Set the fill colour

@@ -29,7 +29,7 @@ public class DataWizardWindowController implements Initializable {
 
     /**
      * dataComboBox is a combo box to select a data set from
-     * */
+     */
     @FXML
     private ComboBox dataComboBox;
     /**
@@ -100,6 +100,9 @@ public class DataWizardWindowController implements Initializable {
      */
     @FXML
     private TextField inputColumnsField;
+    /**
+     * inputs holds the list of user selected input columns indices
+     */
     private ArrayList<Integer> inputs = new ArrayList<>();
 
     /**
@@ -107,6 +110,9 @@ public class DataWizardWindowController implements Initializable {
      */
     @FXML
     private TextField outputColumnsField;
+    /**
+     * outputs holds the list of user selected output columns indices
+     */
     private ArrayList<Integer> outputs = new ArrayList<>();
     /* Inputs/Outputs*/
 
@@ -125,32 +131,59 @@ public class DataWizardWindowController implements Initializable {
     /* Progression Buttons */
 
     /* Needed boxes */
+    /**
+     * hbox1 has the file path and header toggle
+     */
     @FXML
     private HBox hbox1;
+    /**
+     * hbox2 holds delimiter selection
+     */
     @FXML
     private HBox hbox2;
+    /**
+     * hbox3 has the input/output column fields
+     */
     @FXML
     private HBox hbox3;
     /* Needed boxes */
 
+    /**
+     * loadedData holds the currently loaded dataset
+     */
     private Dataset loadedData;
+    /**
+     * fileName holds the name of the external file
+     */
     private String fileName;
 
+    /**
+     * Function initialize()
+     * <p>
+     * Sets up the scene and its elements
+     * </p>
+     *
+     * @param url            is the URL
+     * @param resourceBundle is the bundle
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        // Set the items in the combo box
+        // Disable by default
         hbox1.setDisable(true);
+        // Disable by default
         hbox2.setDisable(true);
+        // Disable by default
         hbox3.setDisable(true);
+        // Set the items in the combo box
         dataComboBox.setItems(FXCollections.observableList(dataSets));
-        dataComboBox.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> {
-                    if(!(newValue.equals("From File"))) {
+        // Add a listener to the combo box to detect change
+        dataComboBox.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
+                    if (!(newValue.equals("From File"))) {
                         hbox1.setDisable(true);
                         hbox2.setDisable(true);
                         hbox3.setDisable(true);
                         update();
-                    }
-                    else {
+                    } else {
                         hbox1.setDisable(false);
                         hbox2.setDisable(false);
                         hbox3.setDisable(false);
@@ -158,12 +191,13 @@ public class DataWizardWindowController implements Initializable {
                     }
                 }
         );
+        // Clear the table columns
         dataTable.getColumns().clear();
-
+        // Add a listener to the commaCheckBox to toggle off all other checkboxes
         commaCheckBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                if(newValue) {
+                if (newValue) {
                     tabCheckBox.setSelected(!newValue);
                     spaceCheckBox.setSelected(!newValue);
                     otherCheckBox.setSelected(!newValue);
@@ -172,10 +206,11 @@ public class DataWizardWindowController implements Initializable {
                 }
             }
         });
+        // Add a listener to the tabCheckBox to toggle off all other checkboxes
         tabCheckBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                if(newValue) {
+                if (newValue) {
                     commaCheckBox.setSelected(!newValue);
                     spaceCheckBox.setSelected(!newValue);
                     otherCheckBox.setSelected(!newValue);
@@ -184,10 +219,11 @@ public class DataWizardWindowController implements Initializable {
                 }
             }
         });
+        // Add a listener to the spaceCheckBox to toggle off all other checkboxes
         spaceCheckBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                if(newValue) {
+                if (newValue) {
                     tabCheckBox.setSelected(!newValue);
                     commaCheckBox.setSelected(!newValue);
                     otherCheckBox.setSelected(!newValue);
@@ -196,55 +232,60 @@ public class DataWizardWindowController implements Initializable {
                 }
             }
         });
+        // Add a listener to the otherCheckBox to toggle off all other checkboxes and the input field
         otherCheckBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                if(newValue) {
+                if (newValue) {
                     tabCheckBox.setSelected(!newValue);
                     spaceCheckBox.setSelected(!newValue);
                     commaCheckBox.setSelected(!newValue);
                     otherDelimiterField.setDisable(false);
                     testConditions();
-                }
-                else {
+                } else {
                     otherDelimiterField.setDisable(true);
                 }
             }
         });
+        // Add a listener to detect when the enter key is pressed in the other delimiter field
         otherDelimiterField.setOnKeyReleased(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
-                if(keyEvent.getCode() == KeyCode.ENTER) {
+                if (keyEvent.getCode() == KeyCode.ENTER) {
                     testConditions();
                 }
             }
         });
-
+        // Add a listener to detect when the enter key is pressed in the input columns field
         inputColumnsField.setOnKeyReleased(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
-                if(keyEvent.getCode() == KeyCode.ENTER) {
+                if (keyEvent.getCode() == KeyCode.ENTER) {
                     checkInputs();
                 }
             }
         });
+        // Add a listener to detect when the enter key is pressed in the output columns field
         outputColumnsField.setOnKeyReleased(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
-                if(keyEvent.getCode() == KeyCode.ENTER) {
+                if (keyEvent.getCode() == KeyCode.ENTER) {
                     checkOutputs();
                 }
             }
         });
+        // Set the style of the input columns field
         inputColumnsField.setStyle("-fx-text-inner-color: rgb(0,128,0);");
+        // Set the style of the output columns field
         outputColumnsField.setStyle("-fx-text-inner-color: rgb(128,0,0);");
+        // Add a listener to the headers checkbox to modify the table
         includesHeadersCheckBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) {
                 testConditions();
             }
         });
-
+        // Add an action to the browse button to open the file explorer
         browseButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
@@ -254,19 +295,23 @@ public class DataWizardWindowController implements Initializable {
                 File file = chooser.showOpenDialog(new Stage());
                 filePathField.setText(file.getAbsolutePath());
                 fileName = file.getName();
-                if(filePathField.getText().endsWith(".csv")) {
+                if (filePathField.getText().endsWith(".csv")) {
                     autoCheck(",");
-                }
-                else if(filePathField.getText().endsWith(".tsv")) {
+                } else if (filePathField.getText().endsWith(".tsv")) {
                     autoCheck("\t");
-                }
-                else {
+                } else {
                     autoCheck("undetermined");
                 }
             }
         });
     }
 
+    /**
+     * Function cancel()
+     * <p>
+     * Set the loaded data to null and close the window
+     * </p>
+     */
     @FXML
     private void cancel() {
         loadedData = null;
@@ -276,143 +321,251 @@ public class DataWizardWindowController implements Initializable {
         stage.close();
     }
 
+    /**
+     * Function update()
+     * <p>
+     * Based on the combo box value, updates the table accordingly
+     * </p>
+     */
     private void update() {
-        switch(dataComboBox.getValue().toString()) {
+        // Switch on the combo box
+        switch (dataComboBox.getValue().toString()) {
+            // If AND
             case "AND":
+                // Load the AND dataset
                 loadedData = new AND();
+                // Update the table
                 updateTable(loadedData);
                 break;
+            // If OR
             case "OR":
+                // Load the OR dataset
                 loadedData = new OR();
+                // Update the table
                 updateTable(loadedData);
                 break;
+            // If XOR
             case "XOR":
+                // Load the XOR dataset
                 loadedData = new XOR();
+                // Update the table
                 updateTable(loadedData);
                 break;
+            // If From File
             case "From File":
+                // Clear the columns
                 dataTable.getColumns().clear();
-                // CODE HERE
             default:
                 break;
         }
     }
 
+    /**
+     * Function updateTable()
+     * <p>
+     * Loads the head of the dataset into the table for viewing
+     * </p>
+     *
+     * @param dataset is the dataset to load
+     */
     private void updateTable(Dataset dataset) {
+        // Create a structure for the table
         ObservableList<ObservableList<String>> data = FXCollections.observableArrayList();
-        for(int i = 0; i < dataset.numEntries() && i < 20; i++) {
+        // For the first 20 or less entries
+        for (int i = 0; i < dataset.numEntries() && i < 20; i++) {
+            // Create a row
             ArrayList<String> row = new ArrayList<>();
-            for(Double d : dataset.getRow(i)) {
+            // For all doubles in the row
+            for (Double d : dataset.getWholeRow(i)) {
+                // Add the double to the row
                 row.add(d.toString());
             }
-            for(Double d : dataset.getRowExpected(i)) {
-                row.add(d.toString());
-            }
+            // Add the row to the table
             data.add(FXCollections.observableList(row));
         }
+        // Clear the columns
         dataTable.getColumns().clear();
+        // Set the data
         dataTable.setItems(data);
-            for (int i = 0; i < data.get(0).size(); i++) {
-                final int curCol = i;
-                String nom = "Col";
-                if(includesHeadersCheckBox.isSelected() || !dataComboBox.getValue().equals("From File")) {
-                    nom = dataset.getColumnHeaders().get(i);
-                }
-                else {
-                    nom = "Col " + i;
-                }
-                final TableColumn<ObservableList<String>, String> column = new TableColumn<>(
-                        nom
-                );
-                column.setMinWidth(100);
-                column.setCellValueFactory(
-                        param -> new ReadOnlyObjectWrapper<>(param.getValue().get(curCol))
-                );
-                dataTable.getColumns().add(column);
+        // For all columns
+        for (int i = 0; i < data.get(0).size(); i++) {
+            // Set the curCol
+            final int curCol = i;
+            // Generate a name
+            String nom = "Col";
+            // If the columnHeaders is selected or one of the default sets is being used
+            if (includesHeadersCheckBox.isSelected() || !dataComboBox.getValue().equals("From File")) {
+                // Use the actual header
+                nom = dataset.getColumnHeaders().get(i);
+              // Otherwise
+            } else {
+                // Generate a column name
+                nom = "Col " + i;
             }
+            // Create the column with the name
+            final TableColumn<ObservableList<String>, String> column = new TableColumn<>(
+                    nom
+            );
+            // Set the width of the column
+            column.setMinWidth(100);
+            // Apply the data to the column
+            column.setCellValueFactory(
+                    param -> new ReadOnlyObjectWrapper<>(param.getValue().get(curCol))
+            );
+            // Add the column to the table
+            dataTable.getColumns().add(column);
+        }
     }
 
+    /**
+     * Function autoCheck()
+     * <p>
+     *     Checks the delimiter and attempts to infer the checkbox to tick
+     * </p>
+     * @param delim is the passed delimiter
+     */
     private void autoCheck(String delim) {
-        switch(delim) {
+        // Switch on delimiter
+        switch (delim) {
+            // If comma
             case ",":
+                // Update the comma checkbox
                 commaCheckBox.setSelected(true);
                 break;
+            // If tab
             case "\t":
+                // Update the tab checkbox
                 tabCheckBox.setSelected(true);
                 break;
+            // If space
             case " ":
+                // Update the space checkbox
                 spaceCheckBox.setSelected(true);
                 break;
+            // Default to other
             default:
+                // Update the other checkbox
                 otherCheckBox.setSelected(true);
                 break;
         }
     }
 
+    /**
+     * Function next()
+     * <p>
+     *     Moves to the next section of the wizard
+     * </p>
+     */
     @FXML
     private void next() {
-        if(dataComboBox.getValue().equals("From File")) {
+        // If from the file
+        if (dataComboBox.getValue().equals("From File")) {
+            // Set the inputs
             loadedData.setInputCols(inputs);
+            // Set the outputs
             loadedData.setOutputCols(outputs);
+            // Close the window
             Stage stage = (Stage) dataTable.getScene().getWindow();
             stage.close();
-        }
-        else {
+        // Other
+        } else {
+            // Close the window
             Stage stage = (Stage) dataTable.getScene().getWindow();
             stage.close();
         }
     }
 
+    /**
+     * Function getLoadedData()
+     * <p>
+     *     Return the loadedData
+     * </p>
+     * @return loadedData
+     */
     public Dataset getLoadedData() {
+        // Return loadedData
         return loadedData;
     }
 
-
+    /**
+     * Function testConditions()
+     * <p>
+     *     Checks the file format is acceptable, checks the delimiter is defined and loads the data. The table is then
+     *     updated
+     * </p>
+     */
     private void testConditions() {
-        if((filePathField.getText().endsWith(".csv") || filePathField.getText().endsWith(".tsv") || filePathField.getText().endsWith(".txt") || filePathField.getText().endsWith(".data"))) {
-            if(commaCheckBox.isSelected() || tabCheckBox.isSelected() || spaceCheckBox.isSelected() || (otherCheckBox.isSelected() && (!otherDelimiterField.getText().equals("") || !otherDelimiterField.getText().isEmpty()))) {
+        // Check file format
+        if ((filePathField.getText().endsWith(".csv") || filePathField.getText().endsWith(".tsv") || filePathField.getText().endsWith(".txt") || filePathField.getText().endsWith(".data"))) {
+            // Check checkboxes
+            if (commaCheckBox.isSelected() || tabCheckBox.isSelected() || spaceCheckBox.isSelected() || (otherCheckBox.isSelected() && (!otherDelimiterField.getText().equals("") || !otherDelimiterField.getText().isEmpty()))) {
+                // Generate fileHandler
                 FileHandler fileHandler = new FileHandler();
-                if(otherCheckBox.isSelected()) {
+                // Finalize delimiter
+                if (otherCheckBox.isSelected()) {
                     delimiter = otherDelimiterField.getText();
                 }
+                // Load the data
                 loadedData = new UserSpecified(fileName, fileHandler.loadData(filePathField.getText()), delimiter, includesHeadersCheckBox.isSelected());
+                // Update table
                 updateTable(loadedData);
-            }
-            else {
+              // Otherwise
+            } else {
+                // Output problem
                 Main.passMessage("No delimiter selected, please select/specify delimiter for the data", "-e");
             }
-        }
-        else {
+          // Otherwise output problem
+        } else {
             Main.passMessage("Invalid file type selected! Valid types are: .csv, .tsv, .txt", "-e");
         }
     }
 
+    /**
+     * Function checkInputs()
+     * <p>
+     *     Checks the input columns field
+     * </p>
+     */
     private void checkInputs() {
+        // Break the vals into an array
         String[] vals = inputColumnsField.getText().split(",");
-        for(String x : vals) {
-            try{
+        // For all the strings in the array
+        for (String x : vals) {
+            // Try
+            try {
+                // Parse the integer
                 int y = Integer.parseInt(x);
-                inputs.add(y-1);
-            }
-            catch (Exception e) {
+                // Add the index
+                inputs.add(y - 1);
+              // Catch errors
+            } catch (Exception e) {
+                // Output error message
                 Main.passMessage("Please use integers for column numbers in a comma-separated list");
+                // Clear list
                 inputs.clear();
+                // Return
                 return;
             }
         }
-        for(Integer i : inputs) {
-            TableColumn col = (TableColumn)dataTable.getColumns().get(i);
+        // For all integer in inputs
+        for (Integer i : inputs) {
+            // Get the table column
+            TableColumn col = (TableColumn) dataTable.getColumns().get(i);
+            // Set the cell factor
             col.setCellFactory(e -> new TableCell<Double, String>() {
                 @Override
-                public void updateItem(String item, boolean empty)
-                {
+                public void updateItem(String item, boolean empty) {
+                    // Update the item to the same value
                     super.updateItem(item, empty);
+                    // Set the style of the cell
                     setStyle("-fx-background-color: rgba(0, 128, 0, 0.3);");
-                    if (item == null || empty)
-                    {
+                    // If the item is null or empty
+                    if (item == null || empty) {
+                        // Set text accordingly
                         setText(null);
-                    } else
-                    {
+                      // Otherwise
+                    } else {
+                        // Set the text to the item
                         setText(item);
                     }
                 }
@@ -420,40 +573,66 @@ public class DataWizardWindowController implements Initializable {
         }
     }
 
+    /**
+     * Function checkOutputs()
+     * <p>
+     *     Checks the values in the output columns field
+     * </p>
+     */
     private void checkOutputs() {
+        // Create an array of the values
         String[] vals = outputColumnsField.getText().split(",");
-        for(String x : vals) {
-            try{
+        // For all the strings in the array
+        for (String x : vals) {
+            // Attempt
+            try {
+                // Parse the integer
                 int y = Integer.parseInt(x);
-                outputs.add(y-1);
-            }
-            catch (Exception e) {
+                // Add the index
+                outputs.add(y - 1);
+              // Catch errors
+            } catch (Exception e) {
+                // Output error message
                 Main.passMessage("Please use integers for column numbers in a comma-separated list");
+                // Clear the output list
                 outputs.clear();
+                // Return
                 return;
             }
         }
-        for(Integer i : outputs) {
-            TableColumn col = (TableColumn)dataTable.getColumns().get(i);
+        // For all integers in the output column list
+        for (Integer i : outputs) {
+            // Get the table column
+            TableColumn col = (TableColumn) dataTable.getColumns().get(i);
+            // Set the cell factory
             col.setCellFactory(e -> new TableCell<Double, String>() {
                 @Override
-                public void updateItem(String item, boolean empty)
-                {
+                public void updateItem(String item, boolean empty) {
+                    // Update the item
                     super.updateItem(item, empty);
+                    // Set the style
                     setStyle("-fx-background-color: rgba(128, 0, 0, 0.3);");
-                    if (item == null || empty)
-                    {
+                    // Set text accordingly
+                    if (item == null || empty) {
                         setText(null);
-                    } else
-                    {
+                    } else {
                         setText(item);
                     }
                 }
             });
         }
     }
+
+    /**
+     * Function checkInOut()
+     * <p>
+     *     Calls both checkInputs and checkOutputs
+     * </p>
+     */
     private void checkInOut() {
-            checkInputs();
-            checkOutputs();
+        // Call checkInputs
+        checkInputs();
+        // Call checkOutputs
+        checkOutputs();
     }
 }

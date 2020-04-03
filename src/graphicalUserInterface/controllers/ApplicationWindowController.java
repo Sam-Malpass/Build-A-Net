@@ -1761,12 +1761,21 @@ public class ApplicationWindowController implements Initializable {
         }
     }
 
+    /**
+     * Function setData()
+     * <p>
+     *     Opens up the data selection wizard and loads the data into the application
+     * </p>
+     */
     @FXML
     private void setData() {
+        // Attempt
         try {
+            // Load Scene
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../fxml/DataWizardWindow.fxml"));
             // Get the scene side
             Parent root = fxmlLoader.load();
+            // Get controller
             DataWizardWindowController controller = fxmlLoader.getController();
             // Set the scene to the loaded FXML
             Scene scene = new Scene(root, 600, 400);
@@ -1782,12 +1791,17 @@ public class ApplicationWindowController implements Initializable {
             // Show the window and wait for a response
             stage.showAndWait();
             if(controller.getLoadedData() != null) {
+                // Get loaded data
                 dataset = controller.getLoadedData();
+                // Output success
                 write("Data for " + dataset.getName() + " loaded successfully!");
+                // Update the data flag
                 dataFlag = true;
             }
         }
+        // Catch errors
         catch(Exception e) {
+            // Output error message
             write("Problem opening the data wizard window", "-e");
         }
     }
