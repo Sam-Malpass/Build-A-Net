@@ -22,6 +22,10 @@ public class MinMaxScaler implements Preprocessor {
      */
     private ArrayList<Double> maxValue;
     /**
+     * columns holds a list of indices. These represent the column indices to scale
+     */
+    private ArrayList<Integer> columns;
+    /**
      * counter holds the current index of the column
      */
     private int counter = 0;
@@ -35,12 +39,12 @@ public class MinMaxScaler implements Preprocessor {
      * @return the scaled data
      */
     @Override
-    public Dataset preprocess(Dataset data) {
+    public Dataset preprocess(Dataset data, ArrayList<Integer> columns) {
         // Find Mins of columns
         findMins(data);
         // Find Maxes of columns
         findMaxes(data);
-
+        this.columns = columns;
         // Create a new Dataset
         UserSpecified processed = new UserSpecified(data.getName(), data.getInputCols(), data.getOutputCols());
         // Create a dataframe
@@ -48,7 +52,7 @@ public class MinMaxScaler implements Preprocessor {
         // For all columns
         for(int i = 0; i < data.getDataFrame().size(); i++) {
             // If an input column
-            if(data.getInputCols().contains(i)) {
+            if(columns.contains(i)) {
                 // Scale it
                 cols.add(scale(data.getDataFrame().get(i)));
                 // Increment the column counter
@@ -79,8 +83,8 @@ public class MinMaxScaler implements Preprocessor {
         // Initialize
         minValue = new ArrayList<>();
         // For all input columns
-        for(int i = 0; i < data.numInputs(); i++) {
-            if(data.getInputCols().contains(i)) {
+        for(int i = 0; i < data.getDataFrame().size(); i++) {
+            if(columns.contains(i)) {
                 // Get the column
                 ArrayList<Double> col = data.getDataFrame().get(i);
                 // Add the min value to the list
@@ -100,8 +104,8 @@ public class MinMaxScaler implements Preprocessor {
         // Initialize
         maxValue = new ArrayList<>();
         // For all input columns
-        for(int i = 0; i < data.numInputs(); i++) {
-            if(data.getInputCols().contains(i)) {
+        for(int i = 0; i < data.getDataFrame().size(); i++) {
+            if(columns.contains(i)) {
                 // Get the column
                 ArrayList<Double> col = data.getDataFrame().get(i);
                 // Add the max value to the list

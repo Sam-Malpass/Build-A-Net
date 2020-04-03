@@ -8,6 +8,8 @@ package data.preprocessors;
 
 import data.Dataset;
 
+import java.util.ArrayList;
+
 public interface Preprocessor {
     /**
      * Function preprocess()
@@ -17,5 +19,5 @@ public interface Preprocessor {
      * @param data is the data to pre-process
      * @return the pre-processed data
      */
-    Dataset preprocess(Dataset data);
+    Dataset preprocess(Dataset data, ArrayList<Integer> columns);
 }
