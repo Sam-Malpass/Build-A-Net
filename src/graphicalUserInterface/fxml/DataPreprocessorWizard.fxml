@@ -116,7 +116,21 @@
                               </SplitPane>
                            </children>
                         </AnchorPane>
-                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0" />
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                           <children>
+                              <HBox alignment="CENTER" prefHeight="44.0" prefWidth="596.0" spacing="391.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <children>
+                                    <Button fx:id="cancel" mnemonicParsing="false" prefWidth="60.0" text="Cancel" />
+                                    <HBox alignment="CENTER" prefHeight="44.0" prefWidth="136.0" spacing="10.0">
+                                       <children>
+                                          <Button fx:id="back" mnemonicParsing="false" prefWidth="60.0" text="Back" />
+                                          <Button fx:id="next" mnemonicParsing="false" prefWidth="60.0" text="Next" />
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </AnchorPane>
                     </items>
                   </SplitPane>
                </children>
