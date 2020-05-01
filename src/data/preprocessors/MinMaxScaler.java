@@ -40,11 +40,11 @@ public class MinMaxScaler implements Preprocessor {
      */
     @Override
     public Dataset preprocess(Dataset data, ArrayList<Integer> columns) {
+        this.columns = columns;
         // Find Mins of columns
         findMins(data);
         // Find Maxes of columns
         findMaxes(data);
-        this.columns = columns;
         // Create a new Dataset
         UserSpecified processed = new UserSpecified(data.getName(), data.getInputCols(), data.getOutputCols());
         // Create a dataframe
@@ -70,6 +70,33 @@ public class MinMaxScaler implements Preprocessor {
         processed.setColumnHeaders(data.getColumnHeaders());
         // Return the scaled data
         return processed;
+    }
+
+    /**
+     * Function preprocess()
+     * <p>
+     *     Overrides the original to call the function without additional arguments
+     * </p>
+     * @param data os the data to pre-process
+     * @param columns are the columns to pre-process
+     * @param args are the additional arguments required
+     * @return the preprocessed data
+     */
+    @Override
+    public Dataset preprocess(Dataset data, ArrayList<Integer> columns, Object args) {
+        return preprocess(data, columns);
+    }
+
+    /**
+     * Function getDescription()
+     * <p>
+     *     Returns a description of the scaler
+     * </p>
+     * @return the string
+     */
+    @Override
+    public String getDescription() {
+        return "Scales the values in the column(s) to fall in the range of [0, 1]";
     }
 
     /**
