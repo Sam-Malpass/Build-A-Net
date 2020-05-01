@@ -625,6 +625,7 @@ public class ApplicationWindowController implements Initializable {
                 newNetwork();
             }
         }
+        commandStack = new ArrayList<>();
     }
 
     /**
@@ -710,6 +711,7 @@ public class ApplicationWindowController implements Initializable {
                 openNetwork();
             }
         }
+        commandStack = new ArrayList<>();
     }
 
     /**
