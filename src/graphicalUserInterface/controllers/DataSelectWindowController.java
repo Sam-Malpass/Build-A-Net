@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.ResourceBundle;
 
-public class DataWizardWindowController implements Initializable {
+public class DataSelectWindowController implements Initializable {
 
     /**
      * dataComboBox is a combo box to select a data set from

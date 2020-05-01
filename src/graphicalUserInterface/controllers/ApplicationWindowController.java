@@ -12,8 +12,6 @@ import application.integrator.Integrator;
 import application.wrappers.DoubleWrapper;
 import application.wrappers.IntegerWrapper;
 import data.Dataset;
-import data.OR;
-import data.XOR;
 import graphicalUserInterface.MessageBus;
 import graphicalUserInterface.drawers.LayerToolboxDrawer;
 import graphicalUserInterface.drawers.NetworkDrawer;
@@ -1777,11 +1775,11 @@ public class ApplicationWindowController implements Initializable {
         // Attempt
         try {
             // Load Scene
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../fxml/DataWizardWindow.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../fxml/DataSelectWindow.fxml"));
             // Get the scene side
             Parent root = fxmlLoader.load();
             // Get controller
-            DataWizardWindowController controller = fxmlLoader.getController();
+            DataSelectWindowController controller = fxmlLoader.getController();
             // Set the scene to the loaded FXML
             Scene scene = new Scene(root, 600, 400);
             // Create a stage (a window)
