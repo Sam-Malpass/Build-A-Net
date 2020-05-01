@@ -11,7 +11,10 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -468,7 +471,23 @@ public class DataSelectWindowController implements Initializable {
             loadedData.setOutputCols(outputs);
             // Close the window
             Stage stage = (Stage) dataTable.getScene().getWindow();
-            stage.close();
+            //stage.close();
+            try {
+                // Create an FXMLLoader
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../fxml/DataPreprocessorWizard.fxml"));
+                // Get the scene side
+                Parent root = fxmlLoader.load();
+                // Get the controller side
+                DataPreprocessorWindowController controller = fxmlLoader.getController();
+                // Pass self to controller
+                controller.setPreviousWindow(this);
+                Scene scene = new Scene(root, 600, 400);
+                stage.setScene(scene);
+            }
+            catch (Exception e) {
+                Main.passMessage("Data Preprocessor Window failed to load", "-e");
+            }
+
         // Other
         } else {
             // Close the window
@@ -674,5 +693,22 @@ public class DataSelectWindowController implements Initializable {
         checkInputs();
         // Call checkOutputs
         checkOutputs();
+    }
+
+    public ArrayList<Integer> getInputs() {
+        return inputs;
+    }
+
+    public ArrayList<Integer> getOutputs() {
+        return outputs;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void reload() {
+        System.out.println("Called");
+        dataComboBox.getSelectionModel().select(3);
     }
 }
