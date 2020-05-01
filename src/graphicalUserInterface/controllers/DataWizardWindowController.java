@@ -262,6 +262,7 @@ public class DataWizardWindowController implements Initializable {
             public void handle(KeyEvent keyEvent) {
                 if (keyEvent.getCode() == KeyCode.ENTER) {
                     checkInputs();
+                    fixCells();
                 }
             }
         });
@@ -271,6 +272,7 @@ public class DataWizardWindowController implements Initializable {
             public void handle(KeyEvent keyEvent) {
                 if (keyEvent.getCode() == KeyCode.ENTER) {
                     checkOutputs();
+                    fixCells();
                 }
             }
         });
@@ -529,6 +531,7 @@ public class DataWizardWindowController implements Initializable {
     private void checkInputs() {
         // Break the vals into an array
         String[] vals = inputColumnsField.getText().split(",");
+        inputs = new ArrayList<>();
         // For all the strings in the array
         for (String x : vals) {
             // Try
@@ -573,6 +576,33 @@ public class DataWizardWindowController implements Initializable {
         }
     }
 
+    private void fixCells() {
+        for(int i = 0; i < loadedData.numAttributes(); i++) {
+            if(!inputs.contains(i) && !outputs.contains(i)) {
+                // Get the table column
+                TableColumn col = (TableColumn) dataTable.getColumns().get(i);
+                // Set the cell factor
+                col.setCellFactory(e -> new TableCell<Double, String>() {
+                    @Override
+                    public void updateItem(String item, boolean empty) {
+                        // Update the item to the same value
+                        super.updateItem(item, empty);
+                        // Set the style of the cell
+                        setStyle("-fx-background-color: rgba(255, 255, 255, 0.3);");
+                        // If the item is null or empty
+                        if (item == null || empty) {
+                            // Set text accordingly
+                            setText(null);
+                            // Otherwise
+                        } else {
+                            // Set the text to the item
+                            setText(item);
+                        }
+                    }
+                });
+            }
+        }
+    }
     /**
      * Function checkOutputs()
      * <p>
@@ -582,6 +612,7 @@ public class DataWizardWindowController implements Initializable {
     private void checkOutputs() {
         // Create an array of the values
         String[] vals = outputColumnsField.getText().split(",");
+        outputs = new ArrayList<>();
         // For all the strings in the array
         for (String x : vals) {
             // Attempt
