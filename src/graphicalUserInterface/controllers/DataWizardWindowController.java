@@ -576,8 +576,17 @@ public class DataWizardWindowController implements Initializable {
         }
     }
 
+    /**
+     * Function fixCells()
+     * <p>
+     *     For all the columns that are not inputs or outputs set the background to white. This is needed to ensure that the
+     *     columns that are removed from I/O lists are reverted to their original states.
+     * </p>
+     */
     private void fixCells() {
+        // For all columns
         for(int i = 0; i < loadedData.numAttributes(); i++) {
+            // If not in the input/output lists
             if(!inputs.contains(i) && !outputs.contains(i)) {
                 // Get the table column
                 TableColumn col = (TableColumn) dataTable.getColumns().get(i);

@@ -586,6 +586,7 @@ public class ApplicationWindowController implements Initializable {
             Optional<ButtonType> result = alert.showAndWait();
             // If save
             if(result.get().equals(save)){
+                write(neuralNetwork.getName());
                 // If the network hasn't been saved yet
                 if(neuralNetwork.getName().equals("Untitled")) {
                     // Open a file chooser
@@ -636,6 +637,8 @@ public class ApplicationWindowController implements Initializable {
     @FXML
     private void openNetwork() {
         // Checks the flags
+        System.out.println(neuralNetwork.getSavedFlag());
+        System.out.println(neuralNetwork.getModified());
         if(neuralNetwork.getSavedFlag() && !neuralNetwork.getModified()) {
             // Open a file chooser
             FileChooser chooser = new FileChooser();

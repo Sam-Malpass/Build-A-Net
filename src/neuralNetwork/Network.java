@@ -394,8 +394,6 @@ public class Network implements Serializable {
     public void setName(String name) {
         // Set the name to the passed string
         networkName = name;
-        // Update modified flag
-        modified = true;
     }
 
     /**
