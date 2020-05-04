@@ -480,7 +480,7 @@ public class DataSelectWindowController implements Initializable {
                 // Get the controller side
                 DataPreprocessorWindowController controller = fxmlLoader.getController();
                 // Pass self to controller
-                controller.setPreviousWindow(this);
+                controller.setPreviousWindow(inputColumnsField.getScene(), this);
                 Scene scene = new Scene(root, 600, 400);
                 stage.setScene(scene);
             }

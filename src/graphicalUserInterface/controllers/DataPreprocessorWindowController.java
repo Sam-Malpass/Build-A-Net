@@ -22,9 +22,11 @@ import java.util.ResourceBundle;
 public class DataPreprocessorWindowController implements Initializable {
 
     /**
-     * previousWindow is the controller for the previous stage of the data wizard
+     * previousWindow is the Scene for the previous stage of the data wizard
      */
-    private DataSelectWindowController previousWindow;
+    private Scene previousWindow;
+
+    private DataSelectWindowController previousController;
 
     @FXML
     private TextField inputColNums;
@@ -37,7 +39,7 @@ public class DataPreprocessorWindowController implements Initializable {
         Platform.runLater(() -> {
             StringBuilder sb = new StringBuilder();
             int j;
-            for(Integer i : previousWindow.getInputs()) {
+            for(Integer i : previousController.getInputs()) {
                 j = i + 1;
                 sb.append(j + ",");
             }
@@ -46,7 +48,7 @@ public class DataPreprocessorWindowController implements Initializable {
 
             sb = new StringBuilder();
 
-            for(Integer i : previousWindow.getOutputs()) {
+            for(Integer i : previousController.getOutputs()) {
                 j = i + 1;
                 sb.append(j + ",");
             }
@@ -62,28 +64,14 @@ public class DataPreprocessorWindowController implements Initializable {
      * </p>
      * @param previousWindow is the previous controller to store
      */
-    public void setPreviousWindow(DataSelectWindowController previousWindow) {
+    public void setPreviousWindow(Scene previousWindow, DataSelectWindowController previousController) {
         this.previousWindow = previousWindow;
+        this.previousController = previousController;
     }
 
     @FXML
     private void back() {
-        try {
-            // Create an FXMLLoader
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../fxml/DataSelectWindow.fxml"));
-            // Get the scene side
-            Parent root = fxmlLoader.load();
-            fxmlLoader.setController(previousWindow);
-            // Get the controller side
-            Scene scene = new Scene(root, 600, 400);
-            Stage stage = (Stage) inputColNums.getScene().getWindow();
-            stage.setScene(scene);
-            ((DataSelectWindowController)fxmlLoader.getController()).reload();
-        }
-        catch(Exception e) {
-            Main.passMessage("Error reverting state", "-e");
-            System.out.println(e.getMessage());
-        }
-
+        Stage stage = (Stage) outputColNums.getScene().getWindow();
+        stage.setScene(previousWindow);
     }
 }
