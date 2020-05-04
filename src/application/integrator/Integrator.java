@@ -7,6 +7,7 @@
 package application.integrator;
 
 import application.Main;
+import data.preprocessors.Preprocessor;
 import neuralNetwork.activationFunctions.ActivationFunction;
 import neuralNetwork.components.layers.Layer;
 import neuralNetwork.learningAlgorithms.LearningAlgorithm;
@@ -273,6 +274,59 @@ public class Integrator {
                         Object instance = load.newInstance();
                         // If it is an instance of ActivationFunction
                         if (instance instanceof LearningAlgorithm) {
+                            // Add it to the list of functions
+                            functions.add(instance);
+                        }
+                    }
+                }
+            }
+        }
+        // Return the list of functions
+        return functions;
+    }
+
+    public static ArrayList<Object> loadPreprocessors() throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
+        // Create a list for the functions
+        ArrayList<Object> functions = new ArrayList<>();
+        // Generate an array of Files
+        File[] fileList = new File("plugins/preprocessors").listFiles();
+        // Convert the array to an ArrayList because they are just better
+        ArrayList<File> files = new ArrayList<File>(Arrays.asList(fileList));
+        // For all files in the folder
+        for(File f : files) {
+            // Check the file is a JAR
+            if(f.getName().endsWith(".jar")) {
+                // Get the names of the JAR
+                String jarName = f.getAbsolutePath();
+                // Setup a stream
+                JarInputStream jarFile = new JarInputStream(new FileInputStream(jarName));
+                // Declare the entry
+                JarEntry jarEntry;
+                // Repeat until broken
+                while (true) {
+                    // Get the next entry in the JAR
+                    jarEntry = jarFile.getNextJarEntry();
+                    // If it is null
+                    if (jarEntry == null) {
+                        // Break
+                        break;
+                    }
+                    // If the name ends with .class
+                    if (jarEntry.getName().endsWith(".class")) {
+                        // Setup the URL
+                        URL jarPath = f.toURI().toURL();
+                        // Get the jarURL
+                        String jarURL = "jar:" + jarPath + "!/";
+                        // Add it to a list of URLs
+                        URL[] urls = {new URL(jarURL)};
+                        // Get the URLClassLoader setup
+                        URLClassLoader child = new URLClassLoader(urls);
+                        // Get the class
+                        Class load = Class.forName(jarEntry.getName().replace(".class", ""), true, child);
+                        // Create an object
+                        Object instance = load.newInstance();
+                        // If it is an instance of ActivationFunction
+                        if (instance instanceof Preprocessor) {
                             // Add it to the list of functions
                             functions.add(instance);
                         }
