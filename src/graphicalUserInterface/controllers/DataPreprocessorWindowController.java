@@ -268,4 +268,16 @@ public class DataPreprocessorWindowController implements Initializable {
             Main.passMessage("Integrator failed to load external functions", "-e");
         }
     }
+
+    @FXML
+    private void next() {
+        // New dataframe
+        // For all selectors
+            // Check if the Preprocessor needs args
+                // Check if args there
+                    // Handle
+            // Create preprocessor
+                // Preprocess column(s)
+                // Add to new dataframe
+    }
 }

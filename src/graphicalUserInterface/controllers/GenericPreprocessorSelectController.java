@@ -6,7 +6,6 @@
  */
 package graphicalUserInterface.controllers;
 
-import data.preprocessors.Preprocessor;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
