@@ -23,6 +23,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import neuralNetwork.activationFunctions.ActivationFunction;
 
 import java.io.File;
 import java.net.URL;
@@ -104,6 +105,7 @@ public class DataPreprocessorWindowController implements Initializable {
 
             inputBoxes = new ArrayList<>();
             outputBoxes = new ArrayList<>();
+            loadPreprocessors();
         });
     }
 
@@ -143,6 +145,7 @@ public class DataPreprocessorWindowController implements Initializable {
                 Parent root = fxmlLoader.load();
                 GenericPreprocessorSelectController controller = fxmlLoader.getController();
                 controller.setHolder(this);
+                controller.setPreprocessors(preprocessors, preprocessorNames);
                 root.setId(Generator.genUUID());
                 inputBoxes.add(root.getId());
                 inputVBOX.getChildren().add(inputVBOX.getChildren().size() - 1, root);
@@ -170,6 +173,7 @@ public class DataPreprocessorWindowController implements Initializable {
                 Parent root = fxmlLoader.load();
                 GenericPreprocessorSelectController controller = fxmlLoader.getController();
                 controller.setHolder(this);
+                controller.setPreprocessors(preprocessors, preprocessorNames);
                 root.setId(Generator.genUUID());
                 outputBoxes.add(root.getId());
                 outputVBOX.getChildren().add(outputVBOX.getChildren().size() - 1, root);
@@ -244,5 +248,24 @@ public class DataPreprocessorWindowController implements Initializable {
         }
         // Remove the interface from the list of classes
         functions.remove(index);
+
+        // For all the activation functions
+        for(File f : functions) {
+            // Create a temporary object of that class
+            Preprocessor tmp = Integrator.createPreprocessor("data/preprocessors", f.getName());
+            preprocessors.add(tmp);
+            preprocessorNames.add(f.getName().replace(".class", ""));
+        }
+
+        try {
+            ArrayList<Object> dummy = Integrator.loadFunctions();
+            for(Object o : dummy) {
+                preprocessors.add((Preprocessor) o);
+                preprocessorNames.add(o.getClass().getName().replace(".class", ""));
+            }
+        }
+        catch (Exception e) {
+            Main.passMessage("Integrator failed to load external functions", "-e");
+        }
     }
 }

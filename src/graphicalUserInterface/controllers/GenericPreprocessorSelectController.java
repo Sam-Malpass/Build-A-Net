@@ -8,6 +8,7 @@ package graphicalUserInterface.controllers;
 
 import data.preprocessors.Preprocessor;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ComboBox;
@@ -31,20 +32,22 @@ public class GenericPreprocessorSelectController implements Initializable {
     private DataPreprocessorWindowController holder;
 
     private ArrayList<Preprocessor> preprocessors;
+    private ArrayList<String> names;
 
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         Platform.runLater(() -> {
-
+            selector.setItems(FXCollections.observableList(names));
         });
     }
 
     public void setHolder(DataPreprocessorWindowController holder) {
         this.holder = holder;
     }
-    public void setPreprocessors(ArrayList<Preprocessor> preprocessors) {
+    public void setPreprocessors(ArrayList<Preprocessor> preprocessors, ArrayList<String> names) {
         this.preprocessors = preprocessors;
+        this.names = names;
     }
 
     @FXML
