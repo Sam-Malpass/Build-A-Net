@@ -99,6 +99,16 @@ public class MinMaxScaler implements Preprocessor {
         return "Scales the values in the column(s) to fall in the range of [0, 1]";
     }
 
+    @Override
+    public boolean needArgs() {
+        return false;
+    }
+
+    @Override
+    public boolean passArgs() {
+        return true;
+    }
+
     /**
      * Function findMins()
      * <P>

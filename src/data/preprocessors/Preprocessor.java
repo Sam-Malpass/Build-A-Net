@@ -43,4 +43,8 @@ public interface Preprocessor {
      */
     String getDescription();
 
+    boolean needArgs();
+
+    boolean passArgs();
+
 }

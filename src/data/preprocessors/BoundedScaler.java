@@ -106,6 +106,16 @@ public class BoundedScaler implements Preprocessor {
         return "Takes an upper and lower bound and scales the data in column(s) to be between those bounds";
     }
 
+    @Override
+    public boolean needArgs() {
+        return true;
+    }
+
+    @Override
+    public boolean passArgs() {
+        return false;
+    }
+
     /**
      * Function findMins()
      * <P>
