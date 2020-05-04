@@ -8,6 +8,8 @@ package graphicalUserInterface.controllers;
 
 import application.Main;
 import application.generator.Generator;
+import application.integrator.Integrator;
+import data.preprocessors.Preprocessor;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -22,6 +24,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -65,6 +68,8 @@ public class DataPreprocessorWindowController implements Initializable {
     private ArrayList<String> inputBoxes;
     private ArrayList<String> outputBoxes;
 
+    private ArrayList<Preprocessor> preprocessors;
+    private ArrayList<String> preprocessorNames;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -223,6 +228,21 @@ public class DataPreprocessorWindowController implements Initializable {
     }
 
     private void loadPreprocessors() {
-
+        preprocessors = new ArrayList<>();
+        preprocessorNames = new ArrayList<>();
+        // Find all the activation functions in the system
+        ArrayList<File> functions = Integrator.getInternalClasses("data/preprocessors");
+        // Set the index to zero - we use this to remove the interface class from the list
+        int index = 0;
+        // For all classes
+        for(File f : functions) {
+            // If the file is the interface file
+            if(f.getName().equals("Preprocessor.class")){
+                // Set the index to the index of the interface
+                index = functions.indexOf(f);
+            }
+        }
+        // Remove the interface from the list of classes
+        functions.remove(index);
     }
 }

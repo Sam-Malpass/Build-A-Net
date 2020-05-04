@@ -119,6 +119,32 @@ public class Integrator {
         return (LearningAlgorithm) instance;
     }
 
+
+    public static Preprocessor createPreprocessor(String path, String name) {
+        // Create a null object
+        Object instance = null;
+        // Attempt
+        try {
+            // Fix the path to a package name structure
+            path = path.replace("/",".");
+            // Remove .class from the name
+            name = name.replace(".class", "");
+            // Concatenate path with class name
+            path = path + "." + name;
+            // Generate a ClassLoader
+            ClassLoader loader = Integrator.class.getClassLoader();
+            // Create a Class object
+            Class aClass = Class.forName(path);
+            // Make an instantiation of that class
+            instance = aClass.newInstance();
+        }
+        catch (Exception e) {
+            Main.passMessage("There was an issue creating an object for <" + name + ">", "-e");
+        }
+        // Return object
+        return (Preprocessor) instance;
+    }
+
     /**
      * Function createLayer()
      * <p>
