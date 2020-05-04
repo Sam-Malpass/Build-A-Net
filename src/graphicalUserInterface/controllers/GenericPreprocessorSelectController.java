@@ -32,13 +32,18 @@ public class GenericPreprocessorSelectController implements Initializable {
 
     private ArrayList<String> names;
     private ArrayList<Integer> cols;
+    private ArrayList<Integer> myCols;
 
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         Platform.runLater(() -> {
             selector.setItems(FXCollections.observableList(names));
-            colSelector.setItems(FXCollections.observableList(cols));
+            myCols = new ArrayList<>();
+            for(Integer i : cols) {
+                myCols.add(i + 1);
+            }
+            colSelector.setItems(FXCollections.observableList(myCols));
         });
     }
 
@@ -59,7 +64,7 @@ public class GenericPreprocessorSelectController implements Initializable {
     }
 
     public Integer getCols() {
-        return Integer.parseInt(colSelector.getValue().toString());
+        return Integer.parseInt(colSelector.getValue().toString()) - 1;
     }
 
     public int getPreprocessorIndex() {

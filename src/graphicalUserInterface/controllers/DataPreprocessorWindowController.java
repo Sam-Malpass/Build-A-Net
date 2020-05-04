@@ -110,6 +110,9 @@ public class DataPreprocessorWindowController implements Initializable {
 
             inputBoxes = new ArrayList<>();
             outputBoxes = new ArrayList<>();
+
+            inputControllers = new ArrayList<>();
+            outputControllers = new ArrayList<>();
             loadPreprocessors();
         });
     }
@@ -282,14 +285,6 @@ public class DataPreprocessorWindowController implements Initializable {
 
     @FXML
     private void next() {
-        // New dataframe
-        // For all selectors
-            // Check if the Preprocessor needs args
-                // Check if args there
-                    // Handle
-            // Create preprocessor
-                // Preprocess column(s)
-                // Add to new dataframe
         UserSpecified preprocessedData = new UserSpecified(previousController.getLoadedData().getName(), previousController.getLoadedData().getInputCols(), previousController.getLoadedData().getOutputCols());
         preprocessedData.setColumnHeaders(previousController.getLoadedData().getColumnHeaders());
         preprocessedData.setDataFrame(previousController.getLoadedData().getDataFrame());

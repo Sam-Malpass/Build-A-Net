@@ -7,9 +7,9 @@
 
 <HBox fx:id="genericHbox" alignment="CENTER" maxHeight="30.0" maxWidth="280.0" minHeight="30.0" minWidth="280.0" prefHeight="30.0" prefWidth="280.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="graphicalUserInterface.controllers.GenericPreprocessorSelectController">
    <children>
-      <TextField fx:id="cols" maxHeight="25.0" maxWidth="60.0" minHeight="25.0" minWidth="60.0" prefHeight="25.0" prefWidth="60.0" promptText="Cols..." />
+      <ComboBox fx:id="colSelector" maxHeight="25.0" maxWidth="60.0" minHeight="25.0" minWidth="60.0" prefHeight="25.0" prefWidth="60.0" promptText="Col" />
       <ComboBox fx:id="selector" maxHeight="25.0" maxWidth="125.0" minHeight="25.0" minWidth="125.0" prefHeight="25.0" prefWidth="125.0" promptText="Preprocessor..." />
       <TextField fx:id="args" maxHeight="25.0" maxWidth="70.0" minHeight="25.0" minWidth="70.0" prefHeight="25.0" prefWidth="70.0" promptText="Args..." />
-      <Button fx:id="remove" maxHeight="21.0" maxWidth="21.0" minHeight="21.0" minWidth="21.0" mnemonicParsing="false" prefHeight="21.0" prefWidth="21.0" text="-" onAction="#remove"/>
+      <Button fx:id="remove" maxHeight="21.0" maxWidth="21.0" minHeight="21.0" minWidth="21.0" mnemonicParsing="false" onAction="#remove" prefHeight="21.0" prefWidth="21.0" text="-" />
    </children>
 </HBox>
