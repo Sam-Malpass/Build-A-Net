@@ -7,6 +7,7 @@
 package application.generator;
 
 import java.util.Random;
+import java.util.UUID;
 
 public class Generator {
 
@@ -35,5 +36,9 @@ public class Generator {
      */
     public static double genDouble() {
         return randomiser.nextDouble();
+    }
+
+    public static String genUUID() {
+        return UUID.randomUUID().toString();
     }
 }
