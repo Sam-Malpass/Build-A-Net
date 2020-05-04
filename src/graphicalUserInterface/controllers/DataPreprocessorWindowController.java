@@ -9,6 +9,7 @@ package graphicalUserInterface.controllers;
 import application.Main;
 import application.generator.Generator;
 import application.integrator.Integrator;
+import data.UserSpecified;
 import data.preprocessors.Preprocessor;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -24,6 +25,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import neuralNetwork.activationFunctions.ActivationFunction;
+import neuralNetwork.components.layers.Layer;
 
 import java.io.File;
 import java.net.URL;
@@ -67,7 +69,10 @@ public class DataPreprocessorWindowController implements Initializable {
     private AnchorPane outputAnchorPane;
 
     private ArrayList<String> inputBoxes;
+    private ArrayList<GenericPreprocessorSelectController> inputControllers;
+
     private ArrayList<String> outputBoxes;
+    private ArrayList<GenericPreprocessorSelectController> outputControllers;
 
     private ArrayList<Preprocessor> preprocessors;
     private ArrayList<String> preprocessorNames;
@@ -146,8 +151,10 @@ public class DataPreprocessorWindowController implements Initializable {
                 GenericPreprocessorSelectController controller = fxmlLoader.getController();
                 controller.setHolder(this);
                 controller.setPreprocessors(preprocessorNames);
+                controller.setCols(previousController.getInputs());
                 root.setId(Generator.genUUID());
                 inputBoxes.add(root.getId());
+                inputControllers.add(controller);
                 inputVBOX.getChildren().add(inputVBOX.getChildren().size() - 1, root);
                 if (inputBoxes.size() > 5) {
                     double newHeight = inputVBOX.getHeight() + 30;
@@ -174,8 +181,10 @@ public class DataPreprocessorWindowController implements Initializable {
                 GenericPreprocessorSelectController controller = fxmlLoader.getController();
                 controller.setHolder(this);
                 controller.setPreprocessors(preprocessorNames);
+                controller.setCols(previousController.getOutputs());
                 root.setId(Generator.genUUID());
                 outputBoxes.add(root.getId());
+                outputControllers.add(controller);
                 outputVBOX.getChildren().add(outputVBOX.getChildren().size() - 1, root);
                 if (outputBoxes.size() > 5) {
                     double newHeight = outputVBOX.getHeight() + 30;
@@ -212,6 +221,7 @@ public class DataPreprocessorWindowController implements Initializable {
 
         if(flaggedInput) {
             inputBoxes.remove(i);
+            inputControllers.remove(i);
             inputVBOX.getChildren().remove(i);
             if (inputBoxes.size() > 5) {
                 double newHeight = inputVBOX.getHeight() - 30;
@@ -222,6 +232,7 @@ public class DataPreprocessorWindowController implements Initializable {
 
         if(flaggedOutput) {
             outputBoxes.remove(i);
+            outputControllers.remove(i);
             outputVBOX.getChildren().remove(i);
             if (outputBoxes.size() > 5) {
                 double newHeight = outputVBOX.getHeight() - 30;
@@ -279,5 +290,36 @@ public class DataPreprocessorWindowController implements Initializable {
             // Create preprocessor
                 // Preprocess column(s)
                 // Add to new dataframe
+        UserSpecified preprocessedData = new UserSpecified(previousController.getLoadedData().getName(), previousController.getLoadedData().getInputCols(), previousController.getLoadedData().getOutputCols());
+        preprocessedData.setColumnHeaders(previousController.getLoadedData().getColumnHeaders());
+        preprocessedData.setDataFrame(previousController.getLoadedData().getDataFrame());
+
+        ArrayList<Integer> completed = new ArrayList<>();
+        for(GenericPreprocessorSelectController controller : inputControllers) {
+            Integer index = controller.getCols();
+            if(!completed.contains(index)) {
+                Preprocessor preprocessor = null;
+                try {
+                    preprocessor = preprocessors.get(controller.getPreprocessorIndex()).getClass().newInstance();
+                } catch (InstantiationException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+                if(preprocessor.needArgs()) {
+                    if(preprocessor.passArgs(controller.getArgs())) {
+                        preprocessor.preprocess(preprocessedData, index);
+                        completed.add(index);
+                    }
+                    else {
+                        Main.passMessage("Column " + index + " failed pre-processing due to malformed arguments", "-e");
+                    }
+                }
+                else {
+                    preprocessor.preprocess(preprocessedData, index);
+                    completed.add(index);
+                }
+            }
+        }
     }
 }

@@ -24,7 +24,7 @@ public class MinMaxScaler implements Preprocessor {
     /**
      * columns holds a list of indices. These represent the column indices to scale
      */
-    private ArrayList<Integer> columns;
+    private Integer column;
     /**
      * counter holds the current index of the column
      */
@@ -39,8 +39,8 @@ public class MinMaxScaler implements Preprocessor {
      * @return the scaled data
      */
     @Override
-    public Dataset preprocess(Dataset data, ArrayList<Integer> columns) {
-        this.columns = columns;
+    public Dataset preprocess(Dataset data, Integer column) {
+        this.column = column;
         // Find Mins of columns
         findMins(data);
         // Find Maxes of columns
@@ -52,7 +52,7 @@ public class MinMaxScaler implements Preprocessor {
         // For all columns
         for(int i = 0; i < data.getDataFrame().size(); i++) {
             // If an input column
-            if(columns.contains(i)) {
+            if(column == i) {
                 // Scale it
                 cols.add(scale(data.getDataFrame().get(i)));
                 // Increment the column counter
@@ -78,13 +78,13 @@ public class MinMaxScaler implements Preprocessor {
      *     Overrides the original to call the function without additional arguments
      * </p>
      * @param data os the data to pre-process
-     * @param columns are the columns to pre-process
+     * @param column are the columns to pre-process
      * @param args are the additional arguments required
      * @return the preprocessed data
      */
     @Override
-    public Dataset preprocess(Dataset data, ArrayList<Integer> columns, Object args) {
-        return preprocess(data, columns);
+    public Dataset preprocess(Dataset data, Integer column, Object args) {
+        return preprocess(data, column);
     }
 
     /**
@@ -105,7 +105,7 @@ public class MinMaxScaler implements Preprocessor {
     }
 
     @Override
-    public boolean passArgs() {
+    public boolean passArgs(String args) {
         return true;
     }
 
@@ -121,7 +121,7 @@ public class MinMaxScaler implements Preprocessor {
         minValue = new ArrayList<>();
         // For all input columns
         for(int i = 0; i < data.getDataFrame().size(); i++) {
-            if(columns.contains(i)) {
+            if(column == i) {
                 // Get the column
                 ArrayList<Double> col = data.getDataFrame().get(i);
                 // Add the min value to the list
@@ -142,7 +142,7 @@ public class MinMaxScaler implements Preprocessor {
         maxValue = new ArrayList<>();
         // For all input columns
         for(int i = 0; i < data.getDataFrame().size(); i++) {
-            if(columns.contains(i)) {
+            if(column == i) {
                 // Get the column
                 ArrayList<Double> col = data.getDataFrame().get(i);
                 // Add the max value to the list

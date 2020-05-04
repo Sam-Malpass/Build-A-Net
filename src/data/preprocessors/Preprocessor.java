@@ -17,10 +17,10 @@ public interface Preprocessor {
      *     Runs the preprocessing function(s)
      * </p>
      * @param data is the data to pre-process
-     * @param columns are the columns to pre-process
+     * @param column is the columns to pre-process
      * @return the pre-processed data
      */
-    Dataset preprocess(Dataset data, ArrayList<Integer> columns);
+    Dataset preprocess(Dataset data, Integer column);
 
     /**
      * Function preprocess()
@@ -28,11 +28,11 @@ public interface Preprocessor {
      *     Runs the preprocessing function(s)
      * </p>
      * @param data os the data to pre-process
-     * @param columns are the columns to pre-process
+     * @param column is the columns to pre-process
      * @param args are the additional arguments required
      * @return the pre-processed data
      */
-    Dataset preprocess(Dataset data, ArrayList<Integer> columns, Object args);
+    Dataset preprocess(Dataset data, Integer column, Object args);
 
     /**
      * Function getDescription()
@@ -45,6 +45,6 @@ public interface Preprocessor {
 
     boolean needArgs();
 
-    boolean passArgs();
+    boolean passArgs(String args);
 
 }

@@ -20,7 +20,7 @@ import java.util.ResourceBundle;
 public class GenericPreprocessorSelectController implements Initializable {
 
     @FXML
-    private TextField cols;
+    private ComboBox colSelector;
 
     @FXML
     private ComboBox selector;
@@ -31,12 +31,14 @@ public class GenericPreprocessorSelectController implements Initializable {
     private DataPreprocessorWindowController holder;
 
     private ArrayList<String> names;
+    private ArrayList<Integer> cols;
 
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         Platform.runLater(() -> {
             selector.setItems(FXCollections.observableList(names));
+            colSelector.setItems(FXCollections.observableList(cols));
         });
     }
 
@@ -47,19 +49,17 @@ public class GenericPreprocessorSelectController implements Initializable {
         this.names = names;
     }
 
+    public void setCols(ArrayList<Integer> cols) {
+        this.cols = cols;
+    }
+
     @FXML
     private void remove() {
         holder.removePreprocessor(selector.getParent().getId());
     }
 
-    public ArrayList<Integer> getCols() {
-        String raw = cols.getText();
-        ArrayList<String> list = new ArrayList<>(Arrays.asList(raw.split(",")));
-        ArrayList<Integer> indices = new ArrayList<>();
-        for(String s : list) {
-            indices.add(Integer.parseInt(s));
-        }
-        return indices;
+    public Integer getCols() {
+        return Integer.parseInt(colSelector.getValue().toString());
     }
 
     public int getPreprocessorIndex() {
