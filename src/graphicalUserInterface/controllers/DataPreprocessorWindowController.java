@@ -145,7 +145,7 @@ public class DataPreprocessorWindowController implements Initializable {
                 Parent root = fxmlLoader.load();
                 GenericPreprocessorSelectController controller = fxmlLoader.getController();
                 controller.setHolder(this);
-                controller.setPreprocessors(preprocessors, preprocessorNames);
+                controller.setPreprocessors(preprocessorNames);
                 root.setId(Generator.genUUID());
                 inputBoxes.add(root.getId());
                 inputVBOX.getChildren().add(inputVBOX.getChildren().size() - 1, root);
@@ -173,7 +173,7 @@ public class DataPreprocessorWindowController implements Initializable {
                 Parent root = fxmlLoader.load();
                 GenericPreprocessorSelectController controller = fxmlLoader.getController();
                 controller.setHolder(this);
-                controller.setPreprocessors(preprocessors, preprocessorNames);
+                controller.setPreprocessors(preprocessorNames);
                 root.setId(Generator.genUUID());
                 outputBoxes.add(root.getId());
                 outputVBOX.getChildren().add(outputVBOX.getChildren().size() - 1, root);

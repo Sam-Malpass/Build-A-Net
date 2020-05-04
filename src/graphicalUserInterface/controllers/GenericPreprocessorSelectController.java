@@ -31,7 +31,6 @@ public class GenericPreprocessorSelectController implements Initializable {
 
     private DataPreprocessorWindowController holder;
 
-    private ArrayList<Preprocessor> preprocessors;
     private ArrayList<String> names;
 
 
@@ -45,8 +44,7 @@ public class GenericPreprocessorSelectController implements Initializable {
     public void setHolder(DataPreprocessorWindowController holder) {
         this.holder = holder;
     }
-    public void setPreprocessors(ArrayList<Preprocessor> preprocessors, ArrayList<String> names) {
-        this.preprocessors = preprocessors;
+    public void setPreprocessors(ArrayList<String> names) {
         this.names = names;
     }
 
@@ -63,5 +61,13 @@ public class GenericPreprocessorSelectController implements Initializable {
             indices.add(Integer.parseInt(s));
         }
         return indices;
+    }
+
+    public int getPreprocessorIndex() {
+        return selector.getItems().indexOf(selector.getValue());
+    }
+
+    public String getArgs() {
+        return args.toString();
     }
 }
