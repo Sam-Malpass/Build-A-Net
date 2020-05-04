@@ -24,7 +24,9 @@ import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.ResourceBundle;
+import java.util.UUID;
 
 public class DataPreprocessorWindowController implements Initializable {
 
@@ -55,7 +57,14 @@ public class DataPreprocessorWindowController implements Initializable {
     @FXML
     private AnchorPane inputAnchorPane;
 
-    private ArrayList<Parent> inputBoxes;
+    @FXML
+    private VBox outputVBOX;
+    @FXML
+    private AnchorPane outputAnchorPane;
+
+    private ArrayList<String> inputBoxes;
+    private ArrayList<String> outputBoxes;
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -71,7 +80,6 @@ public class DataPreprocessorWindowController implements Initializable {
             }
             sb.deleteCharAt(sb.lastIndexOf(","));
             sb2.deleteCharAt(sb2.lastIndexOf("\n"));
-            System.out.println(sb2.toString());
             inputColNums.setText(sb.toString());
             inputColNums.setTooltip(new Tooltip(sb2.toString()));
 
@@ -90,6 +98,7 @@ public class DataPreprocessorWindowController implements Initializable {
             outputColNums.setTooltip(new Tooltip(sb2.toString()));
 
             inputBoxes = new ArrayList<>();
+            outputBoxes = new ArrayList<>();
         });
     }
 
@@ -127,10 +136,12 @@ public class DataPreprocessorWindowController implements Initializable {
                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../fxml/GenericPreprocessorSelect.fxml"));
                 // Get the scene side
                 Parent root = fxmlLoader.load();
-                inputBoxes.add(root);
+                GenericPreprocessorSelectController controller = fxmlLoader.getController();
+                controller.setHolder(this);
+                root.setId(Generator.genUUID());
+                inputBoxes.add(root.getId());
                 inputVBOX.getChildren().add(inputVBOX.getChildren().size() - 1, root);
                 if (inputBoxes.size() > 5) {
-                    System.out.println(inputVBOX.getHeight());
                     double newHeight = inputVBOX.getHeight() + 30;
                     inputVBOX.setPrefHeight(newHeight);
                     inputAnchorPane.setPrefHeight(newHeight);
@@ -141,6 +152,73 @@ public class DataPreprocessorWindowController implements Initializable {
         }
         else {
             Main.passMessage("Maximum of one pre-processor per column", "-e");
+        }
+    }
+
+    @FXML
+    private void addOutputPreprocessor() {
+        if(outputBoxes.size() < previousController.getOutputs().size()) {
+            try {
+                // Create an FXMLLoader
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../fxml/GenericPreprocessorSelect.fxml"));
+                // Get the scene side
+                Parent root = fxmlLoader.load();
+                GenericPreprocessorSelectController controller = fxmlLoader.getController();
+                controller.setHolder(this);
+                root.setId(Generator.genUUID());
+                outputBoxes.add(root.getId());
+                outputVBOX.getChildren().add(outputVBOX.getChildren().size() - 1, root);
+                if (outputBoxes.size() > 5) {
+                    double newHeight = outputVBOX.getHeight() + 30;
+                    outputVBOX.setPrefHeight(newHeight);
+                    outputAnchorPane.setPrefHeight(newHeight);
+                }
+            } catch (Exception e) {
+
+            }
+        }
+        else {
+            Main.passMessage("Maximum of one pre-processor per column", "-e");
+        }
+    }
+
+    public void removePreprocessor(String uuid) {
+        boolean flaggedInput = false;
+        boolean flaggedOutput = false;
+        int i = -1;
+        for(String p : inputBoxes) {
+            if(p.equals(uuid)) {
+                i = inputBoxes.indexOf(p);
+                flaggedInput = true;
+            }
+        }
+
+        // SAME FOR OUTPUT
+        for(String p : outputBoxes) {
+            if(p.equals(uuid)) {
+                i = outputBoxes.indexOf(p);
+                flaggedOutput = true;
+            }
+        }
+
+        if(flaggedInput) {
+            inputBoxes.remove(i);
+            inputVBOX.getChildren().remove(i);
+            if (inputBoxes.size() > 5) {
+                double newHeight = inputVBOX.getHeight() - 30;
+                inputVBOX.setPrefHeight(newHeight);
+                inputAnchorPane.setPrefHeight(newHeight);
+            }
+        }
+
+        if(flaggedOutput) {
+            outputBoxes.remove(i);
+            outputVBOX.getChildren().remove(i);
+            if (outputBoxes.size() > 5) {
+                double newHeight = outputVBOX.getHeight() - 30;
+                outputVBOX.setPrefHeight(newHeight);
+                outputAnchorPane.setPrefHeight(newHeight);
+            }
         }
     }
 }

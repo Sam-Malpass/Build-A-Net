@@ -89,13 +89,13 @@
                                                       <TextField fx:id="outputColNums" editable="false" />
                                                    </children>
                                                 </VBox>
-                                                <ScrollPane fx:id="outputScrollPane" prefHeight="210.0" prefWidth="295.0">
+                                                <ScrollPane fx:id="outputScrollPane" maxHeight="192.0" maxWidth="295.0" minHeight="192.0" minWidth="295.0" prefHeight="192.0" prefWidth="295.0">
                                                    <content>
-                                                      <AnchorPane fx:id="outputAnchorPane" minHeight="0.0" minWidth="0.0" prefHeight="209.0" prefWidth="280.0">
+                                                      <AnchorPane fx:id="outputAnchorPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="209.0" prefWidth="280.0">
                                                          <children>
-                                                            <VBox fx:id="outputVBOX" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                            <VBox fx:id="outputVBOX" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                <children>
-                                                                  <Button fx:id="outputAddProcessor" mnemonicParsing="false" text="Add Preprocessor" />
+                                                                  <Button fx:id="outputAddProcessor" mnemonicParsing="false" text="Add Preprocessor" onAction="#addOutputPreprocessor"/>
                                                                </children>
                                                             </VBox>
                                                          </children>
