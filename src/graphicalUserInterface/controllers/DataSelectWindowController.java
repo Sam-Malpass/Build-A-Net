@@ -465,6 +465,7 @@ public class DataSelectWindowController implements Initializable {
     private void next() {
         // If from the file
         if (dataComboBox.getValue().equals("From File")) {
+            checkInOut();
             // Set the inputs
             loadedData.setInputCols(inputs);
             // Set the outputs
@@ -695,20 +696,25 @@ public class DataSelectWindowController implements Initializable {
         checkOutputs();
     }
 
+    /**
+     * Function getInputs()
+     * <p>
+     *     Return the list of inputs collected by the controller
+     * </p>
+     * @return the input column indices
+     */
     public ArrayList<Integer> getInputs() {
         return inputs;
     }
 
+    /**
+     * Function getOutputs()
+     * <p>
+     *     Return the list of outputs collected by the controller
+     * </p>
+     * @return the output column indices
+     */
     public ArrayList<Integer> getOutputs() {
         return outputs;
-    }
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void reload() {
-        System.out.println("Called");
-        dataComboBox.getSelectionModel().select(3);
     }
 }
