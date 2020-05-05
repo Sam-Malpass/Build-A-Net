@@ -113,6 +113,8 @@ public class DataPreprocessorWindowController implements Initializable {
      */
     private ArrayList<String> preprocessorNames;
 
+    private Dataset preprocessedData;
+
     /**
      * Function initialize()
      * <p>
@@ -394,10 +396,9 @@ public class DataPreprocessorWindowController implements Initializable {
     @FXML
     private void next() {
         // Generate a copy of the data
-        Dataset preprocessedData = new UserSpecified(previousController.getLoadedData().getName(), previousController.getLoadedData().getInputCols(), previousController.getLoadedData().getOutputCols());
+        preprocessedData = new UserSpecified(previousController.getLoadedData().getName(), previousController.getLoadedData().getInputCols(), previousController.getLoadedData().getOutputCols());
         preprocessedData.setColumnHeaders(previousController.getLoadedData().getColumnHeaders());
         preprocessedData.setDataFrame(previousController.getLoadedData().getDataFrame());
-
         // A list of completed columns (We don't want to pre-process a column twice)
         ArrayList<Integer> completed = new ArrayList<>();
         // For all input controllers
@@ -428,6 +429,7 @@ public class DataPreprocessorWindowController implements Initializable {
                     // Otherwise output an error message
                     else {
                         Main.passMessage("Column " + index + " failed pre-processing due to malformed arguments", "-e");
+                        return;
                     }
                 }
                 // Otherwise
@@ -459,6 +461,7 @@ public class DataPreprocessorWindowController implements Initializable {
                     }
                     else {
                         Main.passMessage("Column " + (index+1) + " failed pre-processing due to malformed arguments", "-e");
+                        return;
                     }
                 }
                 else {
@@ -467,6 +470,26 @@ public class DataPreprocessorWindowController implements Initializable {
                 }
             }
         }
+
+        // Close the window
+        Stage stage = (Stage) inputVBOX.getScene().getWindow();
+        //stage.close();
+        try {
+            // Create an FXMLLoader
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../fxml/DataSplitWindow.fxml"));
+            // Get the scene side
+            Parent root = fxmlLoader.load();
+            // Get the controller side
+            DataSplitWindowController controller = fxmlLoader.getController();
+            // Pass self to controller
+            controller.setPrevious(this, inputVBOX.getScene());
+            Scene scene = new Scene(root, 600, 400);
+            stage.setScene(scene);
+        }
+        catch (Exception e) {
+            Main.passMessage("Data Split Window failed to load", "-e");
+        }
+
     }
 
     /**
@@ -481,5 +504,16 @@ public class DataPreprocessorWindowController implements Initializable {
         Stage stage = (Stage) inputVBOX.getScene().getWindow();
         // Close the window
         stage.close();
+    }
+
+    /**
+     * Function getPreprocessedData()
+     * <p>
+     *     Returns the preprocessed data
+     * </p>
+     * @return the preprocessed data
+     */
+    public Dataset getPreprocessedData() {
+        return preprocessedData;
     }
 }
