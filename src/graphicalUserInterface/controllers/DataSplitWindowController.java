@@ -64,6 +64,8 @@ public class DataSplitWindowController implements Initializable {
     private Dataset previousData;
     private int trainSize, testSize, valSize;
 
+    private static ArrayList<Dataset> splits;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         Platform.runLater(()->{
@@ -240,5 +242,42 @@ public class DataSplitWindowController implements Initializable {
         Stage stage = (Stage) valCheckbox.getScene().getWindow();
         // Switch to the previous scene
         stage.setScene(previousWindow);
+    }
+
+    @FXML
+    private void finish() {
+        if(samplerBox.getValue() != null) {
+            try {
+                // Try to generate the appropriate preprocessor
+                Sampler sampler = samplers.get(samplerBox.getSelectionModel().getSelectedIndex()).getClass().newInstance();
+                ArrayList<Integer> sizes = new ArrayList<>();
+                recalc();
+                sizes.add(trainSize);
+                if(testSize > 0) {
+                    sizes.add(testSize);
+                }
+                if(valSize > 0) {
+                    sizes.add(valSize);
+                }
+
+                splits = sampler.sample(previousData, sizes);
+
+                Stage stage = (Stage)testCheckbox.getScene().getWindow();
+                stage.close();
+                for(Dataset d : splits) {
+                    for(int i = 0; i < d.numEntries(); i++) {
+                        System.out.println(d.getWholeRow(i));
+                    }
+                }
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static ArrayList<Dataset> getDatasets() {
+        return splits;
     }
 }

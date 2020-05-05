@@ -271,15 +271,25 @@ public abstract class Dataset {
      * @param row is the row to be added
      */
     public void addWholeRow(ArrayList<Double> row) {
+
         // Check that the row being added will fit in the table
         if(row.size() != numAttributes()) {
             // Return if not
             return;
         }
+
+
         // Otherwise iterate through the the columns
         for(int i = 0; i < row.size(); i++) {
             // Add each value in the row to the given column
             dataFrame.get(i).add(row.get(i));
+        }
+    }
+
+    public void createEmptyDataFrame(int numCols) {
+        dataFrame = new ArrayList<>();
+        for(int i = 0; i < numCols; i++) {
+            dataFrame.add(new ArrayList<Double>());
         }
     }
 }

@@ -170,7 +170,8 @@ public class BoundedScaler implements Preprocessor {
         // For all doubles in the column
         for(Double d : col) {
             // Apply the scaler
-            scaled.add(lowerBound + (((d - minValue) * (upperBound - lowerBound)) / (maxValue - minValue)));
+            double tmp = lowerBound + (d - minValue) * (upperBound - lowerBound) / (maxValue - minValue);
+            scaled.add(tmp);
         }
         // Return the scaled column
         return scaled;

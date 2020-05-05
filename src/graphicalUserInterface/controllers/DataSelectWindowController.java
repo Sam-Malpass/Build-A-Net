@@ -30,6 +30,7 @@ import java.util.ResourceBundle;
 
 public class DataSelectWindowController implements Initializable {
 
+    private ArrayList<String> defaultNames = new ArrayList<>();
     /**
      * dataComboBox is a combo box to select a data set from
      */
@@ -406,6 +407,7 @@ public class DataSelectWindowController implements Initializable {
             } else {
                 // Generate a column name
                 nom = "Col " + i;
+                defaultNames.add(nom);
             }
             // Create the column with the name
             final TableColumn<ObservableList<String>, String> column = new TableColumn<>(
@@ -470,6 +472,7 @@ public class DataSelectWindowController implements Initializable {
             loadedData.setInputCols(inputs);
             // Set the outputs
             loadedData.setOutputCols(outputs);
+            loadedData.setColumnHeaders(defaultNames);
             // Close the window
             Stage stage = (Stage) dataTable.getScene().getWindow();
             //stage.close();

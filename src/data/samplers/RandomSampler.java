@@ -35,6 +35,7 @@ public class RandomSampler implements Sampler {
             String name = data.getName().concat("split").concat(splitCount.toString());
             // Generate an empty dataset
             UserSpecified split = new UserSpecified(name, data.getInputCols(), data.getOutputCols());
+            split.createEmptyDataFrame(data.numAttributes());
             // Declare a counter to tally the amount of entries that have been taken
             int counter = 0;
             // While the counter is not equal to the split size
