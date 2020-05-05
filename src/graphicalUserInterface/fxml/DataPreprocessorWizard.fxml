@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="graphicalUserInterface.controllers.DataPreprocessorWindowController">
+   <center>
+      <SplitPane dividerPositions="0.1934673366834171" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" BorderPane.alignment="CENTER">
+        <items>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+               <children>
+                  <HBox alignment="CENTER" layoutX="44.0" layoutY="32.0" prefHeight="196.0" prefWidth="598.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Pre-processing">
+                           <font>
+                              <Font size="42.0" />
+                           </font>
+                        </Text>
+                     </children>
+                  </HBox>
+               </children>
+            </AnchorPane>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+               <children>
+                  <SplitPane dividerPositions="0.85" orientation="VERTICAL" prefHeight="318.0" prefWidth="598.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <items>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                           <children>
+                              <SplitPane dividerPositions="0.5" prefHeight="318.0" prefWidth="598.0">
+                                 <items>
+                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                                       <children>
+                                          <VBox layoutX="119.0" layoutY="78.0" prefHeight="316.0" prefWidth="295.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <children>
+                                                <VBox prefHeight="73.0" prefWidth="295.0">
+                                                   <children>
+                                                      <HBox alignment="CENTER" prefHeight="55.0" prefWidth="295.0">
+                                                         <children>
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Input Columns">
+                                                               <font>
+                                                                  <Font size="32.0" />
+                                                               </font>
+                                                            </Text>
+                                                         </children>
+                                                      </HBox>
+                                                      <TextField fx:id="inputColNums" editable="false" prefHeight="20.0" prefWidth="150.0" />
+                                                   </children>
+                                                </VBox>
+                                                <ScrollPane fx:id="inputScrollPane" maxHeight="192.0" maxWidth="295.0" minHeight="192.0" minWidth="295.0" prefHeight="192.0" prefWidth="295.0">
+                                                   <content>
+                                                      <AnchorPane fx:id="inputAnchorPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="209.0" prefWidth="280.0">
+                                                         <children>
+                                                            <VBox fx:id="inputVBOX" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                               <children>
+                                                                  <Button fx:id="inputAddPreprocessor" mnemonicParsing="false" onAction="#addInputPreprocessor" text="Add Preprocessor" />
+                                                               </children>
+                                                            </VBox>
+                                                         </children>
+                                                      </AnchorPane>
+                                                   </content>
+                                                </ScrollPane>
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                    </AnchorPane>
+                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                                       <children>
+                                          <VBox layoutX="114.0" layoutY="102.0" prefHeight="316.0" prefWidth="295.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <children>
+                                                <VBox prefHeight="73.0" prefWidth="295.0">
+                                                   <children>
+                                                      <HBox alignment="CENTER" prefHeight="55.0" prefWidth="295.0">
+                                                         <children>
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Output Columns">
+                                                               <font>
+                                                                  <Font size="33.0" />
+                                                               </font>
+                                                            </Text>
+                                                         </children>
+                                                      </HBox>
+                                                      <TextField fx:id="outputColNums" editable="false" />
+                                                   </children>
+                                                </VBox>
+                                                <ScrollPane fx:id="outputScrollPane" maxHeight="192.0" maxWidth="295.0" minHeight="192.0" minWidth="295.0" prefHeight="192.0" prefWidth="295.0">
+                                                   <content>
+                                                      <AnchorPane fx:id="outputAnchorPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="209.0" prefWidth="280.0">
+                                                         <children>
+                                                            <VBox fx:id="outputVBOX" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                               <children>
+                                                                  <Button fx:id="outputAddProcessor" mnemonicParsing="false" text="Add Preprocessor" onAction="#addOutputPreprocessor"/>
+                                                               </children>
+                                                            </VBox>
+                                                         </children>
+                                                      </AnchorPane>
+                                                   </content>
+                                                </ScrollPane>
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                    </AnchorPane>
+                                 </items>
+                              </SplitPane>
+                           </children>
+                        </AnchorPane>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                           <children>
+                              <HBox alignment="CENTER" prefHeight="44.0" prefWidth="596.0" spacing="391.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <children>
+                                    <Button fx:id="cancel" mnemonicParsing="false" prefWidth="60.0" text="Cancel" onAction="#cancel" />
+                                    <HBox alignment="CENTER" prefHeight="44.0" prefWidth="136.0" spacing="10.0">
+                                       <children>
+                                          <Button fx:id="back" mnemonicParsing="false" onAction="#back" prefWidth="60.0" text="Back" />
+                                          <Button fx:id="next" mnemonicParsing="false" prefWidth="60.0" text="Next" onAction="#next" />
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </AnchorPane>
+                    </items>
+                  </SplitPane>
+               </children>
+            </AnchorPane>
+        </items>
+      </SplitPane>
+   </center>
+</BorderPane>

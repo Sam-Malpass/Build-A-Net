@@ -12,8 +12,6 @@ import application.integrator.Integrator;
 import application.wrappers.DoubleWrapper;
 import application.wrappers.IntegerWrapper;
 import data.Dataset;
-import data.OR;
-import data.XOR;
 import graphicalUserInterface.MessageBus;
 import graphicalUserInterface.drawers.LayerToolboxDrawer;
 import graphicalUserInterface.drawers.NetworkDrawer;
@@ -284,7 +282,8 @@ public class ApplicationWindowController implements Initializable {
     /**
      * dataset holds the data to be used
      */
-    private Dataset dataset = null;
+    private ArrayList<Dataset> datasets = null;
+
 
     /**
      * Function initialize()
@@ -360,11 +359,6 @@ public class ApplicationWindowController implements Initializable {
         createLearningAlgorithmList();
         minError.value = 0.01;
         maxEpochs.value = 1000;
-
-        /* DEBUG */
-        dataset = new XOR();
-        dataFlag = true;
-        write("XOR data loaded:\n" + dataset.toString());
 
         updateNetworkCanvas();
         updateStatusBox();
@@ -591,6 +585,7 @@ public class ApplicationWindowController implements Initializable {
             Optional<ButtonType> result = alert.showAndWait();
             // If save
             if(result.get().equals(save)){
+                write(neuralNetwork.getName());
                 // If the network hasn't been saved yet
                 if(neuralNetwork.getName().equals("Untitled")) {
                     // Open a file chooser
@@ -629,6 +624,7 @@ public class ApplicationWindowController implements Initializable {
                 newNetwork();
             }
         }
+        commandStack = new ArrayList<>();
     }
 
     /**
@@ -641,6 +637,8 @@ public class ApplicationWindowController implements Initializable {
     @FXML
     private void openNetwork() {
         // Checks the flags
+        System.out.println(neuralNetwork.getSavedFlag());
+        System.out.println(neuralNetwork.getModified());
         if(neuralNetwork.getSavedFlag() && !neuralNetwork.getModified()) {
             // Open a file chooser
             FileChooser chooser = new FileChooser();
@@ -712,6 +710,7 @@ public class ApplicationWindowController implements Initializable {
                 openNetwork();
             }
         }
+        commandStack = new ArrayList<>();
     }
 
     /**
@@ -833,7 +832,7 @@ public class ApplicationWindowController implements Initializable {
             // Set the momentum
             momentum = (Double) momentumSpinner.getValue();
             // Train the network
-            neuralNetwork.train(maxEpochs.value, minError.value, learningRate, momentum, dataset);
+            neuralNetwork.train(maxEpochs.value, minError.value, learningRate, momentum, datasets.get(0));
         }
     }
 
@@ -1286,15 +1285,15 @@ public class ApplicationWindowController implements Initializable {
                 // Set the current status
                 currStatus = 2;
                 // If the dataset is not null
-                if(!(dataset == null)){
+                if(!(datasets.size() == 0)){
                     // Set the current status
                     currStatus = 3;
                     // Check if the number of input neurons matches the number of input attributes
-                    if(dataset.numInputs() == neuralNetwork.getLayer(0).numNeurons()) {
+                    if(datasets.get(0).numInputs() == neuralNetwork.getLayer(0).numNeurons()) {
                         // Set the current status
                         currStatus = 4;
                         // Check if the number of output neurons matches the number of output values
-                        if(dataset.numOutputs() == neuralNetwork.getLayer(neuralNetwork.numLayers()-1).numNeurons()) {
+                        if(datasets.get(0).numOutputs() == neuralNetwork.getLayer(neuralNetwork.numLayers()-1).numNeurons()) {
                             // Set the current status
                             currStatus = 5;
                         }
@@ -1738,11 +1737,11 @@ public class ApplicationWindowController implements Initializable {
         // Check that data is loaded
         if(dataFlag) {
             // Check that there are the right amount of input neurons
-            if(neuralNetwork.getLayer(0).numNeurons() == dataset.numInputs()) {
+            if(neuralNetwork.getLayer(0).numNeurons() == datasets.get(0).numInputs()) {
                 // Check that there are the right amount of output neurons
-                if(neuralNetwork.getLayer(neuralNetwork.numLayers()-1).numNeurons() == dataset.numOutputs()) {
+                if(neuralNetwork.getLayer(neuralNetwork.numLayers()-1).numNeurons() == datasets.get(0).numOutputs()) {
                     // Connect the layers
-                    neuralNetwork.connectLayers(dataset.numInputs());
+                    neuralNetwork.connectLayers(datasets.get(0).numInputs());
                     // Draw the connections
                     drawConnections();
                     write("Neural network layers connected successfully!");
@@ -1750,19 +1749,64 @@ public class ApplicationWindowController implements Initializable {
                 // If not enough neurons in output layer
                 else {
                     // Output error message
-                    write("You do not have the correct amount of output neurons for this data set\nNeurons required: " + dataset.numOutputs(), "-e");
+                    write("You do not have the correct amount of output neurons for this data set\nNeurons required: " + datasets.get(0).numOutputs(), "-e");
                 }
             }
             // If not enough neurons in input layer
             else {
                 // Output error message
-                write("You do not have the correct amount of neurons in the input layer for this data set\nNeurons required: "+dataset.numEntries(), "-e");
+                write("You do not have the correct amount of neurons in the input layer for this data set\nNeurons required: "+ datasets.get(0).numEntries(), "-e");
             }
         }
         // If no data is loaded
         else {
             // Output error message
             write("No data file is selected", "-e");
+        }
+    }
+
+    /**
+     * Function setData()
+     * <p>
+     *     Opens up the data selection wizard and loads the data into the application
+     * </p>
+     */
+    @FXML
+    private void setData() {
+        // Attempt
+        try {
+            // Load Scene
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../fxml/DataSelectWindow.fxml"));
+            // Get the scene side
+            Parent root = fxmlLoader.load();
+            // Get controller
+            DataSelectWindowController controller = fxmlLoader.getController();
+            // Set the scene to the loaded FXML
+            Scene scene = new Scene(root, 600, 400);
+            // Create a stage (a window)
+            Stage stage = new Stage();
+            // Set the scene of the stage
+            stage.setScene(scene);
+            // Set the window's title
+            stage.setTitle("Select...");
+            stage.getIcons().add(fileHandler.loadIcon());
+            // Make it un-resizable
+            stage.setResizable(false);
+            // Show the window and wait for a response
+            stage.showAndWait();
+            if(DataSplitWindowController.getDatasets().size() >= 1) {
+                // Get loaded data
+                datasets = DataSplitWindowController.getDatasets();
+                // Output success
+                write("Data for " + datasets.get(0).getName() + " loaded successfully!");
+                // Update the data flag
+                dataFlag = true;
+            }
+        }
+        // Catch errors
+        catch(Exception e) {
+            // Output error message
+            write("Problem opening the data wizard window", "-e");
         }
     }
 

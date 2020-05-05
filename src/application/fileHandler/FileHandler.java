@@ -6,9 +6,11 @@
 package application.fileHandler;
 
 import application.Main;
+import data.UserSpecified;
 import javafx.scene.image.Image;
 import neuralNetwork.Network;
 import java.io.*;
+import java.util.ArrayList;
 
 public class FileHandler {
 
@@ -79,7 +81,16 @@ public class FileHandler {
         return null;
     }
 
+    /**
+     * Function loadIcon()
+     * <p>
+     *     Loads and returns the icon of the application from the resource directory
+     *     in the JAR file itself
+     * </p>
+     * @return the loaded icon as an image
+     */
     public Image loadIcon() {
+        // Declare the icon
         Image icon = null;
         try {
             /*Open a file*/
@@ -88,10 +99,51 @@ public class FileHandler {
             FileInputStream input = new FileInputStream(test);
             icon = new Image(input);
         }
+        // If an error occurs
         catch (Exception e) {
+            // Output an error message
             Main.passMessage("Issue loading the application icon", "-e");
 
         }
+        // Return the icon
         return icon;
+    }
+
+    /**
+     * Function loadData()
+     * <P>
+     *     Takes a file path and loads the data from the given file into an ArrayList of strings.
+     *     Works line by line.
+     * </P>
+     * @param filePath is the file location/path
+     * @return the list of lines within the file
+     */
+    public ArrayList<String> loadData(String filePath) {
+        // Declare the ArrayList
+        ArrayList<String> data = new ArrayList<>();
+        // Attempt
+        try {
+            // Create the file object
+            File file = new File(filePath);
+            // Create the file reader object
+            FileReader fileReader = new FileReader(file);
+            // Create the buffered reader object
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            // Read a line
+            String line = bufferedReader.readLine();
+            // While not EOF
+            while(line != null) {
+                // Add the line to the list
+                data.add(line);
+                // Read the next line
+                line = bufferedReader.readLine();
+            }
+        }
+        // Catch errors
+        catch (Exception e) {
+            Main.passMessage("Problem reading data file", "-e");
+        }
+        // Return the data list
+        return data;
     }
 }

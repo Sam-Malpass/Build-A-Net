@@ -322,7 +322,18 @@ public class Network implements Serializable {
 
             learningAlgorithm.runAlgorithm(args);
             sseLog.add(sse);
-
+            if(i % 10 == 0 && sseLog.size() >= 20) {
+                double prev = 0, curr=0;
+                for(int j = sseLog.size()-20; j < 10; j++) {
+                    prev += sseLog.get(j);
+                }
+                for(int j = sseLog.size()-10; j < 10; j++) {
+                    curr += sseLog.get(j);
+                }
+                if(curr > prev) {
+                    break;
+                }
+            }
             if(i % interval == 0) {
                 int index = (int) i / interval;
                 Main.passMessage("Training at epoch " + i + " with an SSE of " + sseLog.get(index));
@@ -383,8 +394,6 @@ public class Network implements Serializable {
     public void setName(String name) {
         // Set the name to the passed string
         networkName = name;
-        // Update modified flag
-        modified = true;
     }
 
     /**

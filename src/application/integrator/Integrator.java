@@ -7,6 +7,8 @@
 package application.integrator;
 
 import application.Main;
+import data.preprocessors.Preprocessor;
+import data.samplers.Sampler;
 import neuralNetwork.activationFunctions.ActivationFunction;
 import neuralNetwork.components.layers.Layer;
 import neuralNetwork.learningAlgorithms.LearningAlgorithm;
@@ -116,6 +118,74 @@ public class Integrator {
         }
         // Return object
         return (LearningAlgorithm) instance;
+    }
+
+    /**
+     * Function createPreprocessor()
+     * <p>
+     *     Takes the internal path and a class name, then generates and returns an object of that class
+     * </p>
+     * @param path is the package path for the class
+     * @param name is the name of the class
+     * @return the instantiated object of the given class
+     */
+    public static Preprocessor createPreprocessor(String path, String name) {
+        // Create a null object
+        Object instance = null;
+        // Attempt
+        try {
+            // Fix the path to a package name structure
+            path = path.replace("/",".");
+            // Remove .class from the name
+            name = name.replace(".class", "");
+            // Concatenate path with class name
+            path = path + "." + name;
+            // Generate a ClassLoader
+            ClassLoader loader = Integrator.class.getClassLoader();
+            // Create a Class object
+            Class aClass = Class.forName(path);
+            // Make an instantiation of that class
+            instance = aClass.newInstance();
+        }
+        catch (Exception e) {
+            Main.passMessage("There was an issue creating an object for <" + name + ">", "-e");
+        }
+        // Return object
+        return (Preprocessor) instance;
+    }
+
+    /**
+     * Function createSampler()
+     * <p>
+     *     Takes the internal path and a class name, then generates and returns an object of that class
+     * </p>
+     * @param path is the package path for the class
+     * @param name is the name of the class
+     * @return the instantiated object of the given class
+     */
+    public static Sampler createSampler(String path, String name) {
+        // Create a null object
+        Object instance = null;
+        // Attempt
+        try {
+            // Fix the path to a package name structure
+            path = path.replace("/",".");
+            // Remove .class from the name
+            name = name.replace(".class", "");
+            // Concatenate path with class name
+            path = path + "." + name;
+            // Generate a ClassLoader
+            ClassLoader loader = Integrator.class.getClassLoader();
+            // Create a Class object
+            Class aClass = Class.forName(path);
+            // Make an instantiation of that class
+            instance = aClass.newInstance();
+        }
+        catch (Exception e) {
+            Main.passMessage("There was an issue creating an object for <" + name + ">", "-e");
+        }
+        // Return object
+        return (Sampler) instance;
     }
 
     /**
@@ -273,6 +343,138 @@ public class Integrator {
                         Object instance = load.newInstance();
                         // If it is an instance of ActivationFunction
                         if (instance instanceof LearningAlgorithm) {
+                            // Add it to the list of functions
+                            functions.add(instance);
+                        }
+                    }
+                }
+            }
+        }
+        // Return the list of functions
+        return functions;
+    }
+
+    /**
+     * Function loadPreprocessors()
+     * <p>
+     *     Iterates over all files in the preprocessors folder and then creates objects of each class in those JARs.
+     *     If the object is then an instance of the Preprocessor then it is added to a list. This list is then returned
+     *     to the prior function.
+     * </p>
+     * @return a list of Preprocessors
+     * @throws IOException is an input/output error
+     * @throws ClassNotFoundException is an error where the class is not fount when loading
+     * @throws IllegalAccessException is an issue with accessing the file(s)
+     * @throws InstantiationException is where the class could not be instantiated
+     */
+    public static ArrayList<Object> loadPreprocessors() throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
+        // Create a list for the functions
+        ArrayList<Object> functions = new ArrayList<>();
+        // Generate an array of Files
+        File[] fileList = new File("plugins/preprocessors").listFiles();
+        // Convert the array to an ArrayList because they are just better
+        ArrayList<File> files = new ArrayList<File>(Arrays.asList(fileList));
+        // For all files in the folder
+        for(File f : files) {
+            // Check the file is a JAR
+            if(f.getName().endsWith(".jar")) {
+                // Get the names of the JAR
+                String jarName = f.getAbsolutePath();
+                // Setup a stream
+                JarInputStream jarFile = new JarInputStream(new FileInputStream(jarName));
+                // Declare the entry
+                JarEntry jarEntry;
+                // Repeat until broken
+                while (true) {
+                    // Get the next entry in the JAR
+                    jarEntry = jarFile.getNextJarEntry();
+                    // If it is null
+                    if (jarEntry == null) {
+                        // Break
+                        break;
+                    }
+                    // If the name ends with .class
+                    if (jarEntry.getName().endsWith(".class")) {
+                        // Setup the URL
+                        URL jarPath = f.toURI().toURL();
+                        // Get the jarURL
+                        String jarURL = "jar:" + jarPath + "!/";
+                        // Add it to a list of URLs
+                        URL[] urls = {new URL(jarURL)};
+                        // Get the URLClassLoader setup
+                        URLClassLoader child = new URLClassLoader(urls);
+                        // Get the class
+                        Class load = Class.forName(jarEntry.getName().replace(".class", ""), true, child);
+                        // Create an object
+                        Object instance = load.newInstance();
+                        // If it is an instance of ActivationFunction
+                        if (instance instanceof Preprocessor) {
+                            // Add it to the list of functions
+                            functions.add(instance);
+                        }
+                    }
+                }
+            }
+        }
+        // Return the list of functions
+        return functions;
+    }
+
+    /**
+     * Function loadSamplers()
+     * <p>
+     *     Iterates over all files in the samplers folder and then creates objects of each class in those JARs.
+     *     If the object is then an instance of the samplers then it is added to a list. This list is then returned
+     *     to the prior function.
+     * </p>
+     * @return a list of Samplers
+     * @throws IOException is an input/output error
+     * @throws ClassNotFoundException is an error where the class is not fount when loading
+     * @throws IllegalAccessException is an issue with accessing the file(s)
+     * @throws InstantiationException is where the class could not be instantiated
+     */
+    public static ArrayList<Object> loadSamplers() throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
+        // Create a list for the functions
+        ArrayList<Object> functions = new ArrayList<>();
+        // Generate an array of Files
+        File[] fileList = new File("plugins/samplers").listFiles();
+        // Convert the array to an ArrayList because they are just better
+        ArrayList<File> files = new ArrayList<File>(Arrays.asList(fileList));
+        // For all files in the folder
+        for(File f : files) {
+            // Check the file is a JAR
+            if(f.getName().endsWith(".jar")) {
+                // Get the names of the JAR
+                String jarName = f.getAbsolutePath();
+                // Setup a stream
+                JarInputStream jarFile = new JarInputStream(new FileInputStream(jarName));
+                // Declare the entry
+                JarEntry jarEntry;
+                // Repeat until broken
+                while (true) {
+                    // Get the next entry in the JAR
+                    jarEntry = jarFile.getNextJarEntry();
+                    // If it is null
+                    if (jarEntry == null) {
+                        // Break
+                        break;
+                    }
+                    // If the name ends with .class
+                    if (jarEntry.getName().endsWith(".class")) {
+                        // Setup the URL
+                        URL jarPath = f.toURI().toURL();
+                        // Get the jarURL
+                        String jarURL = "jar:" + jarPath + "!/";
+                        // Add it to a list of URLs
+                        URL[] urls = {new URL(jarURL)};
+                        // Get the URLClassLoader setup
+                        URLClassLoader child = new URLClassLoader(urls);
+                        // Get the class
+                        Class load = Class.forName(jarEntry.getName().replace(".class", ""), true, child);
+                        // Create an object
+                        Object instance = load.newInstance();
+                        // If it is an instance of ActivationFunction
+                        if (instance instanceof Sampler) {
                             // Add it to the list of functions
                             functions.add(instance);
                         }

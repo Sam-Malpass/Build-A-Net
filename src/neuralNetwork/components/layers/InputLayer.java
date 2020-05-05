@@ -73,6 +73,12 @@ public class InputLayer extends Layer {
     @Override
     public void findDeltas(ArrayList<Double> errors) {
         // Just return
+        for(int i = 0; i < errors.size(); i++) {
+            for(Neuron n : getNeurons()) {
+                n.findDelta(errors.get(i));
+                super.getDeltas().add(n.getDelta());
+            }
+        }
         return;
     }
 

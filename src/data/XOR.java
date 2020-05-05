@@ -38,6 +38,7 @@ public class XOR extends Dataset {
         ArrayList<Integer> outputs = new ArrayList<>();
         outputs.add(2);
         setOutputCols(outputs);
+        setName("XOR");
     }
 
     /**
