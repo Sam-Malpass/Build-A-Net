@@ -468,4 +468,18 @@ public class DataPreprocessorWindowController implements Initializable {
             }
         }
     }
+
+    /**
+     * Function cancel()
+     * <p>
+     *     Closes the window
+     * </p>
+     */
+    @FXML
+    private void cancel() {
+        // Get the stage
+        Stage stage = (Stage) inputVBOX.getScene().getWindow();
+        // Close the window
+        stage.close();
+    }
 }

@@ -114,7 +114,7 @@
                            <children>
                               <HBox alignment="CENTER" prefHeight="44.0" prefWidth="596.0" spacing="391.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <children>
-                                    <Button fx:id="cancel" mnemonicParsing="false" prefWidth="60.0" text="Cancel" />
+                                    <Button fx:id="cancel" mnemonicParsing="false" prefWidth="60.0" text="Cancel" onAction="#cancel" />
                                     <HBox alignment="CENTER" prefHeight="44.0" prefWidth="136.0" spacing="10.0">
                                        <children>
                                           <Button fx:id="back" mnemonicParsing="false" onAction="#back" prefWidth="60.0" text="Back" />
