@@ -18,11 +18,11 @@ public class BoundedScaler implements Preprocessor {
     /**
      * minValue holds a list of minValues for each input column
      */
-    private ArrayList<Double> minValue;
+    private Double minValue;
     /**
      * maxValue holds a list of maxValues for each input column
      */
-    private ArrayList<Double> maxValue;
+    private Double maxValue;
     /**
      * column holds a list of indices. These represent the column indices to scale
      */
@@ -48,32 +48,11 @@ public class BoundedScaler implements Preprocessor {
      */
     @Override
     public Dataset preprocess(Dataset data, Integer column) {
-        // Return the preprocessed data
-        return preprocess(data, column, new ArrayList<>(Arrays.asList(0,1)));
-    }
-
-    /**
-     * Function preprocess()
-     * <p>
-     *     Takes the arguments and scales the data accordingly
-     * </p>
-     * @param data os the data to pre-process
-     * @param column are the columns to pre-process
-     * @param args are the additional arguments required
-     * @return the preprocessed data
-     */
-    @Override
-    public Dataset preprocess(Dataset data, Integer column, Object args) {
-        // Interpret the argument list
-        ArrayList<Double> arglist = (ArrayList)args;
-        // Store the arguments
-        lowerBound = arglist.get(0);
-        upperBound = arglist.get(1);
         this.column = column;
         // Find Mins of columns
-        findMins(data);
+        findMins(data, column);
         // Find Maxes of columns
-        findMaxes(data);
+        findMaxes(data, column);
         // Create a new Dataset
         UserSpecified processed = new UserSpecified(data.getName(), data.getInputCols(), data.getOutputCols());
         // Create a dataframe
@@ -101,19 +80,53 @@ public class BoundedScaler implements Preprocessor {
         return processed;
     }
 
+    /**
+     * Function getDescription()
+     * <p>
+     *     Returns the description of the preprocessor
+     * </p>
+     * @return the description
+     */
     @Override
     public String getDescription() {
         return "Takes an upper and lower bound and scales the data in column(s) to be between those bounds";
     }
 
+    /**
+     * Function needArgs()
+     * <p>
+     *     Returns true since this preprocessor requires arguments
+     * </p>
+     * @return true
+     */
     @Override
     public boolean needArgs() {
         return true;
     }
 
+    /**
+     * Function passArgs()
+     * <P>
+     *     Processes the arguments and returns true or false depending on whether they were valid inputs
+     * </P>
+     * @param args are the arguments for the preprocessor
+     * @return true/false
+     */
     @Override
     public boolean passArgs(String args) {
-        return false;
+        ArrayList<String> string = new ArrayList(Arrays.asList(args.split(",")));
+        if (string.size() != 2) {
+            System.out.println("here");
+            return false;
+        }
+        try {
+            lowerBound = Double.parseDouble(string.get(0));
+            upperBound = Double.parseDouble(string.get(1));
+        }
+        catch(Exception e) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -123,18 +136,11 @@ public class BoundedScaler implements Preprocessor {
      * </P>
      * @param data is the data to process
      */
-    private void findMins(Dataset data) {
-        // Initialize
-        minValue = new ArrayList<>();
-        // For all input columns
-        for(int i = 0; i < data.getDataFrame().size(); i++) {
-            if(column == i) {
-                // Get the column
-                ArrayList<Double> col = data.getDataFrame().get(i);
-                // Add the min value to the list
-                minValue.add(Collections.min(col));
-            }
-        }
+    private void findMins(Dataset data, int i) {
+        // Get the column
+        ArrayList<Double> col = data.getDataFrame().get(i);
+        // Add the min value to the list
+        minValue = Collections.min(col);
     }
 
     /**
@@ -144,18 +150,10 @@ public class BoundedScaler implements Preprocessor {
      * </p>
      * @param data is the dataset to be processed
      */
-    private void findMaxes(Dataset data) {
-        // Initialize
-        maxValue = new ArrayList<>();
-        // For all input columns
-        for(int i = 0; i < data.getDataFrame().size(); i++) {
-            if(column == i) {
-                // Get the column
-                ArrayList<Double> col = data.getDataFrame().get(i);
-                // Add the max value to the list
-                maxValue.add(Collections.max(col));
-            }
-        }
+    private void findMaxes(Dataset data, int i) {
+        ArrayList<Double> col = data.getDataFrame().get(i);
+        // Add the max value to the list
+        maxValue = Collections.max(col);
     }
 
     /**
@@ -172,7 +170,7 @@ public class BoundedScaler implements Preprocessor {
         // For all doubles in the column
         for(Double d : col) {
             // Apply the scaler
-            scaled.add(lowerBound + (((d - minValue.get(counter)) * (upperBound - lowerBound)) / (maxValue.get(counter) - minValue.get(counter))));
+            scaled.add(lowerBound + (((d - minValue) * (upperBound - lowerBound)) / (maxValue - minValue)));
         }
         // Return the scaled column
         return scaled;

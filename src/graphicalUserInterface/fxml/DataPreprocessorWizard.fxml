@@ -118,7 +118,7 @@
                                     <HBox alignment="CENTER" prefHeight="44.0" prefWidth="136.0" spacing="10.0">
                                        <children>
                                           <Button fx:id="back" mnemonicParsing="false" onAction="#back" prefWidth="60.0" text="Back" />
-                                          <Button fx:id="next" mnemonicParsing="false" prefWidth="60.0" text="Next" />
+                                          <Button fx:id="next" mnemonicParsing="false" prefWidth="60.0" text="Next" onAction="#next" />
                                        </children>
                                     </HBox>
                                  </children>

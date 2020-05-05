@@ -119,7 +119,15 @@ public class Integrator {
         return (LearningAlgorithm) instance;
     }
 
-
+    /**
+     * Function createPreprocessor()
+     * <p>
+     *     Takes the internal path and a class name, then generates and returns an object of that class
+     * </p>
+     * @param path is the package path for the class
+     * @param name is the name of the class
+     * @return the instantiated object of the given class
+     */
     public static Preprocessor createPreprocessor(String path, String name) {
         // Create a null object
         Object instance = null;
@@ -311,6 +319,19 @@ public class Integrator {
         return functions;
     }
 
+    /**
+     * Function loadPreprocessors()
+     * <p>
+     *     Iterates over all files in the preprocessors folder and then creates objects of each class in those JARs.
+     *     If the object is then an instance of the Preprocessor then it is added to a list. This list is then returned
+     *     to the prior function.
+     * </p>
+     * @return a list of Preprocessors
+     * @throws IOException is an input/output error
+     * @throws ClassNotFoundException is an error where the class is not fount when loading
+     * @throws IllegalAccessException is an issue with accessing the file(s)
+     * @throws InstantiationException is where the class could not be instantiated
+     */
     public static ArrayList<Object> loadPreprocessors() throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
         // Create a list for the functions
         ArrayList<Object> functions = new ArrayList<>();

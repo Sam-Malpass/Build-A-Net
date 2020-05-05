@@ -38,6 +38,13 @@ public class Generator {
         return randomiser.nextDouble();
     }
 
+    /**
+     * Function genUUID()
+     * <p>
+     *     Generates a random UUID
+     * </p>
+     * @return a random UUID
+     */
     public static String genUUID() {
         return UUID.randomUUID().toString();
     }
