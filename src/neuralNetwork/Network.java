@@ -13,6 +13,8 @@ import javafx.application.Platform;
 import neuralNetwork.components.layers.*;
 import neuralNetwork.components.neuron.Neuron;
 import neuralNetwork.learningAlgorithms.LearningAlgorithm;
+
+import java.awt.image.AreaAveragingScaleFilter;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -352,8 +354,73 @@ public class Network implements Serializable {
      * </p>
      * @return 0.0
      */
-    public double test() {
-        return 0.0;
+    public double test(Dataset testSet) {
+        double currCorrect = 0;
+        double totalResults = testSet.numEntries() * testSet.numOutputs();
+        ArrayList<String> testOutputs = new ArrayList<>();
+        StringBuilder sb = new StringBuilder();
+        sb.append("Inputs");
+        for(int i = 0; i < testSet.numInputs(); i++) {
+            sb.append("\t");
+        }
+        sb.append("Expected Outputs");
+        for(int i = 0; i < testSet.numOutputs(); i++) {
+            sb.append("\t");
+        }
+        sb.append("Raw Outputs");
+        for(int i = 0; i < testSet.numOutputs(); i++){
+            sb.append("\t");
+        }
+        sb.append("Final Outputs");
+        testOutputs.add(sb.toString());
+        for(int i = 0; i < testSet.numEntries(); i++) {
+            // For all layers
+            sb = new StringBuilder();
+            ArrayList<Double> row = testSet.getRow(i);
+            for(Double d : row) {
+                sb.append(String.format("%.2f", d));
+                sb.append("\t");
+            }
+            for(int layerCT = 0; layerCT < numLayers(); layerCT++) {
+                // Calculate the outputs of the layers
+                getLayer(layerCT).calculateOutputs(row);
+                // Update the inputs for the next layer to be the outputs of this layer
+                row = getLayer(layerCT).getOutputs();
+            }
+            double tmpCount = 0.0;
+            for(Double d : testSet.getRowExpected(i)) {
+                sb.append(d);
+                sb.append("\t");
+            }
+            for (Double d : getOutputs()) {
+                sb.append(String.format("%.2f", d));
+                sb.append("\t");
+            }
+            for(int j = 0; j < getOutputs().size(); j++) {
+                if(classification) {
+                    //double roundedOut = (double)Math.round(getOutputs().get(j) * 10) / 10;
+                    double roundedOut = findNearestClass(getOutputs().get(j), testSet.findUniques(j));
+                    if(roundedOut == testSet.getRowExpected(i).get(j)) {
+                        tmpCount++;
+                    }
+                    sb.append(roundedOut);
+                    sb.append("\t");
+                }
+                else if (getOutputs().get(j).equals(testSet.getRowExpected(i).get(j))) {
+                    tmpCount++;
+                    sb.append("N/A");
+                }
+            }
+            tmpCount = tmpCount / (double)getOutputs().size();
+            currCorrect += tmpCount;
+            testOutputs.add(sb.toString());
+        }
+
+        double accuracy = (currCorrect / totalResults) * 100;
+        for(String s : testOutputs) {
+            Main.passMessage(s);
+        }
+        return accuracy;
     }
 
     /**
@@ -580,5 +647,27 @@ public class Network implements Serializable {
     public void setSSE(double newVal) {
         // Set the sse to a passed value
         this.sse = newVal;
+    }
+
+    public double findNearestClass(double val, ArrayList<Double> uniques) {
+        double closestClass = -1;
+        double closestDistance = Double.MAX_VALUE;
+
+        for(Double d : uniques) {
+            if (d - val > 0 && d - val < closestDistance) {
+                closestDistance = d - val;
+                closestClass = d;
+            }
+            else if (val - d > 0 && val - d < closestDistance) {
+                closestClass = d;
+                closestDistance = val - d;
+            }
+        }
+
+        return closestClass;
+    }
+
+    public boolean isClassification() {
+        return classification;
     }
 }

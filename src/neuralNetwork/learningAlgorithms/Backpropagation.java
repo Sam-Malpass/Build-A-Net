@@ -47,8 +47,12 @@ public class Backpropagation implements LearningAlgorithm {
             calculateOutputs(data.getRow(i));
             // For all predictions the network has made (Equivalent to number of outputs)
             for(int predictionCT = 0; predictionCT < network.getLayer(network.numLayers()-1).getOutputs().size(); predictionCT++) {
+                double prediction = network.getLayer(network.numLayers()-1).getOutputs().get(predictionCT);
+                if(network.isClassification()) {
+                    prediction = network.findNearestClass(prediction, data.findUniques(predictionCT));
+                }
                 // Add the error to the list of errors for each prediction
-                errors.add(data.getRowExpected(i).get(predictionCT) - network.getLayer(network.numLayers()-1).getOutputs().get(predictionCT));
+                errors.add(data.getRowExpected(i).get(predictionCT) - prediction);
             }
             // Add those errors to the total error list
             allErrors.add(errors);

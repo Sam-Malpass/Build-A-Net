@@ -524,6 +524,9 @@ public class ApplicationWindowController implements Initializable {
                 // Append warning label
                 console.appendText("[WARNING]" + line + "\n");
                 break;
+            case "-n":
+                console.appendText(line + "\n");
+                break;
             default:
                 // Default to system label
                 console.appendText("[SYSTEM] " + line + "\n");
@@ -1810,4 +1813,15 @@ public class ApplicationWindowController implements Initializable {
         }
     }
 
+    @FXML
+    private void testNetwork() {
+        if(datasets.get(1).getName().contains("Test")) {
+            double acc = neuralNetwork.test(datasets.get(1));
+
+            write("Accuracy of network: " + acc + "% over " + datasets.get(1).numEntries() + " entries with " + datasets.get(1).numOutputs() + " output(s) each.");
+        }
+        else {
+            write("No test set available", "-e");
+        }
+    }
 }

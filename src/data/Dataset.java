@@ -292,4 +292,15 @@ public abstract class Dataset {
             dataFrame.add(new ArrayList<Double>());
         }
     }
+
+    public ArrayList<Double> findUniques(int outputNum) {
+        int index = outputCols.get(outputNum);
+        ArrayList<Double> uniques = new ArrayList<>();
+        for(Double d : dataFrame.get(index)) {
+            if(!uniques.contains(d)) {
+                uniques.add(d);
+            }
+        }
+        return uniques;
+    }
 }

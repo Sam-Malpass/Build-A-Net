@@ -134,6 +134,9 @@ public class DataPreprocessorWindowController implements Initializable {
             // For all inputs, append the number to one builder and the corresponding column name to the other
             sb2.append("Column Names:\n");
             int j;
+            while(previousController == null) {
+
+            }
             for(Integer i : previousController.getInputs()) {
                 j = i + 1;
                 sb.append(j + ",");

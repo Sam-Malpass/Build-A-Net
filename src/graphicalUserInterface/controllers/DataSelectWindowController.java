@@ -472,7 +472,9 @@ public class DataSelectWindowController implements Initializable {
             loadedData.setInputCols(inputs);
             // Set the outputs
             loadedData.setOutputCols(outputs);
-            loadedData.setColumnHeaders(defaultNames);
+            if(!includesHeadersCheckBox.isSelected()) {
+                loadedData.setColumnHeaders(defaultNames);
+            }
             // Close the window
             Stage stage = (Stage) dataTable.getScene().getWindow();
             //stage.close();

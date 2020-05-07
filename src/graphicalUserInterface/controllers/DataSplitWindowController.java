@@ -262,13 +262,18 @@ public class DataSplitWindowController implements Initializable {
 
                 splits = sampler.sample(previousData, sizes);
 
+                if(testSize > 0 && valSize == 0) {
+                    splits.get(1).setName("Test Set");
+                }
+                else if(valSize > 0 && testSize == 0) {
+                    splits.get(1).setName("Val Set");
+                }
+                else if(testSize > 0 && valSize > 0) {
+                    splits.get(1).setName("Test Set");
+                    splits.get(2).setName("Val Set");
+                }
                 Stage stage = (Stage)testCheckbox.getScene().getWindow();
                 stage.close();
-                for(Dataset d : splits) {
-                    for(int i = 0; i < d.numEntries(); i++) {
-                        System.out.println(d.getWholeRow(i));
-                    }
-                }
             } catch (InstantiationException e) {
                 e.printStackTrace();
             } catch (IllegalAccessException e) {
