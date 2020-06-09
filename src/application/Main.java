@@ -80,6 +80,7 @@ public class Main extends Application {
         // Catch
         } catch (Exception e) {
             // Error handling occurs here
+            System.out.println("Uh-oh!");
         }
         // Run the setup function
         setup();

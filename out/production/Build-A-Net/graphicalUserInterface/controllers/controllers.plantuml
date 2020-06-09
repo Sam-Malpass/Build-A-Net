@@ -1,0 +1,261 @@
+@startuml
+
+title __CONTROLLERS's Class Diagram__\n
+
+  namespace graphicalUserInterface {
+    namespace controllers {
+      class graphicalUserInterface.controllers.ApplicationWindowController {
+          ~ colourVals : ArrayList<ArrayList<Double>>
+          ~ layerNames : ArrayList<String>
+          ~ layerTypes : ArrayList<Layer>
+          ~ learningAlgorithmNames : ArrayList<String>
+          ~ learningAlgorithms : ArrayList<LearningAlgorithm>
+          ~ neuronNames : ArrayList<String>
+          ~ neuronTypes : ArrayList<ActivationFunction>
+          - algorithmBox : ComboBox
+          - baseMaxLayers : int
+          - canvasPane : AnchorPane
+          - commandStack : ArrayList<Command>
+          - console : TextArea
+          - currStatus : int
+          - dataFlag : boolean
+          - datasets : ArrayList<Dataset>
+          - deepFlag : boolean
+          - learningRate : double
+          - learningRateSpinner : Spinner
+          - locXNetwork : double
+          - locYToolbox : double
+          {static} - messageBus : MessageBus
+          - momentum : double
+          - momentumSpinner : Spinner
+          - networkCanvas : Canvas
+          - networkContext : GraphicsContext
+          - networkMenu : ContextMenu
+          - paramsFlag : boolean
+          - redoStack : ArrayList<Command>
+          - selectedLayer : int
+          - selectedLayerBox : int
+          - selectedNeuron : int
+          - statusBox : TextArea
+          - toolboxCanvas : Canvas
+          - toolboxCanvasLayers : Canvas
+          - toolboxContext : GraphicsContext
+          - toolboxContextLayers : GraphicsContext
+          - toolboxPane : AnchorPane
+          - toolboxPaneLayers : AnchorPane
+          {static} + getMessageBus()
+          + getParameterFlag()
+          + initialize()
+          + write()
+          + write()
+          - about()
+          - addLayer()
+          - addNeuron()
+          - checkParameters()
+          - checkStatus()
+          - connectLayers()
+          - createCanvasMenu()
+          - createLearningAlgorithmList()
+          - drawConnections()
+          - exit()
+          - hiddenLayers()
+          - hiliteLayer()
+          - initializeLayerToolbox()
+          - initializeNeuronToolbox()
+          - newNetwork()
+          - openNetwork()
+          - redoAction()
+          - removeLayer()
+          - removeNeuron()
+          - save()
+          - saveAs()
+          - setData()
+          - setMaxEpochs()
+          - setMinError()
+          - testNetwork()
+          - trainNetwork()
+          - undoAction()
+          - updateNetworkCanvas()
+          - updateStatusBox()
+      }
+    }
+  }
+  
+
+  namespace graphicalUserInterface {
+    namespace controllers {
+      class graphicalUserInterface.controllers.DataPreprocessorWindowController {
+          - inputAnchorPane : AnchorPane
+          - inputBoxes : ArrayList<String>
+          - inputColNums : TextField
+          - inputControllers : ArrayList<GenericPreprocessorSelectController>
+          - inputVBOX : VBox
+          - outputAnchorPane : AnchorPane
+          - outputBoxes : ArrayList<String>
+          - outputColNums : TextField
+          - outputControllers : ArrayList<GenericPreprocessorSelectController>
+          - outputVBOX : VBox
+          - preprocessorNames : ArrayList<String>
+          - preprocessors : ArrayList<Preprocessor>
+          - previousWindow : Scene
+          + getPreprocessedData()
+          + initialize()
+          + removePreprocessor()
+          + setPreviousWindow()
+          - addInputPreprocessor()
+          - addOutputPreprocessor()
+          - back()
+          - cancel()
+          - loadPreprocessors()
+          - next()
+      }
+    }
+  }
+  
+
+  namespace graphicalUserInterface {
+    namespace controllers {
+      class graphicalUserInterface.controllers.DataSelectWindowController {
+          - browseButton : Button
+          - cancelButton : Button
+          - commaCheckBox : CheckBox
+          - dataComboBox : ComboBox
+          - dataSets : ArrayList<String>
+          - dataTable : TableView
+          - defaultNames : ArrayList<String>
+          - delimiter : String
+          - fileName : String
+          - filePathField : TextField
+          - hbox1 : HBox
+          - hbox2 : HBox
+          - hbox3 : HBox
+          - includesHeadersCheckBox : CheckBox
+          - inputColumnsField : TextField
+          - inputs : ArrayList<Integer>
+          - nextButton : Button
+          - otherCheckBox : CheckBox
+          - otherDelimiterField : TextField
+          - outputColumnsField : TextField
+          - outputs : ArrayList<Integer>
+          - spaceCheckBox : CheckBox
+          - tabCheckBox : CheckBox
+          + getInputs()
+          + getLoadedData()
+          + getOutputs()
+          + initialize()
+          - autoCheck()
+          - cancel()
+          - checkInOut()
+          - checkInputs()
+          - checkOutputs()
+          - fixCells()
+          - next()
+          - testConditions()
+          - update()
+          - updateTable()
+      }
+    }
+  }
+  
+
+  namespace graphicalUserInterface {
+    namespace controllers {
+      class graphicalUserInterface.controllers.DataSplitWindowController {
+          - previousWindow : Scene
+          - reserved : double
+          - samplerBox : ComboBox
+          - samplerNames : ArrayList<String>
+          - samplers : ArrayList<Sampler>
+          {static} - splits : ArrayList<Dataset>
+          - testCheckbox : CheckBox
+          - testDetails : TextArea
+          - testSize : int
+          - testSpinner : Spinner<Double>
+          - total : double
+          - trainDetails : TextArea
+          - trainSize : int
+          - valCheckbox : CheckBox
+          - valDetails : TextArea
+          - valSize : int
+          - valSpinner : Spinner<Double>
+          {static} + getDatasets()
+          + initialize()
+          + setPrevious()
+          - back()
+          - cancel()
+          - finish()
+          - recalc()
+          - setupSamplers()
+          - writeDetails()
+      }
+    }
+  }
+  
+
+  namespace graphicalUserInterface {
+    namespace controllers {
+      class graphicalUserInterface.controllers.GenericPreprocessorSelectController {
+          - args : TextField
+          - colSelector : ComboBox
+          - cols : ArrayList<Integer>
+          - myCols : ArrayList<Integer>
+          - names : ArrayList<String>
+          - selector : ComboBox
+          + getArgs()
+          + getCols()
+          + getPreprocessorIndex()
+          + initialize()
+          + setCols()
+          + setHolder()
+          + setPreprocessors()
+          - remove()
+      }
+    }
+  }
+  
+
+  namespace graphicalUserInterface {
+    namespace controllers {
+      class graphicalUserInterface.controllers.NeuronSelectWindowController {
+          - index : int
+          - list : ArrayList<Neuron>
+          - listView : ListView
+          + getIndex()
+          + initialize()
+          + setNeurons()
+          - cancel()
+          - select()
+      }
+    }
+  }
+  
+
+  graphicalUserInterface.controllers.ApplicationWindowController .up.|> javafx.fxml.Initializable
+  graphicalUserInterface.controllers.ApplicationWindowController o-- application.fileHandler.FileHandler : fileHandler
+  graphicalUserInterface.controllers.ApplicationWindowController o-- graphicalUserInterface.drawers.LayerToolboxDrawer : layerToolboxDrawer
+  graphicalUserInterface.controllers.ApplicationWindowController o-- application.wrappers.IntegerWrapper : maxEpochs
+  graphicalUserInterface.controllers.ApplicationWindowController o-- application.wrappers.DoubleWrapper : minError
+  graphicalUserInterface.controllers.ApplicationWindowController o-- graphicalUserInterface.drawers.NetworkDrawer : networkDrawer
+  graphicalUserInterface.controllers.ApplicationWindowController o-- neuralNetwork.Network : neuralNetwork
+  graphicalUserInterface.controllers.ApplicationWindowController o-- graphicalUserInterface.drawers.NeuronToolboxDrawer : neuronToolboxDrawer
+  graphicalUserInterface.controllers.DataPreprocessorWindowController .up.|> javafx.fxml.Initializable
+  graphicalUserInterface.controllers.DataPreprocessorWindowController o-- data.Dataset : preprocessedData
+  graphicalUserInterface.controllers.DataPreprocessorWindowController o-- graphicalUserInterface.controllers.DataSelectWindowController : previousController
+  graphicalUserInterface.controllers.DataSelectWindowController .up.|> javafx.fxml.Initializable
+  graphicalUserInterface.controllers.DataSelectWindowController o-- data.Dataset : loadedData
+  graphicalUserInterface.controllers.DataSplitWindowController .up.|> javafx.fxml.Initializable
+  graphicalUserInterface.controllers.DataSplitWindowController o-- graphicalUserInterface.controllers.DataPreprocessorWindowController : previousController
+  graphicalUserInterface.controllers.DataSplitWindowController o-- data.Dataset : previousData
+  graphicalUserInterface.controllers.GenericPreprocessorSelectController .up.|> javafx.fxml.Initializable
+  graphicalUserInterface.controllers.GenericPreprocessorSelectController o-- graphicalUserInterface.controllers.DataPreprocessorWindowController : holder
+  graphicalUserInterface.controllers.NeuronSelectWindowController .up.|> javafx.fxml.Initializable
+
+
+right footer
+
+
+PlantUML diagram generated by SketchIt! (https://bitbucket.org/pmesmeur/sketch.it)
+For more information about this tool, please contact philippe.mesmeur@gmail.com
+endfooter
+
+@enduml

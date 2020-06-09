@@ -282,7 +282,7 @@ public class ApplicationWindowController implements Initializable {
     /**
      * dataset holds the data to be used
      */
-    private ArrayList<Dataset> datasets = null;
+    private ArrayList<Dataset> datasets = new ArrayList<>();
 
 
     /**
@@ -335,8 +335,10 @@ public class ApplicationWindowController implements Initializable {
         networkDrawer = new NetworkDrawer(networkContext);
         neuronToolboxDrawer = new NeuronToolboxDrawer(toolboxContext);
         layerToolboxDrawer = new LayerToolboxDrawer(toolboxContextLayers);
+
         initializeNeuronToolbox();
         initializeLayerToolbox();
+
         // Create the menu for the canvas
         createCanvasMenu();
         // Set the menu in the canvas

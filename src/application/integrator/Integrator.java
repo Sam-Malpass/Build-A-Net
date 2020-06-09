@@ -48,6 +48,15 @@ public class Integrator {
         File[] fileList = new File(path).listFiles();
         // Convert the array to an ArrayList because they are just better
         files = new ArrayList<>(Arrays.asList(fileList));
+        ArrayList<File> badFiles = new ArrayList<>();
+        for(File f : files) {
+            if(f.getName().contains(".plantuml")) {
+                badFiles.add(f);
+            }
+        }
+        for(File f : badFiles) {
+            files.remove(f);
+        }
         // Return those files
         return files;
     }

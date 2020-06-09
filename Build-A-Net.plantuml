@@ -1,0 +1,424 @@
+@startuml
+
+title __BUILD-A-NET's Class Diagram__\n
+
+  namespace application {
+    class application.Main {
+    }
+  }
+  
+
+  namespace application {
+    namespace commands {
+      class application.commands.AddLayer {
+      }
+    }
+  }
+  
+
+  namespace application {
+    namespace commands {
+      class application.commands.AddNeuron {
+      }
+    }
+  }
+  
+
+  namespace application {
+    namespace commands {
+      abstract class application.commands.Command {
+      }
+    }
+  }
+  
+
+  namespace application {
+    namespace commands {
+      class application.commands.RemoveLayer {
+      }
+    }
+  }
+  
+
+  namespace application {
+    namespace commands {
+      class application.commands.RemoveNeuron {
+      }
+    }
+  }
+  
+
+  namespace application {
+    namespace commands {
+      class application.commands.SetMaxEpochs {
+      }
+    }
+  }
+  
+
+  namespace application {
+    namespace commands {
+      class application.commands.SetMinError {
+      }
+    }
+  }
+  
+
+  namespace application {
+    namespace converter {
+      class application.converter.LayerConverter {
+      }
+    }
+  }
+  
+
+  namespace application {
+    namespace fileHandler {
+      class application.fileHandler.FileHandler {
+      }
+    }
+  }
+  
+
+  namespace application {
+    namespace generator {
+      class application.generator.Generator {
+      }
+    }
+  }
+  
+
+  namespace application {
+    namespace integrator {
+      class application.integrator.Integrator {
+      }
+    }
+  }
+  
+
+  namespace application {
+    namespace wrappers {
+      class application.wrappers.DoubleWrapper {
+      }
+    }
+  }
+  
+
+  namespace application {
+    namespace wrappers {
+      class application.wrappers.IntegerWrapper {
+      }
+    }
+  }
+  
+
+  namespace data {
+    class data.AND {
+    }
+  }
+  
+
+  namespace data {
+    abstract class data.Dataset {
+    }
+  }
+  
+
+  namespace data {
+    class data.OR {
+    }
+  }
+  
+
+  namespace data {
+    class data.UserSpecified {
+    }
+  }
+  
+
+  namespace data {
+    class data.XOR {
+    }
+  }
+  
+
+  namespace data {
+    namespace preprocessors {
+      class data.preprocessors.BoundedScaler {
+      }
+    }
+  }
+  
+
+  namespace data {
+    namespace preprocessors {
+      class data.preprocessors.MinMaxScaler {
+      }
+    }
+  }
+  
+
+  namespace data {
+    namespace preprocessors {
+      interface data.preprocessors.Preprocessor {
+      }
+    }
+  }
+  
+
+  namespace data {
+    namespace samplers {
+      class data.samplers.RandomSampler {
+      }
+    }
+  }
+  
+
+  namespace data {
+    namespace samplers {
+      interface data.samplers.Sampler {
+      }
+    }
+  }
+  
+
+  namespace graphicalUserInterface {
+    class graphicalUserInterface.MessageBus {
+    }
+  }
+  
+
+  namespace graphicalUserInterface {
+    namespace controllers {
+      class graphicalUserInterface.controllers.ApplicationWindowController {
+      }
+    }
+  }
+  
+
+  namespace graphicalUserInterface {
+    namespace controllers {
+      class graphicalUserInterface.controllers.DataPreprocessorWindowController {
+      }
+    }
+  }
+  
+
+  namespace graphicalUserInterface {
+    namespace controllers {
+      class graphicalUserInterface.controllers.DataSelectWindowController {
+      }
+    }
+  }
+  
+
+  namespace graphicalUserInterface {
+    namespace controllers {
+      class graphicalUserInterface.controllers.DataSplitWindowController {
+      }
+    }
+  }
+  
+
+  namespace graphicalUserInterface {
+    namespace controllers {
+      class graphicalUserInterface.controllers.GenericPreprocessorSelectController {
+      }
+    }
+  }
+  
+
+  namespace graphicalUserInterface {
+    namespace controllers {
+      class graphicalUserInterface.controllers.NeuronSelectWindowController {
+      }
+    }
+  }
+  
+
+  namespace graphicalUserInterface {
+    namespace drawers {
+      class graphicalUserInterface.drawers.LayerToolboxDrawer {
+      }
+    }
+  }
+  
+
+  namespace graphicalUserInterface {
+    namespace drawers {
+      class graphicalUserInterface.drawers.NetworkDrawer {
+      }
+    }
+  }
+  
+
+  namespace graphicalUserInterface {
+    namespace drawers {
+      class graphicalUserInterface.drawers.NeuronToolboxDrawer {
+      }
+    }
+  }
+  
+
+  namespace neuralNetwork {
+    class neuralNetwork.Network {
+    }
+  }
+  
+
+  namespace neuralNetwork {
+    namespace activationFunctions {
+      interface neuralNetwork.activationFunctions.ActivationFunction {
+      }
+    }
+  }
+  
+
+  namespace neuralNetwork {
+    namespace activationFunctions {
+      class neuralNetwork.activationFunctions.Identity {
+      }
+    }
+  }
+  
+
+  namespace neuralNetwork {
+    namespace activationFunctions {
+      class neuralNetwork.activationFunctions.Linear {
+      }
+    }
+  }
+  
+
+  namespace neuralNetwork {
+    namespace activationFunctions {
+      class neuralNetwork.activationFunctions.ReLU {
+      }
+    }
+  }
+  
+
+  namespace neuralNetwork {
+    namespace activationFunctions {
+      class neuralNetwork.activationFunctions.Sigmoid {
+      }
+    }
+  }
+  
+
+  namespace neuralNetwork {
+    namespace components.layers {
+      class neuralNetwork.components.layers.HiddenLayer {
+      }
+    }
+  }
+  
+
+  namespace neuralNetwork {
+    namespace components.layers {
+      class neuralNetwork.components.layers.InputLayer {
+      }
+    }
+  }
+  
+
+  namespace neuralNetwork {
+    namespace components.layers {
+      abstract class neuralNetwork.components.layers.Layer {
+      }
+    }
+  }
+  
+
+  namespace neuralNetwork {
+    namespace components.layers {
+      class neuralNetwork.components.layers.OutputLayer {
+      }
+    }
+  }
+  
+
+  namespace neuralNetwork {
+    namespace components.neuron {
+      class neuralNetwork.components.neuron.Neuron {
+      }
+    }
+  }
+  
+
+  namespace neuralNetwork {
+    namespace learningAlgorithms {
+      class neuralNetwork.learningAlgorithms.Backpropagation {
+      }
+    }
+  }
+  
+
+  namespace neuralNetwork {
+    namespace learningAlgorithms {
+      interface neuralNetwork.learningAlgorithms.LearningAlgorithm {
+      }
+    }
+  }
+  
+
+  application.Main -up-|> javafx.application.Application
+  application.commands.AddLayer -up-|> application.commands.Command
+  application.commands.AddNeuron -up-|> application.commands.Command
+  application.commands.RemoveLayer -up-|> application.commands.Command
+  application.commands.RemoveLayer o-- neuralNetwork.components.layers.Layer : component
+  application.commands.RemoveNeuron -up-|> application.commands.Command
+  application.commands.RemoveNeuron o-- neuralNetwork.components.neuron.Neuron : neuron
+  application.commands.SetMaxEpochs -up-|> application.commands.Command
+  application.commands.SetMinError -up-|> application.commands.Command
+  data.AND -up-|> data.Dataset
+  data.OR -up-|> data.Dataset
+  data.UserSpecified -up-|> data.Dataset
+  data.XOR -up-|> data.Dataset
+  data.preprocessors.BoundedScaler .up.|> data.preprocessors.Preprocessor
+  data.preprocessors.MinMaxScaler .up.|> data.preprocessors.Preprocessor
+  data.samplers.RandomSampler .up.|> data.samplers.Sampler
+  graphicalUserInterface.controllers.ApplicationWindowController .up.|> javafx.fxml.Initializable
+  graphicalUserInterface.controllers.ApplicationWindowController o-- application.fileHandler.FileHandler : fileHandler
+  graphicalUserInterface.controllers.ApplicationWindowController o-- graphicalUserInterface.drawers.LayerToolboxDrawer : layerToolboxDrawer
+  graphicalUserInterface.controllers.ApplicationWindowController o-- application.wrappers.IntegerWrapper : maxEpochs
+  graphicalUserInterface.controllers.ApplicationWindowController o-- application.wrappers.DoubleWrapper : minError
+  graphicalUserInterface.controllers.ApplicationWindowController o-- graphicalUserInterface.drawers.NetworkDrawer : networkDrawer
+  graphicalUserInterface.controllers.ApplicationWindowController o-- neuralNetwork.Network : neuralNetwork
+  graphicalUserInterface.controllers.ApplicationWindowController o-- graphicalUserInterface.drawers.NeuronToolboxDrawer : neuronToolboxDrawer
+  graphicalUserInterface.controllers.DataPreprocessorWindowController .up.|> javafx.fxml.Initializable
+  graphicalUserInterface.controllers.DataPreprocessorWindowController o-- data.Dataset : preprocessedData
+  graphicalUserInterface.controllers.DataPreprocessorWindowController o-- graphicalUserInterface.controllers.DataSelectWindowController : previousController
+  graphicalUserInterface.controllers.DataSelectWindowController .up.|> javafx.fxml.Initializable
+  graphicalUserInterface.controllers.DataSelectWindowController o-- data.Dataset : loadedData
+  graphicalUserInterface.controllers.DataSplitWindowController .up.|> javafx.fxml.Initializable
+  graphicalUserInterface.controllers.DataSplitWindowController o-- graphicalUserInterface.controllers.DataPreprocessorWindowController : previousController
+  graphicalUserInterface.controllers.DataSplitWindowController o-- data.Dataset : previousData
+  graphicalUserInterface.controllers.GenericPreprocessorSelectController .up.|> javafx.fxml.Initializable
+  graphicalUserInterface.controllers.GenericPreprocessorSelectController o-- graphicalUserInterface.controllers.DataPreprocessorWindowController : holder
+  graphicalUserInterface.controllers.NeuronSelectWindowController .up.|> javafx.fxml.Initializable
+  neuralNetwork.Network .up.|> java.io.Serializable
+  neuralNetwork.Network o-- neuralNetwork.learningAlgorithms.LearningAlgorithm : learningAlgorithm
+  neuralNetwork.activationFunctions.Identity .up.|> neuralNetwork.activationFunctions.ActivationFunction
+  neuralNetwork.activationFunctions.Linear .up.|> neuralNetwork.activationFunctions.ActivationFunction
+  neuralNetwork.activationFunctions.ReLU .up.|> neuralNetwork.activationFunctions.ActivationFunction
+  neuralNetwork.activationFunctions.Sigmoid .up.|> neuralNetwork.activationFunctions.ActivationFunction
+  neuralNetwork.components.layers.HiddenLayer -up-|> neuralNetwork.components.layers.Layer
+  neuralNetwork.components.layers.InputLayer -up-|> neuralNetwork.components.layers.Layer
+  neuralNetwork.components.layers.Layer .up.|> java.io.Serializable
+  neuralNetwork.components.layers.OutputLayer -up-|> neuralNetwork.components.layers.Layer
+  neuralNetwork.components.neuron.Neuron .up.|> java.io.Serializable
+  neuralNetwork.components.neuron.Neuron o-- neuralNetwork.activationFunctions.ActivationFunction : activationFunction
+  neuralNetwork.learningAlgorithms.Backpropagation .up.|> neuralNetwork.learningAlgorithms.LearningAlgorithm
+  neuralNetwork.learningAlgorithms.Backpropagation o-- data.Dataset : data
+  neuralNetwork.learningAlgorithms.Backpropagation o-- neuralNetwork.Network : network
+
+
+right footer
+
+
+PlantUML diagram generated by SketchIt! (https://bitbucket.org/pmesmeur/sketch.it)
+For more information about this tool, please contact philippe.mesmeur@gmail.com
+endfooter
+
+@enduml
