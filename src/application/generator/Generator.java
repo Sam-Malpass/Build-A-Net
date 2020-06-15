@@ -6,6 +6,8 @@
  */
 package application.generator;
 
+import application.wrappers.IntegerWrapper;
+
 import java.util.Random;
 import java.util.UUID;
 
@@ -14,8 +16,16 @@ public class Generator {
     /**
      * randomiser is the random object that the generator will use
      */
-     private static Random randomiser = new Random();
+     private static Random randomiser = new Random(0);
+     private static IntegerWrapper seed = new IntegerWrapper(0);
 
+     public static int genInt() {
+         return randomiser.nextInt();
+     }
+
+     public static int genInt(int bound) {
+         return randomiser.nextInt(bound);
+     }
     /**
      * Function genLong()
      * <p>
@@ -47,5 +57,17 @@ public class Generator {
      */
     public static String genUUID() {
         return UUID.randomUUID().toString();
+    }
+
+    public static void setSeed(int newSeed) {
+        seed.value = newSeed;
+    }
+
+    public static int getSeed() {
+        return seed.value;
+    }
+
+    public static IntegerWrapper getWrapper() {
+        return seed;
     }
 }

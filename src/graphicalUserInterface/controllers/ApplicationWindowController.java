@@ -8,6 +8,7 @@ package graphicalUserInterface.controllers;
 
 import application.commands.*;
 import application.fileHandler.FileHandler;
+import application.generator.Generator;
 import application.integrator.Integrator;
 import application.wrappers.DoubleWrapper;
 import application.wrappers.IntegerWrapper;
@@ -1211,6 +1212,7 @@ public class ApplicationWindowController implements Initializable {
         information += "Max Epochs to Run: " + maxEpochs + "\n";
         // Append minError
         information += "Min Error to Achieve: " + minError + "\n";
+        information += "Seed: " + Generator.getSeed();
         // Output the information to the statusBox
         statusBox.setText(information);
     }
@@ -1825,5 +1827,38 @@ public class ApplicationWindowController implements Initializable {
         else {
             write("No test set available", "-e");
         }
+    }
+
+    @FXML
+    private void setSeed() {
+        // Create the dialog box
+        TextInputDialog window = new TextInputDialog();
+        // Set the title
+        window.setTitle("Enter New Seed...");
+        // Set the header text
+        window.setHeaderText("Enter Number:");
+        // Show the pop-up and wait
+        window.showAndWait();
+        // Check the input is an integer
+        if(window.getResult().matches("\\d+")) {
+            // Create the command
+            SetSeed set = new SetSeed();
+            // Create a list for the arguments
+            ArrayList<Object> args = new ArrayList<>();
+            // Add the maxEpochs object to the args (the command will treat this as a pointer)
+            args.add(Generator.getWrapper());
+            // Add the new desired value to the args
+            args.add(Integer.parseInt(window.getResult()));
+            // Execute the command
+            set.executeCommand(args);
+            // Add the command to the stack
+            commandStack.add(set);
+        }
+        // Otherwise
+        else {
+            // Output error to user
+            write("Given number could not be parsed", "-e");
+        }
+        updateStatusBox();
     }
 }

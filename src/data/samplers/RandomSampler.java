@@ -6,10 +6,10 @@
  */
 package data.samplers;
 
+import application.generator.Generator;
 import data.Dataset;
 import data.UserSpecified;
 import java.util.ArrayList;
-import java.util.Random;
 
 public class RandomSampler implements Sampler {
     /**
@@ -41,7 +41,7 @@ public class RandomSampler implements Sampler {
             // While the counter is not equal to the split size
             while(counter != i) {
                 // Generate an index
-                int index = new Random().nextInt(data.numEntries());
+                int index = new Generator().genInt(data.numEntries());
                 // If the index has not been used thus far
                 if(!sampledIndices.contains(index)) {
                     // Add that row to the split

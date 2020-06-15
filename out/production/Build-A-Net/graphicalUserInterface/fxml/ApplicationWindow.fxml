@@ -22,7 +22,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="graphicalUserInterface.controllers.ApplicationWindowController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="graphicalUserInterface.controllers.ApplicationWindowController">
    <bottom>
       <SplitPane fx:id="splitPaneBottom" dividerPositions="0.7942097026604069" prefHeight="162.0" prefWidth="1280.0" BorderPane.alignment="CENTER">
         <items>
@@ -49,7 +49,8 @@
                         <MenuItem fx:id="openNetwork" mnemonicParsing="false" onAction="#openNetwork" text="Open..." />
                         <MenuItem fx:id="saveNet" mnemonicParsing="false" onAction="#save" text="Save" />
                         <MenuItem fx:id="saveNetAs" mnemonicParsing="false" onAction="#saveAs" text="Save As..." />
-                        <MenuItem fx:id="setData" mnemonicParsing="false" text="Set Data..." onAction="#setData"/>
+                        <MenuItem fx:id="setData" mnemonicParsing="false" onAction="#setData" text="Set Data..." />
+                        <MenuItem fx:id="setSeed" mnemonicParsing="false" text="Set Seed..." onAction="#setSeed"/>
                         <MenuItem fx:id="settings" mnemonicParsing="false" text="Settings" />
                         <SeparatorMenuItem mnemonicParsing="false" />
                     <MenuItem fx:id="exit" mnemonicParsing="false" onAction="#exit" text="Exit" />
@@ -71,7 +72,7 @@
             <ToolBar prefHeight="40.0" prefWidth="200.0">
               <items>
                   <Button fx:id="trainNetwork" mnemonicParsing="false" onAction="#trainNetwork" text="Train Network" />
-                <Button fx:id="testNetwork" alignment="CENTER" mnemonicParsing="false" text="Test Network" onAction="#testNetwork" />
+                <Button fx:id="testNetwork" alignment="CENTER" mnemonicParsing="false" onAction="#testNetwork" text="Test Network" />
                   <Button fx:id="setEpochs" mnemonicParsing="false" onAction="#setMaxEpochs" text="Set Max Epochs" />
                   <Button fx:id="setError" mnemonicParsing="false" onAction="#setMinError" prefHeight="25.0" prefWidth="100.0" text="Set Min Error" />
                   <Label text="Learning Rate:" />
