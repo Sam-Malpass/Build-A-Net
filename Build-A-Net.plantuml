@@ -65,8 +65,8 @@ title __BUILD-A-NET's Class Diagram__\n
   
 
   namespace application {
-    namespace converter {
-      class application.converter.LayerConverter {
+    namespace commands {
+      class application.commands.SetSeed {
       }
     }
   }
@@ -91,6 +91,14 @@ title __BUILD-A-NET's Class Diagram__\n
   namespace application {
     namespace integrator {
       class application.integrator.Integrator {
+      }
+    }
+  }
+  
+
+  namespace application {
+    namespace misc {
+      class application.misc.Rounder {
       }
     }
   }
@@ -371,6 +379,7 @@ title __BUILD-A-NET's Class Diagram__\n
   application.commands.RemoveNeuron o-- neuralNetwork.components.neuron.Neuron : neuron
   application.commands.SetMaxEpochs -up-|> application.commands.Command
   application.commands.SetMinError -up-|> application.commands.Command
+  application.commands.SetSeed -up-|> application.commands.Command
   data.AND -up-|> data.Dataset
   data.OR -up-|> data.Dataset
   data.UserSpecified -up-|> data.Dataset

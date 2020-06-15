@@ -81,6 +81,18 @@ title __COMMANDS's Class Diagram__\n
   }
   
 
+  namespace application {
+    namespace commands {
+      class application.commands.SetSeed {
+          - prevValue : int
+          + executeCommand()
+          + executeCommand()
+          + unExecuteCommand()
+      }
+    }
+  }
+  
+
   application.commands.AddLayer -up-|> application.commands.Command
   application.commands.AddNeuron -up-|> application.commands.Command
   application.commands.RemoveLayer -up-|> application.commands.Command
@@ -89,6 +101,7 @@ title __COMMANDS's Class Diagram__\n
   application.commands.RemoveNeuron o-- neuralNetwork.components.neuron.Neuron : neuron
   application.commands.SetMaxEpochs -up-|> application.commands.Command
   application.commands.SetMinError -up-|> application.commands.Command
+  application.commands.SetSeed -up-|> application.commands.Command
 
 
 right footer
