@@ -51,6 +51,9 @@ public class Backpropagation implements LearningAlgorithm {
                 if(network.isClassification()) {
                     prediction = network.findNearestClass(prediction, data.findUniques(predictionCT));
                 }
+                else {
+                    prediction =
+                }
                 // Add the error to the list of errors for each prediction
                 errors.add(data.getRowExpected(i).get(predictionCT) - prediction);
             }

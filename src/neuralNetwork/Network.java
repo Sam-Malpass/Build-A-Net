@@ -29,6 +29,7 @@ public class Network implements Serializable {
      * classification holds a boolean value - true for classification network, false for regression networks
      */
     private boolean classification = true;
+    private int precision = 0;
 
     /**
      * networkLayers holds the layers in the network
@@ -673,5 +674,13 @@ public class Network implements Serializable {
 
     public void setMode(boolean mode) {
         classification = mode;
+    }
+
+    public void setPrecision(int numberOfPlaces) {
+        precision = numberOfPlaces;
+    }
+
+    public int getPrecision() {
+        return precision;
     }
 }
