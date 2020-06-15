@@ -50,7 +50,7 @@
                         <MenuItem fx:id="saveNet" mnemonicParsing="false" onAction="#save" text="Save" />
                         <MenuItem fx:id="saveNetAs" mnemonicParsing="false" onAction="#saveAs" text="Save As..." />
                         <MenuItem fx:id="setData" mnemonicParsing="false" onAction="#setData" text="Set Data..." />
-                        <MenuItem fx:id="setSeed" mnemonicParsing="false" text="Set Seed..." onAction="#setSeed"/>
+                        <MenuItem fx:id="setSeed" mnemonicParsing="false" onAction="#setSeed" text="Set Seed..." />
                         <MenuItem fx:id="settings" mnemonicParsing="false" text="Settings" />
                         <SeparatorMenuItem mnemonicParsing="false" />
                     <MenuItem fx:id="exit" mnemonicParsing="false" onAction="#exit" text="Exit" />
@@ -76,11 +76,13 @@
                   <Button fx:id="setEpochs" mnemonicParsing="false" onAction="#setMaxEpochs" text="Set Max Epochs" />
                   <Button fx:id="setError" mnemonicParsing="false" onAction="#setMinError" prefHeight="25.0" prefWidth="100.0" text="Set Min Error" />
                   <Label text="Learning Rate:" />
-                  <Spinner fx:id="learningRateSpinner" />
+                  <Spinner fx:id="learningRateSpinner" prefHeight="25.0" prefWidth="100.0" />
                   <Label text="Momentum:" />
-                  <Spinner fx:id="momentumSpinner" />
-                  <Label text="Learning Algorithm" />
+                  <Spinner fx:id="momentumSpinner" prefHeight="25.0" prefWidth="100.0" />
+                  <Label text="Learning Algorithm:" />
                   <ComboBox fx:id="algorithmBox" prefWidth="150.0" promptText="Select..." />
+                  <Label text="Mode:" />
+                  <ComboBox fx:id="modeComboBox" prefWidth="215.0" promptText="Select..." />
               </items>
             </ToolBar>
          </children>

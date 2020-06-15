@@ -670,4 +670,8 @@ public class Network implements Serializable {
     public boolean isClassification() {
         return classification;
     }
+
+    public void setMode(boolean mode) {
+        classification = mode;
+    }
 }

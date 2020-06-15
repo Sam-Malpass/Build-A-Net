@@ -43,6 +43,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -171,6 +172,11 @@ public class ApplicationWindowController implements Initializable {
      */
     @FXML
     private ComboBox algorithmBox;
+
+    @FXML
+    private ComboBox modeComboBox;
+    ArrayList<String> modes = new ArrayList<>(Arrays.asList("Classification", "Regression"));
+    private Integer precision = 5;
 
     /**
      * learningAlgorithmsNames holds a list of all the algorithm names loaded
@@ -362,6 +368,36 @@ public class ApplicationWindowController implements Initializable {
         createLearningAlgorithmList();
         minError.value = 0.01;
         maxEpochs.value = 1000;
+
+        modeComboBox.setItems(FXCollections.observableList(modes));
+        modeComboBox.getSelectionModel().selectedItemProperty().addListener((observableValue, o, t1) -> {
+            if(t1.equals("Regression")) {
+                neuralNetwork.setMode(false);
+                // Create the dialog box
+                TextInputDialog window = new TextInputDialog();
+                // Set the title
+                window.setTitle("Enter Number of Decimal Place for Outputs...");
+                // Set the header text
+                window.setHeaderText("Enter Number:");
+                // Show the pop-up and wait
+                window.showAndWait();
+                // Check the input is an integer
+                if(window.getResult().matches("\\d+")) {
+                    precision = Integer.parseInt(window.getResult());
+                    write("Neural Network set to regression mode");
+                    write("Precision for outputs set to " + precision + " decimal place(s)");
+                }
+                // Otherwise
+                else {
+                    // Output error to user
+                    write("Given number could not be parsed", "-e");
+                }
+            }
+            else {
+                neuralNetwork.setMode(true);
+                write("Neural Network set to classification mode");
+            }
+        });
 
         updateNetworkCanvas();
         updateStatusBox();
@@ -1845,7 +1881,7 @@ public class ApplicationWindowController implements Initializable {
             SetSeed set = new SetSeed();
             // Create a list for the arguments
             ArrayList<Object> args = new ArrayList<>();
-            // Add the maxEpochs object to the args (the command will treat this as a pointer)
+            // Add the seed object to the args (the command will treat this as a pointer)
             args.add(Generator.getWrapper());
             // Add the new desired value to the args
             args.add(Integer.parseInt(window.getResult()));
