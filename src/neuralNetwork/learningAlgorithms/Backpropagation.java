@@ -6,6 +6,7 @@
  */
 package neuralNetwork.learningAlgorithms;
 
+import application.misc.Rounder;
 import data.Dataset;
 import neuralNetwork.Network;
 import java.util.ArrayList;
@@ -52,7 +53,7 @@ public class Backpropagation implements LearningAlgorithm {
                     prediction = network.findNearestClass(prediction, data.findUniques(predictionCT));
                 }
                 else {
-                    prediction =
+                    prediction = Rounder.round(prediction, network.getPrecision());
                 }
                 // Add the error to the list of errors for each prediction
                 errors.add(data.getRowExpected(i).get(predictionCT) - prediction);

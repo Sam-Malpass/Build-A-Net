@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 public class Rounder {
-    private static double round(double val, int places) {
+    public static double round(double val, int places) {
 
         if (places < 0) {
             Main.passMessage("Error rounding number", "-e");

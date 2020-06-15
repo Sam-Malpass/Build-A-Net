@@ -869,6 +869,7 @@ public class ApplicationWindowController implements Initializable {
         if(algorithmBox.getValue() != "-" && maxEpochs.value > 0 && minError.value > 0) {
             // Set the learning algorithm
             neuralNetwork.setLearningAlgorithm(learningAlgorithms.get(learningAlgorithmNames.indexOf(algorithmBox.getValue().toString())));
+            neuralNetwork.setPrecision(precision);
             // Set the learning rate
             learningRate = (Double) learningRateSpinner.getValue();
             // Set the momentum
