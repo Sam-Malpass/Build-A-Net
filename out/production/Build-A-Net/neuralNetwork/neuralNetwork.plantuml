@@ -11,6 +11,7 @@ title __NEURALNETWORK's Class Diagram__\n
         - momentum : double
         - networkLayers : ArrayList<Layer>
         - networkName : String
+        - precision : int
         - saved : boolean
         {static} - serialversionUID : long
         - sse : double
@@ -30,6 +31,7 @@ title __NEURALNETWORK's Class Diagram__\n
         + getMomentum()
         + getName()
         + getOutputs()
+        + getPrecision()
         + getSSE()
         + getSavedFlag()
         + getTrainedFlag()
@@ -41,8 +43,10 @@ title __NEURALNETWORK's Class Diagram__\n
         + removeNeuron()
         + setConnected()
         + setLearningAlgorithm()
+        + setMode()
         + setModified()
         + setName()
+        + setPrecision()
         + setSSE()
         + setSavedFlag()
         + setTrained()

@@ -10,6 +10,7 @@ title __CONTROLLERS's Class Diagram__\n
           ~ layerTypes : ArrayList<Layer>
           ~ learningAlgorithmNames : ArrayList<String>
           ~ learningAlgorithms : ArrayList<LearningAlgorithm>
+          ~ modes : ArrayList<String>
           ~ neuronNames : ArrayList<String>
           ~ neuronTypes : ArrayList<ActivationFunction>
           - algorithmBox : ComboBox
@@ -26,12 +27,14 @@ title __CONTROLLERS's Class Diagram__\n
           - locXNetwork : double
           - locYToolbox : double
           {static} - messageBus : MessageBus
+          - modeComboBox : ComboBox
           - momentum : double
           - momentumSpinner : Spinner
           - networkCanvas : Canvas
           - networkContext : GraphicsContext
           - networkMenu : ContextMenu
           - paramsFlag : boolean
+          - precision : Integer
           - redoStack : ArrayList<Command>
           - selectedLayer : int
           - selectedLayerBox : int
@@ -72,6 +75,7 @@ title __CONTROLLERS's Class Diagram__\n
           - setData()
           - setMaxEpochs()
           - setMinError()
+          - setSeed()
           - testNetwork()
           - trainNetwork()
           - undoAction()

@@ -7,7 +7,6 @@
 package neuralNetwork;
 
 import application.Main;
-import application.converter.LayerConverter;
 import data.Dataset;
 import javafx.application.Platform;
 import neuralNetwork.components.layers.*;
@@ -362,15 +361,15 @@ public class Network implements Serializable {
         StringBuilder sb = new StringBuilder();
         sb.append("Inputs");
         for(int i = 0; i < testSet.numInputs(); i++) {
-            sb.append("\t");
+            sb.append("\t\t");
         }
         sb.append("Expected Outputs");
         for(int i = 0; i < testSet.numOutputs(); i++) {
-            sb.append("\t");
+            sb.append("\t\t");
         }
         sb.append("Raw Outputs");
         for(int i = 0; i < testSet.numOutputs(); i++){
-            sb.append("\t");
+            sb.append("\t\t");
         }
         sb.append("Final Outputs");
         testOutputs.add(sb.toString());
@@ -380,7 +379,7 @@ public class Network implements Serializable {
             ArrayList<Double> row = testSet.getRow(i);
             for(Double d : row) {
                 sb.append(String.format("%.2f", d));
-                sb.append("\t");
+                sb.append("\t\t");
             }
             for(int layerCT = 0; layerCT < numLayers(); layerCT++) {
                 // Calculate the outputs of the layers
@@ -391,11 +390,11 @@ public class Network implements Serializable {
             double tmpCount = 0.0;
             for(Double d : testSet.getRowExpected(i)) {
                 sb.append(d);
-                sb.append("\t");
+                sb.append("\t\t");
             }
             for (Double d : getOutputs()) {
                 sb.append(String.format("%.2f", d));
-                sb.append("\t");
+                sb.append("\t\t");
             }
             for(int j = 0; j < getOutputs().size(); j++) {
                 if(classification) {
@@ -405,7 +404,7 @@ public class Network implements Serializable {
                         tmpCount++;
                     }
                     sb.append(roundedOut);
-                    sb.append("\t");
+                    sb.append("\t\t");
                 }
                 else if (getOutputs().get(j).equals(testSet.getRowExpected(i).get(j))) {
                     tmpCount++;

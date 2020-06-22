@@ -23,16 +23,37 @@ public class AddNeuron extends Command {
     public void executeCommand(Object inputs) {
         // Set the data store
         dataStore = inputs;
-        // Convert to a list
-        ArrayList<Object> args = (ArrayList<Object>)dataStore;
-        // Get the network
-        Network tmpNet = (Network) args.get(0);
-        // Get the activation function
-        ActivationFunction function = (ActivationFunction) args.get(1);
-        // Get the layerID
-        Integer layerID = (Integer) args.get(2);
-        // Add a neuron with function to given layer
-        tmpNet.addNeuron(new Neuron(function), layerID);
+        if(((ArrayList<Object>) dataStore).size() == 3) {
+            // Convert to a list
+            ArrayList<Object> args = (ArrayList<Object>) dataStore;
+            // Get the network
+            Network tmpNet = (Network) args.get(0);
+            // Get the activation function
+            ActivationFunction function = (ActivationFunction) args.get(1);
+            // Get the layerID
+            Integer layerID = (Integer) args.get(2);
+            // Add a neuron with function to given layer
+            tmpNet.addNeuron(new Neuron(function), layerID);
+            ((ArrayList<Object>) dataStore).add(tmpNet.getLayer(layerID).numNeurons() - 1);
+        }
+        else {
+            // Convert to a list
+            ArrayList<Object> args = (ArrayList<Object>) dataStore;
+            // Get the network
+            Network tmpNet = (Network) args.get(0);
+            // Get the activation function
+            ActivationFunction function = (ActivationFunction) args.get(1);
+            // Get the layerID
+            Integer layerID = (Integer) args.get(2);
+            // Add a neuron with function to given layer
+            int index = (int)((ArrayList<Object>) dataStore).get(3);
+            if(tmpNet.getLayer(layerID).numNeurons() >= index) {
+                tmpNet.insertNeuron(layerID, index, new Neuron(function));
+            }
+            else {
+                tmpNet.addNeuron(new Neuron(function), layerID);
+            }
+        }
     }
 
     /**

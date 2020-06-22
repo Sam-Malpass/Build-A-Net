@@ -291,6 +291,8 @@ public class ApplicationWindowController implements Initializable {
      */
     private ArrayList<Dataset> datasets = new ArrayList<>();
 
+    private boolean newNet = true;
+
 
     /**
      * Function initialize()
@@ -325,8 +327,6 @@ public class ApplicationWindowController implements Initializable {
         // Set the deepFlag
         deepFlag = false;
         selectedLayer = -1;
-        // Update the statusBox
-        updateStatusBox();
         // Create the Spinner ValueFactory for learningRate
         learningRateSpinner.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0.0, Double.MAX_VALUE, 1.0, 0.1));
         // Add the listener
@@ -397,6 +397,11 @@ public class ApplicationWindowController implements Initializable {
                 neuralNetwork.setMode(true);
                 write("Neural Network set to classification mode");
             }
+            updateStatusBox();
+        });
+
+        algorithmBox.getSelectionModel().selectedItemProperty().addListener((observableValue, o, t1) -> {
+            updateStatusBox();
         });
 
         updateNetworkCanvas();
@@ -593,8 +598,11 @@ public class ApplicationWindowController implements Initializable {
      */
     @FXML
     private void newNetwork() {
+        if(neuralNetwork.getModified()) {
+            newNet = false;
+        }
         // Check the flags
-        if(neuralNetwork.getSavedFlag() && !neuralNetwork.getModified()) {
+        if(newNet == true || (neuralNetwork.getSavedFlag() && !neuralNetwork.getModified())) {
             // Create a new network
             neuralNetwork = new Network();
             // Deselect the layer
@@ -603,6 +611,7 @@ public class ApplicationWindowController implements Initializable {
             updateNetworkCanvas();
             // Update the status box
             updateStatusBox();
+            newNet = true;
         }
         // Otherwise
         else {
@@ -678,10 +687,11 @@ public class ApplicationWindowController implements Initializable {
      */
     @FXML
     private void openNetwork() {
+        if(neuralNetwork.getModified()) {
+            newNet = false;
+        }
         // Checks the flags
-        System.out.println(neuralNetwork.getSavedFlag());
-        System.out.println(neuralNetwork.getModified());
-        if(neuralNetwork.getSavedFlag() && !neuralNetwork.getModified()) {
+        if(newNet == true || (neuralNetwork.getSavedFlag() && !neuralNetwork.getModified())) {
             // Open a file chooser
             FileChooser chooser = new FileChooser();
             // Get the selected file
@@ -694,6 +704,7 @@ public class ApplicationWindowController implements Initializable {
             updateNetworkCanvas();
             // Update the status box
             updateStatusBox();
+            newNet = false;
         }
         // Otherwise
         else {
@@ -866,16 +877,24 @@ public class ApplicationWindowController implements Initializable {
      */
     @FXML
     private void trainNetwork() {
-        if(algorithmBox.getValue() != "-" && maxEpochs.value > 0 && minError.value > 0) {
-            // Set the learning algorithm
-            neuralNetwork.setLearningAlgorithm(learningAlgorithms.get(learningAlgorithmNames.indexOf(algorithmBox.getValue().toString())));
-            neuralNetwork.setPrecision(precision);
-            // Set the learning rate
-            learningRate = (Double) learningRateSpinner.getValue();
-            // Set the momentum
-            momentum = (Double) momentumSpinner.getValue();
-            // Train the network
-            neuralNetwork.train(maxEpochs.value, minError.value, learningRate, momentum, datasets.get(0));
+        if(datasets.size() > 0) {
+            if (algorithmBox.getValue() != "-" && maxEpochs.value > 0 && minError.value > 0 && algorithmBox.getValue() != null && modeComboBox.getValue() != null) {
+                // Set the learning algorithm
+                neuralNetwork.setLearningAlgorithm(learningAlgorithms.get(learningAlgorithmNames.indexOf(algorithmBox.getValue().toString())));
+                neuralNetwork.setPrecision(precision);
+                // Set the learning rate
+                learningRate = (Double) learningRateSpinner.getValue();
+                // Set the momentum
+                momentum = (Double) momentumSpinner.getValue();
+                // Train the network
+                neuralNetwork.train(maxEpochs.value, minError.value, learningRate, momentum, datasets.get(0));
+            }
+            else {
+                write("One or more parameters is incorrect, please check and try again", "-e");
+            }
+        }
+        else {
+            write("No Training set specified", "-e");
         }
     }
 
@@ -1246,7 +1265,7 @@ public class ApplicationWindowController implements Initializable {
             information += "NO\n";
         }
         // Append maxEpochs
-        information += "Max Epochs to Run: " + maxEpochs + "\n";
+        information += "Max Epochs to Run: " + maxEpochs.value + "\n";
         // Append minError
         information += "Min Error to Achieve: " + minError + "\n";
         information += "Seed: " + Generator.getSeed();
@@ -1299,47 +1318,26 @@ public class ApplicationWindowController implements Initializable {
      * @return the string
      */
     private String checkStatus() {
-        // Check that there are at least 2 layers (input and output layers)
-        if(neuralNetwork.numLayers() >= 2 && currStatus == 0) {
-            // Set the current status
+        currStatus = 0;
+        if(datasets.size() > 0) {
             currStatus = 1;
-        }
-        // Otherwise
-        else {
-            // Create a temporary variable
-            boolean neurons = true;
-            // Check whether there are no layers
-            if(neuralNetwork.numLayers() == 0){
-                // Set the flag to false
-                neurons = false;
-            }
-            // Otherwise
-            else {
-                // For all layers of the network
-                for (int i = 0; i < neuralNetwork.numLayers(); i++) {
-                    // If the layer i has 0 neurons
-                    if (neuralNetwork.getLayer(i).numNeurons() <= 0) {
-                        // Set the flag to false
-                        neurons = false;
-                    }
-                }
-            }
-            // If flag is true
-            if (neurons == true) {
-                // Set the current status
+            if(datasets.get(0).numInputs() == neuralNetwork.getLayer(0).numNeurons()) {
                 currStatus = 2;
-                // If the dataset is not null
-                if(!(datasets.size() == 0)){
-                    // Set the current status
+                if(datasets.get(0).numOutputs() == neuralNetwork.getLayer(neuralNetwork.numLayers()-1).numNeurons()) {
                     currStatus = 3;
-                    // Check if the number of input neurons matches the number of input attributes
-                    if(datasets.get(0).numInputs() == neuralNetwork.getLayer(0).numNeurons()) {
-                        // Set the current status
+                    if(!missingNeurons()) {
                         currStatus = 4;
-                        // Check if the number of output neurons matches the number of output values
-                        if(datasets.get(0).numOutputs() == neuralNetwork.getLayer(neuralNetwork.numLayers()-1).numNeurons()) {
-                            // Set the current status
+                        if(algorithmBox.getValue() != null && !algorithmBox.getValue().toString().equals("-")) {
                             currStatus = 5;
+                            if(modeComboBox.getValue() != null) {
+                                currStatus = 6;
+                                if(maxEpochs.value > 0) {
+                                    currStatus = 7;
+                                    if(neuralNetwork.getConnectedFlag()) {
+                                        currStatus = 8;
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -1348,18 +1346,33 @@ public class ApplicationWindowController implements Initializable {
         // Check the status
         switch(currStatus) {
             case 0:
-                return "MIN LAYERS NOT REACHED";
-            case 1:
-                return "MISSING NEURONS IN LAYER(S)";
-            case 2:
                 return "NO DATA SELECTED";
+            case 1:
+                return "NUM INPUTS MISMATCH WITH NEURONS IN INPUT LAYER";
+            case 2:
+                return "NUM OUTPUTS MISMATCH WITH NEURONS IN THE OUTPUT LAYER";
             case 3:
-                return "NUM INPUTS EXCEEDS NUM NEURONS IN INPUT LAYER";
+                return "ONE OR MORE LAYERS IS MISSING NEURONS";
             case 4:
-                return "NUM OUTPUTS EXCEEDS NUM NEURONS IN OUTPUT LAYER";
+                return "NO LEARNING ALGORITHM SELECTED";
+            case 5:
+                return "NETWORK MODE NOT SET";
+            case 6:
+                return "MAX EPOCHS IS LESS THAN OR EQUAL TO 0";
+            case 7:
+                return "NETWORK IS NOT CONNECTED";
             default:
                 return "IDLE";
         }
+    }
+
+    private boolean missingNeurons() {
+        for(int i = 0; i < neuralNetwork.numLayers(); i++) {
+            if(neuralNetwork.getLayer(i).getNeurons().isEmpty()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -1784,11 +1797,16 @@ public class ApplicationWindowController implements Initializable {
             if(neuralNetwork.getLayer(0).numNeurons() == datasets.get(0).numInputs()) {
                 // Check that there are the right amount of output neurons
                 if(neuralNetwork.getLayer(neuralNetwork.numLayers()-1).numNeurons() == datasets.get(0).numOutputs()) {
-                    // Connect the layers
-                    neuralNetwork.connectLayers(datasets.get(0).numInputs());
-                    // Draw the connections
-                    drawConnections();
-                    write("Neural network layers connected successfully!");
+                    if(!missingNeurons()) {
+                        // Connect the layers
+                        neuralNetwork.connectLayers(datasets.get(0).numInputs());
+                        // Draw the connections
+                        drawConnections();
+                        write("Neural network layers connected successfully!");
+                    }
+                    else {
+                        write("Neurons are missing in one or more layers", "-e");
+                    }
                 }
                 // If not enough neurons in output layer
                 else {
@@ -1799,7 +1817,7 @@ public class ApplicationWindowController implements Initializable {
             // If not enough neurons in input layer
             else {
                 // Output error message
-                write("You do not have the correct amount of neurons in the input layer for this data set\nNeurons required: "+ datasets.get(0).numEntries(), "-e");
+                write("You do not have the correct amount of neurons in the input layer for this data set\nNeurons required: "+ datasets.get(0).numInputs(), "-e");
             }
         }
         // If no data is loaded
@@ -1807,6 +1825,7 @@ public class ApplicationWindowController implements Initializable {
             // Output error message
             write("No data file is selected", "-e");
         }
+        updateStatusBox();
     }
 
     /**
@@ -1846,6 +1865,7 @@ public class ApplicationWindowController implements Initializable {
                 // Update the data flag
                 dataFlag = true;
             }
+            updateStatusBox();
         }
         // Catch errors
         catch(Exception e) {
@@ -1856,10 +1876,14 @@ public class ApplicationWindowController implements Initializable {
 
     @FXML
     private void testNetwork() {
-        if(datasets.get(1).getName().contains("Test")) {
-            double acc = neuralNetwork.test(datasets.get(1));
+        if(datasets.size() > 1) {
+            if (datasets.get(1).getName().contains("Test")) {
+                double acc = neuralNetwork.test(datasets.get(1));
 
-            write("Accuracy of network: " + acc + "% over " + datasets.get(1).numEntries() + " entries with " + datasets.get(1).numOutputs() + " output(s) each.");
+                write("Accuracy of network: " + acc + "% over " + datasets.get(1).numEntries() + " entries with " + datasets.get(1).numOutputs() + " output(s) each.");
+            } else {
+                write("No test set available", "-e");
+            }
         }
         else {
             write("No test set available", "-e");
