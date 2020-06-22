@@ -98,7 +98,7 @@ public abstract class Dataset {
         // For all columns
         for(int i = 0; i < numAttributes(); i++) {
             // If the column is not an output column
-            if(!outputCols.contains(i)) {
+            if(inputCols.contains(i)) {
                 // Add the value of the column at row index to the row
                 row.add(dataFrame.get(i).get(rowIndex));
             }
@@ -255,10 +255,13 @@ public abstract class Dataset {
      * @return the row itself
      */
     public ArrayList<Double> getWholeRow(int rowIndex) {
-        // Get the input cols in the row
-        ArrayList<Double> row = this.getRow(rowIndex);
-        // Get the output cols in the row
-        row.addAll(this.getRowExpected(rowIndex));
+        // Create a new row
+        ArrayList<Double> row = new ArrayList<>();
+        // For all columns
+        for(int i = 0; i < numAttributes(); i++) {
+            // Add the value of the column at row index to the row
+            row.add(dataFrame.get(i).get(rowIndex));
+        }
         // Return the row
         return row;
     }

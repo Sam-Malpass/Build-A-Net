@@ -878,7 +878,7 @@ public class ApplicationWindowController implements Initializable {
     @FXML
     private void trainNetwork() {
         if(datasets.size() > 0) {
-            if (algorithmBox.getValue() != "-" && maxEpochs.value > 0 && minError.value > 0) {
+            if (algorithmBox.getValue() != "-" && maxEpochs.value > 0 && minError.value > 0 && algorithmBox.getValue() != null && modeComboBox.getValue() != null) {
                 // Set the learning algorithm
                 neuralNetwork.setLearningAlgorithm(learningAlgorithms.get(learningAlgorithmNames.indexOf(algorithmBox.getValue().toString())));
                 neuralNetwork.setPrecision(precision);
@@ -888,6 +888,9 @@ public class ApplicationWindowController implements Initializable {
                 momentum = (Double) momentumSpinner.getValue();
                 // Train the network
                 neuralNetwork.train(maxEpochs.value, minError.value, learningRate, momentum, datasets.get(0));
+            }
+            else {
+                write("One or more parameters is incorrect, please check and try again", "-e");
             }
         }
         else {

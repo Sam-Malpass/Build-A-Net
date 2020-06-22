@@ -272,6 +272,7 @@ public class DataSelectWindowController implements Initializable {
         });
         inputColumnsField.textProperty().addListener((observable, oldVal, newVal) ->{
             checkInputs();
+            checkOutputs();
             fixCells();
         });
         // Add a listener to detect when the enter key is pressed in the output columns field
@@ -285,6 +286,7 @@ public class DataSelectWindowController implements Initializable {
             }
         });
         outputColumnsField.textProperty().addListener(((observableValue, s, t1) -> {
+            checkOutputs();
             checkInputs();
             fixCells();
         }));
