@@ -877,16 +877,21 @@ public class ApplicationWindowController implements Initializable {
      */
     @FXML
     private void trainNetwork() {
-        if(algorithmBox.getValue() != "-" && maxEpochs.value > 0 && minError.value > 0) {
-            // Set the learning algorithm
-            neuralNetwork.setLearningAlgorithm(learningAlgorithms.get(learningAlgorithmNames.indexOf(algorithmBox.getValue().toString())));
-            neuralNetwork.setPrecision(precision);
-            // Set the learning rate
-            learningRate = (Double) learningRateSpinner.getValue();
-            // Set the momentum
-            momentum = (Double) momentumSpinner.getValue();
-            // Train the network
-            neuralNetwork.train(maxEpochs.value, minError.value, learningRate, momentum, datasets.get(0));
+        if(datasets.size() > 0) {
+            if (algorithmBox.getValue() != "-" && maxEpochs.value > 0 && minError.value > 0) {
+                // Set the learning algorithm
+                neuralNetwork.setLearningAlgorithm(learningAlgorithms.get(learningAlgorithmNames.indexOf(algorithmBox.getValue().toString())));
+                neuralNetwork.setPrecision(precision);
+                // Set the learning rate
+                learningRate = (Double) learningRateSpinner.getValue();
+                // Set the momentum
+                momentum = (Double) momentumSpinner.getValue();
+                // Train the network
+                neuralNetwork.train(maxEpochs.value, minError.value, learningRate, momentum, datasets.get(0));
+            }
+        }
+        else {
+            write("No Training set specified", "-e");
         }
     }
 
@@ -1789,11 +1794,16 @@ public class ApplicationWindowController implements Initializable {
             if(neuralNetwork.getLayer(0).numNeurons() == datasets.get(0).numInputs()) {
                 // Check that there are the right amount of output neurons
                 if(neuralNetwork.getLayer(neuralNetwork.numLayers()-1).numNeurons() == datasets.get(0).numOutputs()) {
-                    // Connect the layers
-                    neuralNetwork.connectLayers(datasets.get(0).numInputs());
-                    // Draw the connections
-                    drawConnections();
-                    write("Neural network layers connected successfully!");
+                    if(!missingNeurons()) {
+                        // Connect the layers
+                        neuralNetwork.connectLayers(datasets.get(0).numInputs());
+                        // Draw the connections
+                        drawConnections();
+                        write("Neural network layers connected successfully!");
+                    }
+                    else {
+                        write("Neurons are missing in one or more layers", "-e");
+                    }
                 }
                 // If not enough neurons in output layer
                 else {
@@ -1804,7 +1814,7 @@ public class ApplicationWindowController implements Initializable {
             // If not enough neurons in input layer
             else {
                 // Output error message
-                write("You do not have the correct amount of neurons in the input layer for this data set\nNeurons required: "+ datasets.get(0).numEntries(), "-e");
+                write("You do not have the correct amount of neurons in the input layer for this data set\nNeurons required: "+ datasets.get(0).numInputs(), "-e");
             }
         }
         // If no data is loaded
@@ -1863,10 +1873,14 @@ public class ApplicationWindowController implements Initializable {
 
     @FXML
     private void testNetwork() {
-        if(datasets.get(1).getName().contains("Test")) {
-            double acc = neuralNetwork.test(datasets.get(1));
+        if(datasets.size() > 1) {
+            if (datasets.get(1).getName().contains("Test")) {
+                double acc = neuralNetwork.test(datasets.get(1));
 
-            write("Accuracy of network: " + acc + "% over " + datasets.get(1).numEntries() + " entries with " + datasets.get(1).numOutputs() + " output(s) each.");
+                write("Accuracy of network: " + acc + "% over " + datasets.get(1).numEntries() + " entries with " + datasets.get(1).numOutputs() + " output(s) each.");
+            } else {
+                write("No test set available", "-e");
+            }
         }
         else {
             write("No test set available", "-e");
