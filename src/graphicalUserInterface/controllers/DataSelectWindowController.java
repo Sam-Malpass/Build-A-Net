@@ -406,7 +406,7 @@ public class DataSelectWindowController implements Initializable {
               // Otherwise
             } else {
                 // Generate a column name
-                nom = "Col " + i;
+                nom = "Col " + (i+1);
                 defaultNames.add(nom);
             }
             // Create the column with the name
