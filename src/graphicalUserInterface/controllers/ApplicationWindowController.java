@@ -291,6 +291,8 @@ public class ApplicationWindowController implements Initializable {
      */
     private ArrayList<Dataset> datasets = new ArrayList<>();
 
+    private boolean newNet = true;
+
 
     /**
      * Function initialize()
@@ -593,8 +595,11 @@ public class ApplicationWindowController implements Initializable {
      */
     @FXML
     private void newNetwork() {
+        if(neuralNetwork.getModified()) {
+            newNet = false;
+        }
         // Check the flags
-        if(neuralNetwork.getSavedFlag() && !neuralNetwork.getModified()) {
+        if(newNet == true || (neuralNetwork.getSavedFlag() && !neuralNetwork.getModified())) {
             // Create a new network
             neuralNetwork = new Network();
             // Deselect the layer
@@ -603,6 +608,7 @@ public class ApplicationWindowController implements Initializable {
             updateNetworkCanvas();
             // Update the status box
             updateStatusBox();
+            newNet = true;
         }
         // Otherwise
         else {
@@ -678,10 +684,11 @@ public class ApplicationWindowController implements Initializable {
      */
     @FXML
     private void openNetwork() {
+        if(neuralNetwork.getModified()) {
+            newNet = false;
+        }
         // Checks the flags
-        System.out.println(neuralNetwork.getSavedFlag());
-        System.out.println(neuralNetwork.getModified());
-        if(neuralNetwork.getSavedFlag() && !neuralNetwork.getModified()) {
+        if(newNet == true || (neuralNetwork.getSavedFlag() && !neuralNetwork.getModified())) {
             // Open a file chooser
             FileChooser chooser = new FileChooser();
             // Get the selected file
@@ -694,6 +701,7 @@ public class ApplicationWindowController implements Initializable {
             updateNetworkCanvas();
             // Update the status box
             updateStatusBox();
+            newNet = false;
         }
         // Otherwise
         else {
