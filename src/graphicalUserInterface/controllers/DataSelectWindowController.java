@@ -270,6 +270,10 @@ public class DataSelectWindowController implements Initializable {
                 }
             }
         });
+        inputColumnsField.textProperty().addListener((observable, oldVal, newVal) ->{
+            checkInputs();
+            fixCells();
+        });
         // Add a listener to detect when the enter key is pressed in the output columns field
         outputColumnsField.setOnKeyReleased(new EventHandler<KeyEvent>() {
             @Override
@@ -280,6 +284,10 @@ public class DataSelectWindowController implements Initializable {
                 }
             }
         });
+        outputColumnsField.textProperty().addListener(((observableValue, s, t1) -> {
+            checkInputs();
+            fixCells();
+        }));
         // Set the style of the input columns field
         inputColumnsField.setStyle("-fx-text-inner-color: rgb(0,128,0);");
         // Set the style of the output columns field
@@ -310,6 +318,7 @@ public class DataSelectWindowController implements Initializable {
                 }
             }
         });
+
     }
 
     /**
