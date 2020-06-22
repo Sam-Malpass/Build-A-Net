@@ -327,8 +327,6 @@ public class ApplicationWindowController implements Initializable {
         // Set the deepFlag
         deepFlag = false;
         selectedLayer = -1;
-        // Update the statusBox
-        updateStatusBox();
         // Create the Spinner ValueFactory for learningRate
         learningRateSpinner.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0.0, Double.MAX_VALUE, 1.0, 0.1));
         // Add the listener
@@ -399,6 +397,11 @@ public class ApplicationWindowController implements Initializable {
                 neuralNetwork.setMode(true);
                 write("Neural Network set to classification mode");
             }
+            updateStatusBox();
+        });
+
+        algorithmBox.getSelectionModel().selectedItemProperty().addListener((observableValue, o, t1) -> {
+            updateStatusBox();
         });
 
         updateNetworkCanvas();
@@ -1254,7 +1257,7 @@ public class ApplicationWindowController implements Initializable {
             information += "NO\n";
         }
         // Append maxEpochs
-        information += "Max Epochs to Run: " + maxEpochs + "\n";
+        information += "Max Epochs to Run: " + maxEpochs.value + "\n";
         // Append minError
         information += "Min Error to Achieve: " + minError + "\n";
         information += "Seed: " + Generator.getSeed();
@@ -1307,47 +1310,26 @@ public class ApplicationWindowController implements Initializable {
      * @return the string
      */
     private String checkStatus() {
-        // Check that there are at least 2 layers (input and output layers)
-        if(neuralNetwork.numLayers() >= 2 && currStatus == 0) {
-            // Set the current status
+        currStatus = 0;
+        if(datasets.size() > 0) {
             currStatus = 1;
-        }
-        // Otherwise
-        else {
-            // Create a temporary variable
-            boolean neurons = true;
-            // Check whether there are no layers
-            if(neuralNetwork.numLayers() == 0){
-                // Set the flag to false
-                neurons = false;
-            }
-            // Otherwise
-            else {
-                // For all layers of the network
-                for (int i = 0; i < neuralNetwork.numLayers(); i++) {
-                    // If the layer i has 0 neurons
-                    if (neuralNetwork.getLayer(i).numNeurons() <= 0) {
-                        // Set the flag to false
-                        neurons = false;
-                    }
-                }
-            }
-            // If flag is true
-            if (neurons == true) {
-                // Set the current status
+            if(datasets.get(0).numInputs() == neuralNetwork.getLayer(0).numNeurons()) {
                 currStatus = 2;
-                // If the dataset is not null
-                if(!(datasets.size() == 0)){
-                    // Set the current status
+                if(datasets.get(0).numOutputs() == neuralNetwork.getLayer(neuralNetwork.numLayers()-1).numNeurons()) {
                     currStatus = 3;
-                    // Check if the number of input neurons matches the number of input attributes
-                    if(datasets.get(0).numInputs() == neuralNetwork.getLayer(0).numNeurons()) {
-                        // Set the current status
+                    if(!missingNeurons()) {
                         currStatus = 4;
-                        // Check if the number of output neurons matches the number of output values
-                        if(datasets.get(0).numOutputs() == neuralNetwork.getLayer(neuralNetwork.numLayers()-1).numNeurons()) {
-                            // Set the current status
+                        if(algorithmBox.getValue() != null && !algorithmBox.getValue().toString().equals("-")) {
                             currStatus = 5;
+                            if(modeComboBox.getValue() != null) {
+                                currStatus = 6;
+                                if(maxEpochs.value > 0) {
+                                    currStatus = 7;
+                                    if(neuralNetwork.getConnectedFlag()) {
+                                        currStatus = 8;
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -1356,18 +1338,33 @@ public class ApplicationWindowController implements Initializable {
         // Check the status
         switch(currStatus) {
             case 0:
-                return "MIN LAYERS NOT REACHED";
-            case 1:
-                return "MISSING NEURONS IN LAYER(S)";
-            case 2:
                 return "NO DATA SELECTED";
+            case 1:
+                return "NUM INPUTS MISMATCH WITH NEURONS IN INPUT LAYER";
+            case 2:
+                return "NUM OUTPUTS MISMATCH WITH NEURONS IN THE OUTPUT LAYER";
             case 3:
-                return "NUM INPUTS EXCEEDS NUM NEURONS IN INPUT LAYER";
+                return "ONE OR MORE LAYERS IS MISSING NEURONS";
             case 4:
-                return "NUM OUTPUTS EXCEEDS NUM NEURONS IN OUTPUT LAYER";
+                return "NO LEARNING ALGORITHM SELECTED";
+            case 5:
+                return "NETWORK MODE NOT SET";
+            case 6:
+                return "MAX EPOCHS IS LESS THAN OR EQUAL TO 0";
+            case 7:
+                return "NETWORK IS NOT CONNECTED";
             default:
                 return "IDLE";
         }
+    }
+
+    private boolean missingNeurons() {
+        for(int i = 0; i < neuralNetwork.numLayers(); i++) {
+            if(neuralNetwork.getLayer(i).getNeurons().isEmpty()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -1815,6 +1812,7 @@ public class ApplicationWindowController implements Initializable {
             // Output error message
             write("No data file is selected", "-e");
         }
+        updateStatusBox();
     }
 
     /**
@@ -1854,6 +1852,7 @@ public class ApplicationWindowController implements Initializable {
                 // Update the data flag
                 dataFlag = true;
             }
+            updateStatusBox();
         }
         // Catch errors
         catch(Exception e) {

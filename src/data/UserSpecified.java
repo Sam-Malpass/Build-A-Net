@@ -14,7 +14,7 @@ public class UserSpecified extends Dataset {
     /**
      * mappings holds a conversion from string data types to numerical data types. Should be used for class column
      */
-    private HashMap<String, Double> mappings;
+    private ArrayList<HashMap<String, Double>> mappings;
 
     /**
      * Constructor with data
@@ -64,11 +64,11 @@ public class UserSpecified extends Dataset {
      */
     private void setup(ArrayList<String> dataFile, String delimiter, boolean includeHeaders) {
         // Declare the initial data frame
-        ArrayList<ArrayList<Double>> dataFramePre = new ArrayList<>();
+        ArrayList<ArrayList<String>> dataFramePre = new ArrayList<>();
         // Create a value variable
         Double value = 0.0;
         // Create a fresh HashMap for new variables
-        mappings = new HashMap<>();
+        mappings = new ArrayList<>();
         // Dummy boolean for first row
         boolean first = true;
         // For all strings in the datafile
@@ -78,7 +78,7 @@ public class UserSpecified extends Dataset {
                 // Create an array for the row
                 String[] row = x.split(delimiter);
                 // Declare the list for the values
-                ArrayList<Double> values = new ArrayList<>();
+                ArrayList<String> values = new ArrayList<>();
                 // If include headers is true
                 if (includeHeaders) {
                     // Set the headers
@@ -86,57 +86,36 @@ public class UserSpecified extends Dataset {
                     // Toggle the flags
                     first = false;
                     includeHeaders = false;
+                    continue;
                   // Otherwise
-                } else {
-                    /* DEBUG
-                    if(first) {
-                        first = false;
-                        continue;
-                    }*/
-                    // For all strings in the row
-                    for (String r : row) {
-                        // Attempt
-                        try {
-                            // Parse the double and add to the list of values
-                            values.add(Double.parseDouble(r));
-                          // Catch errors
-                        } catch (Exception e) {
-                            // If mappings doesn't contain the key (string)
-                            if (!mappings.containsKey(r)) {
-                                // Put the Mapping in the HashMap with a unique double value
-                                mappings.put(r, value++);
-                            }
-                            // Add the value associated with that string
-                            values.add(mappings.get(r));
-                        }
+                }
+                dataFramePre.add(new ArrayList<>(Arrays.asList(row)));
+            }
+        }
+        ArrayList<ArrayList<Double>> dataFrame = new ArrayList<>();
+        for(int i = 0; i < dataFramePre.get(0).size(); i++) {
+            HashMap<String, Double> map = new HashMap<>();
+            ArrayList<Double> col = new ArrayList<>();
+            Double val = 0.0;
+            for(ArrayList<String> row : dataFramePre) {
+                try {
+                    col.add(Double.parseDouble(row.get(i)));
+                }
+                catch (Exception e) {
+                    if(!map.containsKey(row.get(i))) {
+                        map.put(row.get(i), val++);
                     }
-                    // Add the row to the pre-dataframe
-                    dataFramePre.add(values);
+                    col.add(map.get(row.get(i)));
                 }
             }
-            }
-        /*
-        * Since the Dataset class uses a column based dataframe, the structure must be converted
-        * */
-        // Declare the final list
-            ArrayList<ArrayList<Double>> dataFrameFinal = new ArrayList<>();
-            // For all the data attributes
-            for (int i = 0; i < dataFramePre.get(0).size(); i++) {
-                // Declare a column
-                ArrayList<Double> col = new ArrayList<>();
-                // For all the rows
-                for (ArrayList<Double> row : dataFramePre) {
-                    // Add to column the value at row index i
-                    col.add(row.get(i));
-                }
-                // Add the column to the data frame
-                dataFrameFinal.add(col);
-            }
-            // Set the dataframe in the dataset
-            setDataFrame(dataFrameFinal);
-            // Declare the inputCols
-            setInputCols(new ArrayList<>());
-            // Declare the outputCols
-            setOutputCols(new ArrayList<>());
+            mappings.add(map);
+            dataFrame.add(col);
+        }
+        // Set the dataframe in the dataset
+        setDataFrame(dataFrame);
+        // Declare the inputCols
+        setInputCols(new ArrayList<>());
+        // Declare the outputCols
+        setOutputCols(new ArrayList<>());
     }
 }
