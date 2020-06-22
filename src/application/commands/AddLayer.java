@@ -51,7 +51,7 @@ public class AddLayer extends Command {
     @Override
     public void unExecuteCommand() {
         // Get the network
-        Network tmpNet = (Network)dataStore;
+        Network tmpNet = (Network)((ArrayList)dataStore).get(0);
         int position = (int)((ArrayList)dataStore).get(1);
         // Remove the last layer from the network - we know this will be the previously added layer by this command
         tmpNet.removeLayer(position);

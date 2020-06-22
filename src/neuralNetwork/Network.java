@@ -7,7 +7,6 @@
 package neuralNetwork;
 
 import application.Main;
-import application.converter.LayerConverter;
 import data.Dataset;
 import javafx.application.Platform;
 import neuralNetwork.components.layers.*;

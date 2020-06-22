@@ -496,6 +496,9 @@ public class DataSelectWindowController implements Initializable {
 
         // Other
         } else {
+            ArrayList tmp = new ArrayList<Dataset>();
+            tmp.add(loadedData);
+            DataSplitWindowController.setDatasets(tmp);
             // Close the window
             Stage stage = (Stage) dataTable.getScene().getWindow();
             stage.close();

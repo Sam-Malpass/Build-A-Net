@@ -12,8 +12,6 @@ title __ACTIVATIONFUNCTIONS's Class Diagram__\n
       }
     }
   }
-  
-
   namespace neuralNetwork {
     namespace activationFunctions {
       class neuralNetwork.activationFunctions.Identity {
@@ -23,8 +21,6 @@ title __ACTIVATIONFUNCTIONS's Class Diagram__\n
       }
     }
   }
-  
-
   namespace neuralNetwork {
     namespace activationFunctions {
       class neuralNetwork.activationFunctions.Linear {
@@ -34,8 +30,6 @@ title __ACTIVATIONFUNCTIONS's Class Diagram__\n
       }
     }
   }
-  
-
   namespace neuralNetwork {
     namespace activationFunctions {
       class neuralNetwork.activationFunctions.ReLU {
@@ -45,8 +39,6 @@ title __ACTIVATIONFUNCTIONS's Class Diagram__\n
       }
     }
   }
-  
-
   namespace neuralNetwork {
     namespace activationFunctions {
       class neuralNetwork.activationFunctions.Sigmoid {
@@ -56,8 +48,6 @@ title __ACTIVATIONFUNCTIONS's Class Diagram__\n
       }
     }
   }
-  
-
   neuralNetwork.activationFunctions.Identity .up.|> neuralNetwork.activationFunctions.ActivationFunction
   neuralNetwork.activationFunctions.Linear .up.|> neuralNetwork.activationFunctions.ActivationFunction
   neuralNetwork.activationFunctions.ReLU .up.|> neuralNetwork.activationFunctions.ActivationFunction

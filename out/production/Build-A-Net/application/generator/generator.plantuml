@@ -6,9 +6,15 @@ title __GENERATOR's Class Diagram__\n
     namespace generator {
       class application.generator.Generator {
           {static} - randomiser : Random
+          {static} - seed : IntegerWrapper
           {static} + genDouble()
+          {static} + genInt()
+          {static} + genInt()
           {static} + genLong()
           {static} + genUUID()
+          {static} + getSeed()
+          {static} + getWrapper()
+          {static} + setSeed()
       }
     }
   }

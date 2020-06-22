@@ -282,6 +282,9 @@ public class DataSplitWindowController implements Initializable {
         }
     }
 
+    public static void setDatasets(ArrayList<Dataset> data) {
+        splits = data;
+    }
     public static ArrayList<Dataset> getDatasets() {
         return splits;
     }

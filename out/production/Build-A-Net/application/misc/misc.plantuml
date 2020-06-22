@@ -1,11 +1,11 @@
 @startuml
 
-title __CONVERTER's Class Diagram__\n
+title __MISC's Class Diagram__\n
 
   namespace application {
-    namespace converter {
-      class application.converter.LayerConverter {
-          {static} + convert()
+    namespace misc {
+      class application.misc.Rounder {
+          {static} + round()
       }
     }
   }
