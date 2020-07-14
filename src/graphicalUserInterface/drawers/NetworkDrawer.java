@@ -166,6 +166,7 @@ public class NetworkDrawer {
         context.setFill(Color.LIGHTGRAY);
         // Fill the canvas with the colour
         context.fillRect(0,0, width, 475);
+        context.setLineWidth(1);
     }
 
     /**

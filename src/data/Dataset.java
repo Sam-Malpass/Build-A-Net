@@ -306,4 +306,13 @@ public abstract class Dataset {
         }
         return uniques;
     }
+
+    public ArrayList<Double> getColumn(int index) {
+        return dataFrame.get(index);
+    }
+
+    public ArrayList<Double> getOutputColumn(int index) {
+        int num = getOutputCols().get(index);
+        return dataFrame.get(num);
+    }
 }

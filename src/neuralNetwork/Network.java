@@ -16,6 +16,7 @@ import neuralNetwork.learningAlgorithms.LearningAlgorithm;
 import java.awt.image.AreaAveragingScaleFilter;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Network implements Serializable {
 
@@ -433,6 +434,24 @@ public class Network implements Serializable {
     public ArrayList<Double> getOutputs() {
         // Return the output(s)
         return networkLayers.get(numLayers()-1).getOutputs();
+    }
+
+    public Double calculateOutputs(ArrayList<Double> row, int outputNum, ArrayList<Double> uniques) {
+        for(int layerCT = 0; layerCT < numLayers(); layerCT++) {
+            // Calculate the outputs of the layers
+            getLayer(layerCT).calculateOutputs(row);
+            // Update the inputs for the next layer to be the outputs of this layer
+            row = getLayer(layerCT).getOutputs();
+        }
+        if (classification) {
+            //double roundedOut = (double)Math.round(getOutputs().get(j) * 10) / 10;
+            double roundedOut = findNearestClass(getOutputs().get(outputNum), uniques);
+            return roundedOut;
+        }
+        //Regression
+        else {
+            return getOutputs().get(outputNum);
+        }
     }
 
     /**

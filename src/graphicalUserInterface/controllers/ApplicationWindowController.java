@@ -14,6 +14,7 @@ import application.wrappers.DoubleWrapper;
 import application.wrappers.IntegerWrapper;
 import data.Dataset;
 import graphicalUserInterface.MessageBus;
+import graphicalUserInterface.drawers.GraphDrawer;
 import graphicalUserInterface.drawers.LayerToolboxDrawer;
 import graphicalUserInterface.drawers.NetworkDrawer;
 import graphicalUserInterface.drawers.NeuronToolboxDrawer;
@@ -29,6 +30,8 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
@@ -48,6 +51,9 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class ApplicationWindowController implements Initializable {
+
+    private final Clipboard clipboard = Clipboard.getSystemClipboard();
+    private final ClipboardContent content = new ClipboardContent();
 
     /**
      * messageBus holds a MessageBus object which is needed to set up communication between the console and all other threads & classes
@@ -132,6 +138,8 @@ public class ApplicationWindowController implements Initializable {
      */
     private NetworkDrawer networkDrawer;
 
+    private GraphDrawer graphDrawer;
+
     /**
      * toolboxDrawer is a special object that allows for the drawing of elements to the toolbox canvas
      */
@@ -193,6 +201,8 @@ public class ApplicationWindowController implements Initializable {
      * networkMenu holds the ContextMenu object for the network canvas
      */
     private ContextMenu networkMenu;
+
+    private ContextMenu copyMenu;
 
     /**
      * locXNetwork is used for determining the layer that is being selected on the network canvas
@@ -293,6 +303,8 @@ public class ApplicationWindowController implements Initializable {
 
     private boolean newNet = true;
 
+    private int viewMode = 0;
+
 
     /**
      * Function initialize()
@@ -340,6 +352,8 @@ public class ApplicationWindowController implements Initializable {
         toolboxContext = toolboxCanvas.getGraphicsContext2D();
         toolboxContextLayers = toolboxCanvasLayers.getGraphicsContext2D();
         networkDrawer = new NetworkDrawer(networkContext);
+        graphDrawer = new GraphDrawer(networkContext, (int)networkCanvas.getWidth(), (int)networkCanvas.getHeight());
+
         neuronToolboxDrawer = new NeuronToolboxDrawer(toolboxContext);
         layerToolboxDrawer = new LayerToolboxDrawer(toolboxContextLayers);
 
@@ -348,17 +362,27 @@ public class ApplicationWindowController implements Initializable {
 
         // Create the menu for the canvas
         createCanvasMenu();
+        createCopyMenu();
         // Set the menu in the canvas
         networkCanvas.setOnContextMenuRequested(e -> {
-            networkMenu.show(networkCanvas, e.getScreenX(), e.getScreenY()); locXNetwork = e.getX();});
+            if(viewMode == 0) {
+                networkMenu.show(networkCanvas, e.getScreenX(), e.getScreenY()); locXNetwork = e.getX();
+            }
+            else {
+                copyMenu.show(networkCanvas, e.getScreenX(), e.getScreenX());
+                locXNetwork = e.getX();
+            }
+        });
         // Add a listener for a mouse click to the canvas
         networkCanvas.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                // Set the x position on the canvas of the click
-                locXNetwork = mouseEvent.getX();
-                // Call the hiliteLayer function
-                hiliteLayer();
+                if(viewMode == 0) {
+                    // Set the x position on the canvas of the click
+                    locXNetwork = mouseEvent.getX();
+                    // Call the hiliteLayer function
+                    hiliteLayer();
+                }
             }
         });
         // Prepare the canvas
@@ -543,6 +567,36 @@ public class ApplicationWindowController implements Initializable {
         menu.getItems().addAll(addLayer, removeLayer,separator, addNeuronMenu, removeNeuron, separator2, cancel);
         // Set the menu
         this.networkMenu = menu;
+    }
+
+    private void createCopyMenu() {
+        ContextMenu menu = new ContextMenu();
+
+        MenuItem copy = new MenuItem("Copy");
+        copy.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                content.clear();
+                content.putImage(graphDrawer.getImage());
+                clipboard.setContent(content);
+                write("Graphs copied to Clipboard");
+            }
+        });
+        MenuItem copyAndClose = new MenuItem("Copy and Close");
+        copyAndClose.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                content.clear();
+                content.putImage(graphDrawer.getImage());
+                clipboard.setContent(content);
+                write("Graphs copied to Clipboard");
+                viewNetwork();
+            }
+        });
+        SeparatorMenuItem sep = new SeparatorMenuItem();
+        MenuItem cancel = new MenuItem("Cancel");
+        menu.getItems().addAll(copy, copyAndClose, sep, cancel);
+        copyMenu = menu;
     }
 
     /**
@@ -996,31 +1050,33 @@ public class ApplicationWindowController implements Initializable {
      * @param layer is the layer to add
      */
     private void addLayer(int position, Layer layer) {
-        // Create the argument list
-        ArrayList<Object> args = new ArrayList<>();
-        // Add the network
-        args.add(neuralNetwork);
-        // Add the position
-        args.add(position);
-        // Add the layer
-        args.add(layer);
-        // Create the command
-        AddLayer add = new AddLayer();
-        // Execute the command
-        add.executeCommand(args);
-        // Add the command to the stack
-        commandStack.add(add);
-        // If the number of layers is greater than the max that can be displayed
-        if(neuralNetwork.numLayers() > baseMaxLayers) {
-            // Update the width of the canvas
-            networkCanvas.setWidth(networkCanvas.getWidth()+100);
-            // Update the width of the pane that holds the canvas
-            canvasPane.setPrefWidth(canvasPane.getWidth() + 100);
+        if(viewMode == 0) {
+            // Create the argument list
+            ArrayList<Object> args = new ArrayList<>();
+            // Add the network
+            args.add(neuralNetwork);
+            // Add the position
+            args.add(position);
+            // Add the layer
+            args.add(layer);
+            // Create the command
+            AddLayer add = new AddLayer();
+            // Execute the command
+            add.executeCommand(args);
+            // Add the command to the stack
+            commandStack.add(add);
+            // If the number of layers is greater than the max that can be displayed
+            if (neuralNetwork.numLayers() > baseMaxLayers) {
+                // Update the width of the canvas
+                networkCanvas.setWidth(networkCanvas.getWidth() + 100);
+                // Update the width of the pane that holds the canvas
+                canvasPane.setPrefWidth(canvasPane.getWidth() + 100);
+            }
+            // Update the canvas
+            updateNetworkCanvas();
+            // Update the status
+            updateStatusBox();
         }
-        // Update the canvas
-        updateNetworkCanvas();
-        // Update the status
-        updateStatusBox();
     }
 
     /**
@@ -1030,25 +1086,27 @@ public class ApplicationWindowController implements Initializable {
      * </p>
      */
     private void addNeuron(ActivationFunction function) {
-        if(selectedLayer != -1) {
-            // Create the command
-            AddNeuron add = new AddNeuron();
-            // Create a list for arguments
-            ArrayList<Object> args = new ArrayList<>();
-            // Add the neuralNetwork to the args
-            args.add(neuralNetwork);
-            // Add the selected activation function to list
-            args.add(function);
-            // Add the selectedLayer to the args
-            args.add(selectedLayer);
-            // Execute the command
-            add.executeCommand(args);
-            // Add the command to the stack
-            commandStack.add(add);
-            // Update canvas
-            updateNetworkCanvas();
-            // Update the status box
-            updateStatusBox();
+        if(viewMode == 0) {
+            if (selectedLayer != -1) {
+                // Create the command
+                AddNeuron add = new AddNeuron();
+                // Create a list for arguments
+                ArrayList<Object> args = new ArrayList<>();
+                // Add the neuralNetwork to the args
+                args.add(neuralNetwork);
+                // Add the selected activation function to list
+                args.add(function);
+                // Add the selectedLayer to the args
+                args.add(selectedLayer);
+                // Execute the command
+                add.executeCommand(args);
+                // Add the command to the stack
+                commandStack.add(add);
+                // Update canvas
+                updateNetworkCanvas();
+                // Update the status box
+                updateStatusBox();
+            }
         }
     }
 
@@ -1060,59 +1118,61 @@ public class ApplicationWindowController implements Initializable {
      * </p>
      */
     private void removeNeuron() {
-        // Check that there is a selected layer
-        if(selectedLayer != -1) {
-            // Check that there is at least one neuron in that layer
-            if(neuralNetwork.getLayer(selectedLayer).numNeurons() > 0) {
-                // Try
-                try {
-                    // Create an FXMLLoader
-                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../fxml/NeuronSelectWindow.fxml"));
-                    // Get the scene side
-                    Parent root = fxmlLoader.load();
-                    // Get the controller side
-                    NeuronSelectWindowController controller = fxmlLoader.getController();
-                    // Pass the list of neurons in the layer to the controller
-                    controller.setNeurons(neuralNetwork.getLayer(selectedLayer).getNeurons());
-                    // Set the scene to the loaded FXML
-                    Scene scene = new Scene(root, 250, 400);
-                    // Create a stage (a window)
-                    Stage stage = new Stage();
-                    // Set the scene of the stage
-                    stage.setScene(scene);
-                    // Set the window's title
-                    stage.setTitle("Select...");
-                    // Make it un-resizable
-                    stage.setResizable(false);
-                    // Show the window and wait for a response
-                    stage.showAndWait();
-                    // Get the selected index
-                    int index = controller.getIndex();
-                    // If index is not default
-                    if(index != -1) {
-                        // Create the command
-                        RemoveNeuron removeNeuron = new RemoveNeuron();
-                        // Create a list for the arguments
-                        ArrayList<Object> args = new ArrayList<>();
-                        // Add the network to the args
-                        args.add(neuralNetwork);
-                        // Add the selected layer index
-                        args.add(selectedLayer);
-                        // Add the index of the neuron to the arguments
-                        args.add(index);
-                        // Execute the command
-                        removeNeuron.executeCommand(args);
-                        // Add the command to the stack
-                        commandStack.add(removeNeuron);
-                        // Redraw the canvas
-                        updateNetworkCanvas();
-                        // Update the status box
-                        updateStatusBox();
+        if(viewMode == 0) {
+            // Check that there is a selected layer
+            if (selectedLayer != -1) {
+                // Check that there is at least one neuron in that layer
+                if (neuralNetwork.getLayer(selectedLayer).numNeurons() > 0) {
+                    // Try
+                    try {
+                        // Create an FXMLLoader
+                        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../fxml/NeuronSelectWindow.fxml"));
+                        // Get the scene side
+                        Parent root = fxmlLoader.load();
+                        // Get the controller side
+                        NeuronSelectWindowController controller = fxmlLoader.getController();
+                        // Pass the list of neurons in the layer to the controller
+                        controller.setNeurons(neuralNetwork.getLayer(selectedLayer).getNeurons());
+                        // Set the scene to the loaded FXML
+                        Scene scene = new Scene(root, 250, 400);
+                        // Create a stage (a window)
+                        Stage stage = new Stage();
+                        // Set the scene of the stage
+                        stage.setScene(scene);
+                        // Set the window's title
+                        stage.setTitle("Select...");
+                        // Make it un-resizable
+                        stage.setResizable(false);
+                        // Show the window and wait for a response
+                        stage.showAndWait();
+                        // Get the selected index
+                        int index = controller.getIndex();
+                        // If index is not default
+                        if (index != -1) {
+                            // Create the command
+                            RemoveNeuron removeNeuron = new RemoveNeuron();
+                            // Create a list for the arguments
+                            ArrayList<Object> args = new ArrayList<>();
+                            // Add the network to the args
+                            args.add(neuralNetwork);
+                            // Add the selected layer index
+                            args.add(selectedLayer);
+                            // Add the index of the neuron to the arguments
+                            args.add(index);
+                            // Execute the command
+                            removeNeuron.executeCommand(args);
+                            // Add the command to the stack
+                            commandStack.add(removeNeuron);
+                            // Redraw the canvas
+                            updateNetworkCanvas();
+                            // Update the status box
+                            updateStatusBox();
+                        }
+                        // Catch exception
+                    } catch (IOException e) {
+                        // Write out error message
+                        write("FXMLLoader encountered a problem", "-e");
                     }
-                // Catch exception
-                } catch (IOException e) {
-                    // Write out error message
-                    write("FXMLLoader encountered a problem", "-e");
                 }
             }
         }
@@ -1125,46 +1185,48 @@ public class ApplicationWindowController implements Initializable {
      * </p>
      */
     private void removeLayer() {
-        // Create the bound
-        double bound = neuralNetwork.numLayers() * 100;
-        double rawLayerNum = 0.0;
-        // Determine whether the cursor is not on any layer
-        if(locXNetwork < bound) {
-            // Calculate which layer it should be in roughly
-            rawLayerNum = (locXNetwork / 100);
-            // Round to get precise layer number
-            rawLayerNum = Math.ceil(rawLayerNum);
+        if(viewMode == 0) {
+            // Create the bound
+            double bound = neuralNetwork.numLayers() * 100;
+            double rawLayerNum = 0.0;
+            // Determine whether the cursor is not on any layer
+            if (locXNetwork < bound) {
+                // Calculate which layer it should be in roughly
+                rawLayerNum = (locXNetwork / 100);
+                // Round to get precise layer number
+                rawLayerNum = Math.ceil(rawLayerNum);
+            }
+            // Create the command
+            RemoveLayer removeLayer = new RemoveLayer();
+            // Create the list for the arguments
+            ArrayList<Object> args = new ArrayList<>();
+            // Get the position
+            Integer position = new Integer((int) rawLayerNum - 1);
+            // Check whether selectedLayer is being removed
+            if (selectedLayer == position - 1) {
+                // Reset the selectedLayer
+                selectedLayer = -1;
+            }
+            // Check whether we can go back to default view size
+            if (neuralNetwork.numLayers() > baseMaxLayers) {
+                // Update the width of the canvas
+                networkCanvas.setWidth(networkCanvas.getWidth() - 100);
+                // Update the width of the pane holding the canvas
+                canvasPane.setPrefWidth(canvasPane.getWidth() - 100);
+            }
+            // Add the network to the arguments
+            args.add(neuralNetwork);
+            // Add the position ot hte arguments
+            args.add(position);
+            // Execute the command
+            removeLayer.executeCommand(args);
+            // Add command to the stack
+            commandStack.add(removeLayer);
+            // Update the canvas
+            updateNetworkCanvas();
+            // Update the status box
+            updateStatusBox();
         }
-        // Create the command
-        RemoveLayer removeLayer = new RemoveLayer();
-        // Create the list for the arguments
-        ArrayList<Object> args = new ArrayList<>();
-        // Get the position
-        Integer position = new Integer((int)rawLayerNum-1);
-        // Check whether selectedLayer is being removed
-        if(selectedLayer == position-1) {
-            // Reset the selectedLayer
-            selectedLayer = -1;
-        }
-        // Check whether we can go back to default view size
-        if(neuralNetwork.numLayers() > baseMaxLayers) {
-            // Update the width of the canvas
-            networkCanvas.setWidth(networkCanvas.getWidth()-100);
-            // Update the width of the pane holding the canvas
-            canvasPane.setPrefWidth(canvasPane.getWidth() - 100);
-        }
-        // Add the network to the arguments
-        args.add(neuralNetwork);
-        // Add the position ot hte arguments
-        args.add(position);
-        // Execute the command
-        removeLayer.executeCommand(args);
-        // Add command to the stack
-        commandStack.add(removeLayer);
-        // Update the canvas
-        updateNetworkCanvas();
-        // Update the status box
-        updateStatusBox();
     }
 
     /**
@@ -1791,41 +1853,42 @@ public class ApplicationWindowController implements Initializable {
      */
     @FXML
     private void connectLayers() {
-        // Check that data is loaded
-        if(dataFlag) {
-            // Check that there are the right amount of input neurons
-            if(neuralNetwork.getLayer(0).numNeurons() == datasets.get(0).numInputs()) {
-                // Check that there are the right amount of output neurons
-                if(neuralNetwork.getLayer(neuralNetwork.numLayers()-1).numNeurons() == datasets.get(0).numOutputs()) {
-                    if(!missingNeurons()) {
-                        // Connect the layers
-                        neuralNetwork.connectLayers(datasets.get(0).numInputs());
-                        // Draw the connections
-                        drawConnections();
-                        write("Neural network layers connected successfully!");
+        if(viewMode == 0) {
+            // Check that data is loaded
+            if (dataFlag) {
+                // Check that there are the right amount of input neurons
+                if (neuralNetwork.getLayer(0).numNeurons() == datasets.get(0).numInputs()) {
+                    // Check that there are the right amount of output neurons
+                    if (neuralNetwork.getLayer(neuralNetwork.numLayers() - 1).numNeurons() == datasets.get(0).numOutputs()) {
+                        if (!missingNeurons()) {
+                            // Connect the layers
+                            neuralNetwork.connectLayers(datasets.get(0).numInputs());
+                            // Draw the connections
+                            drawConnections();
+                            write("Neural network layers connected successfully!");
+                        } else {
+                            write("Neurons are missing in one or more layers", "-e");
+                        }
                     }
+                    // If not enough neurons in output layer
                     else {
-                        write("Neurons are missing in one or more layers", "-e");
+                        // Output error message
+                        write("You do not have the correct amount of output neurons for this data set\nNeurons required: " + datasets.get(0).numOutputs(), "-e");
                     }
                 }
-                // If not enough neurons in output layer
+                // If not enough neurons in input layer
                 else {
                     // Output error message
-                    write("You do not have the correct amount of output neurons for this data set\nNeurons required: " + datasets.get(0).numOutputs(), "-e");
+                    write("You do not have the correct amount of neurons in the input layer for this data set\nNeurons required: " + datasets.get(0).numInputs(), "-e");
                 }
             }
-            // If not enough neurons in input layer
+            // If no data is loaded
             else {
                 // Output error message
-                write("You do not have the correct amount of neurons in the input layer for this data set\nNeurons required: "+ datasets.get(0).numInputs(), "-e");
+                write("No data file is selected", "-e");
             }
+            updateStatusBox();
         }
-        // If no data is loaded
-        else {
-            // Output error message
-            write("No data file is selected", "-e");
-        }
-        updateStatusBox();
     }
 
     /**
@@ -1922,4 +1985,65 @@ public class ApplicationWindowController implements Initializable {
         }
         updateStatusBox();
     }
+
+    @FXML
+    private void viewNetwork() {
+        viewMode = 0;
+        // Update the width of the canvas
+        networkCanvas.setWidth(1100);
+        // Update the width of the pane that holds the canvas
+        canvasPane.setPrefWidth(1100);
+        if (neuralNetwork.numLayers() > baseMaxLayers) {
+            int iterate = neuralNetwork.numLayers() - baseMaxLayers;
+            for(int i = 0; i < iterate; i++) {
+                // Update the width of the canvas
+                networkCanvas.setWidth(networkCanvas.getWidth() + 100);
+                // Update the width of the pane that holds the canvas
+                canvasPane.setPrefWidth(canvasPane.getWidth() + 100);
+            }
+        }
+        updateNetworkCanvas();
+    }
+
+    @FXML
+    private void viewTadpole() {
+        viewMode = 1;
+        if(datasets.size() == 1) {
+            graphDrawer.updateSize((int)networkCanvas.getWidth(), (int)networkCanvas.getHeight());
+            graphDrawer.clearGraph();
+            helpTadpole(0, datasets.size()*datasets.get(0).numOutputs());
+        }
+        if(datasets.size() == 2) {
+            graphDrawer.updateSize((int)networkCanvas.getWidth(), (int)networkCanvas.getHeight());
+            graphDrawer.clearGraph();
+            helpTadpole(0,datasets.size()*datasets.get(0).numOutputs());
+            helpTadpole(1,datasets.size()*datasets.get(0).numOutputs());
+        }
+        if(datasets.size() == 3) {
+            if(networkCanvas.getWidth() != 1605) {
+                networkCanvas.setWidth(networkCanvas.getWidth() + 505);
+                canvasPane.setPrefWidth(networkCanvas.getWidth());
+            }
+            graphDrawer.updateSize((int)networkCanvas.getWidth(), (int)networkCanvas.getHeight());
+            graphDrawer.clearGraph();
+            helpTadpole(0, datasets.size()*datasets.get(0).numOutputs());
+            helpTadpole(1, datasets.size()*datasets.get(0).numOutputs());
+            helpTadpole(2, datasets.size()*datasets.get(0).numOutputs());
+        }
+    }
+
+    private void helpTadpole(int dataset, int numGraphs) {
+        ArrayList<ArrayList<Double>> allOuts = new ArrayList<>();
+        for(int j = 0; j < datasets.get(dataset).numOutputs(); j++) {
+            ArrayList<Double> outs = new ArrayList<>();
+            for(int i = 0; i < datasets.get(dataset).numEntries(); i++) {
+                outs.add(neuralNetwork.calculateOutputs(datasets.get(dataset).getRow(i), j, datasets.get(dataset).findUniques(j)));
+            }
+            allOuts.add(outs);
+        }
+        for(int i = 0; i < allOuts.size(); i++) {
+            graphDrawer.tadpolePlot(datasets.get(dataset).getName() + " Output " + i, datasets.get(dataset).getOutputColumn(i), allOuts.get(i), numGraphs);
+        }
+    }
+
 }
