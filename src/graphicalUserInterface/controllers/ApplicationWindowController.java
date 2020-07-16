@@ -2032,6 +2032,12 @@ public class ApplicationWindowController implements Initializable {
         }
     }
 
+    @FXML
+    private void viewSSE() {
+        viewMode = 2;
+        graphDrawer.clearGraph();
+        graphDrawer.ssePlot("SSE", neuralNetwork.getSseLog());
+    }
     private void helpTadpole(int dataset, int numGraphs) {
         ArrayList<ArrayList<Double>> allOuts = new ArrayList<>();
         for(int j = 0; j < datasets.get(dataset).numOutputs(); j++) {

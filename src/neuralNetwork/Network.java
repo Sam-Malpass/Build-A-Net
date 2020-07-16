@@ -701,4 +701,8 @@ public class Network implements Serializable {
     public int getPrecision() {
         return precision;
     }
+
+    public ArrayList<Double> getSseLog() {
+        return sseLog;
+    }
 }

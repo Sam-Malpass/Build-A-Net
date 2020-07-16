@@ -49,7 +49,7 @@ public class GraphDrawer {
     private void calcMinMax(ArrayList<Double> target, ArrayList<Double> datapoints) {
         minVal = 0.0;
         maxVal = 0.001;
-
+        target.remove(0);
         maxX = target.size();
         for(int i = 0; i < maxX; i++) {
             if (target.get(i)<minVal) {
@@ -75,15 +75,12 @@ public class GraphDrawer {
     }
 
     private double scaleY(double y) {
-        System.out.println(minVal);
-        System.out.println(maxVal);
         return (30 - (canvasHeight - 30)) * ((y - minVal) / (maxVal - minVal)) + (canvasHeight - 30);
     }
 
     public void tadpolePlot(String title, ArrayList<Double> target, ArrayList<Double> actual, int numGraphs) {
         this.numGraphs = numGraphs;
         individualGraphLength = (canvasWidth - (30 * (numGraphs+1))) / numGraphs;
-        System.out.println(individualGraphLength);
         calcMinMax(target, actual);
         setup(title);
 
@@ -99,6 +96,28 @@ public class GraphDrawer {
             context.fillArc(xval-2, ytar-2, 4, 4, 0, 360, ArcType.ROUND);
         }
         startPoint = endPoint + 30;
+    }
+
+    /**
+     * Plot a graph of the given y values
+     * @param title		title of graph
+     * @param yVals		the y values
+     */
+    public void ssePlot(String title, ArrayList<Double> yVals) {
+        numGraphs = 1;
+        individualGraphLength = (canvasWidth - (30 * (numGraphs+1))) / numGraphs;
+        calcMinMax(yVals, null);
+        setup(title);
+        label(0.0, maxVal);
+        context.setStroke(Color.BLUE);
+        context.setLineWidth(2);
+        context.beginPath();
+        for (int ct=0; ct<yVals.size(); ct++) {
+            double xval = scaleX(ct+0.5);
+            double yval = scaleY(yVals.get(ct));
+            if (ct>0) context.lineTo(xval, yval); else context.moveTo(xval, yval);
+        }
+        context.stroke();
     }
 
     public void updateSize(int x, int y) {
