@@ -7,6 +7,7 @@
 package neuralNetwork;
 
 import application.Main;
+import application.misc.Rounder;
 import data.Dataset;
 import javafx.application.Platform;
 import neuralNetwork.components.layers.*;
@@ -75,6 +76,8 @@ public class Network implements Serializable {
      * sseLog holds a list of the SSE at every given epoch verbose
      */
     private ArrayList<Double> sseLog = new ArrayList<>();
+
+    private ArrayList<Double> valLog = new ArrayList<>();
 
     /**
      * learnRate holds the learning rate for the network
@@ -349,6 +352,105 @@ public class Network implements Serializable {
     }
 
     /**
+     * Function train()
+     * <p>
+     *     Runs the learning algorithm using to train the network using passed parameters
+     * </p>
+     * @param maxEpochs is the maximum iterations to run for
+     * @param minError is the minimum error to strive for
+     * @param learnRate is the learning rate
+     * @param momentum is the momentum
+     */
+    public void train(int maxEpochs, double minError, double learnRate, double momentum, Dataset data, Dataset val) {
+        ArrayList<Object> args = new ArrayList<>();
+        sseLog = new ArrayList<>();
+        args.add(this);
+        args.add(data);
+        this.learnRate = learnRate;
+        this.momentum = momentum;
+        Main.passMessage("Beginning Training...");
+        sse = Double.MAX_VALUE;
+        // For all epochs
+        sseLog.add(Double.MAX_VALUE);
+        int interval = Math.max(1, maxEpochs/100);
+        int epochsRun = 0;
+        for(int i = 1; i < maxEpochs+1; i++) {
+            if(sse <= minError) {
+                break;
+            }
+
+            learningAlgorithm.runAlgorithm(args);
+            sseLog.add(sse);
+            validate(val);
+            if(i % 10 == 0 && sseLog.size() >= 20) {
+                double prev = 0, curr=0;
+                for(int j = sseLog.size()-20; j < 10; j++) {
+                    prev += sseLog.get(j);
+                }
+                for(int j = sseLog.size()-10; j < 10; j++) {
+                    curr += sseLog.get(j);
+                }
+
+                double valPrev = 0, valCurr = 0;
+                for(int j = valLog.size()-20; j < 10; j++) {
+                    valPrev += valLog.get(j);
+                }
+                for(int j = valLog.size()-10; j < 10; j++) {
+                    valCurr += valLog.get(j);
+                }
+
+                if(curr > prev || valCurr > valPrev) {
+                    break;
+                }
+            }
+            if(i % interval == 0) {
+                int index = (int) i / interval;
+                Main.passMessage("Training at epoch " + i + " with an SSE of " + sseLog.get(index));
+            }
+            epochsRun = i;
+        }
+        Main.passMessage("Training completed in " + epochsRun +  " with final SSE of: " + sse);
+        // Update modified flag
+        modified = true;
+    }
+
+    private void validate(Dataset val) {
+        // Declare a list for the errors
+        ArrayList<Double> errors = new ArrayList<>();
+        // Declare a list of lists for all errors
+        ArrayList<ArrayList<Double>> allErrors = new ArrayList<>();
+        // For all data entries in the data
+        for(int i = 0; i < val.numEntries(); i++) {
+            // Reset the errors list
+            errors = new ArrayList<>();
+            // Calculate the outputs of the network using the row of the data
+
+            // For all predictions the network has made (Equivalent to number of outputs)
+            for (int predictionCT = 0; predictionCT < this.getLayer(this.numLayers() - 1).getOutputs().size(); predictionCT++) {
+                double prediction = calculateOutputs(val.getRow(i), predictionCT, val.findUniques(predictionCT));
+                // Add the error to the list of errors for each prediction
+                errors.add(val.getRowExpected(i).get(predictionCT) - prediction);
+            }
+            // Add those errors to the total error list
+            allErrors.add(errors);
+        }
+        // Create a dummy variable
+        double newSSE = 0;
+        // For all errors in the total errors
+        for(int i = 0; i < allErrors.get(0).size(); i++) {
+            // For all individual errors in those lists
+            for (ArrayList<Double> e : allErrors) {
+                // Increase the SSE
+                newSSE += e.get(0) * e.get(0);
+            }
+        }
+        // Divide the SSE by the number of data entries
+        newSSE = newSSE / val.numEntries();
+        // Set the SSE in the network
+        valLog.add(newSSE);
+    }
+
+    /**
      * Function test()
      * <p>
      *     NOT IMPLEMENTED YET
@@ -450,7 +552,7 @@ public class Network implements Serializable {
         }
         //Regression
         else {
-            return getOutputs().get(outputNum);
+            return Rounder.round(getOutputs().get(outputNum), precision);
         }
     }
 
@@ -704,5 +806,9 @@ public class Network implements Serializable {
 
     public ArrayList<Double> getSseLog() {
         return sseLog;
+    }
+
+    public ArrayList<Double> getValLog() {
+        return valLog;
     }
 }

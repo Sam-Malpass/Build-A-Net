@@ -941,7 +941,15 @@ public class ApplicationWindowController implements Initializable {
                 // Set the momentum
                 momentum = (Double) momentumSpinner.getValue();
                 // Train the network
-                neuralNetwork.train(maxEpochs.value, minError.value, learningRate, momentum, datasets.get(0));
+                if(datasets.size() == 1) {
+                    neuralNetwork.train(maxEpochs.value, minError.value, learningRate, momentum, datasets.get(0));
+                }
+                else if(datasets.size() == 2 && datasets.get(1).getName().contains("Val")) {
+                    neuralNetwork.train(maxEpochs.value, minError.value, learningRate, momentum, datasets.get(0), datasets.get(1));
+                }
+                else if(datasets.size() == 3) {
+                    neuralNetwork.train(maxEpochs.value, minError.value, learningRate, momentum, datasets.get(0), datasets.get(2));
+                }
             }
             else {
                 write("One or more parameters is incorrect, please check and try again", "-e");
@@ -2036,7 +2044,17 @@ public class ApplicationWindowController implements Initializable {
     private void viewSSE() {
         viewMode = 2;
         graphDrawer.clearGraph();
-        graphDrawer.ssePlot("SSE", neuralNetwork.getSseLog());
+        if(datasets.size() == 1) {
+            graphDrawer.ssePlot("SSE", neuralNetwork.getSseLog(),1);
+        }
+        else if (datasets.size() == 2 && datasets.get(1).getName().contains("Val")) {
+            graphDrawer.ssePlot("Training SSE", neuralNetwork.getSseLog(),2);
+            graphDrawer.ssePlot("Validation SSE", neuralNetwork.getValLog(),2);
+        }
+        else {
+            graphDrawer.ssePlot("Training SSE", neuralNetwork.getSseLog(),2);
+            graphDrawer.ssePlot("Validation SSE", neuralNetwork.getValLog(),2);
+        }
     }
     private void helpTadpole(int dataset, int numGraphs) {
         ArrayList<ArrayList<Double>> allOuts = new ArrayList<>();

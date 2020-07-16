@@ -49,7 +49,6 @@ public class GraphDrawer {
     private void calcMinMax(ArrayList<Double> target, ArrayList<Double> datapoints) {
         minVal = 0.0;
         maxVal = 0.001;
-        target.remove(0);
         maxX = target.size();
         for(int i = 0; i < maxX; i++) {
             if (target.get(i)<minVal) {
@@ -103,9 +102,10 @@ public class GraphDrawer {
      * @param title		title of graph
      * @param yVals		the y values
      */
-    public void ssePlot(String title, ArrayList<Double> yVals) {
-        numGraphs = 1;
+    public void ssePlot(String title, ArrayList<Double> yVals, int numGraphs) {
+        this.numGraphs = numGraphs;
         individualGraphLength = (canvasWidth - (30 * (numGraphs+1))) / numGraphs;
+        yVals.remove(0);
         calcMinMax(yVals, null);
         setup(title);
         label(0.0, maxVal);
@@ -118,6 +118,7 @@ public class GraphDrawer {
             if (ct>0) context.lineTo(xval, yval); else context.moveTo(xval, yval);
         }
         context.stroke();
+        startPoint = endPoint + 30;
     }
 
     public void updateSize(int x, int y) {
