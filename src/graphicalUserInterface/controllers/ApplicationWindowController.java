@@ -947,6 +947,9 @@ public class ApplicationWindowController implements Initializable {
                 else if(datasets.size() == 2 && datasets.get(1).getName().contains("Val")) {
                     neuralNetwork.train(maxEpochs.value, minError.value, learningRate, momentum, datasets.get(0), datasets.get(1));
                 }
+                else if(datasets.size() == 2 && datasets.get(1).getName().contains("Test")) {
+                    neuralNetwork.train(maxEpochs.value, minError.value, learningRate, momentum, datasets.get(0));
+                }
                 else if(datasets.size() == 3) {
                     neuralNetwork.train(maxEpochs.value, minError.value, learningRate, momentum, datasets.get(0), datasets.get(2));
                 }
